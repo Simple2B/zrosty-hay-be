@@ -25,9 +25,9 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.tenkabel.rule=Host(`zrosty-hay.simple2b.net`)"
-      - "traefik.http.routers.tenkabel.tls=true"
-      - "traefik.http.routers.tenkabel.tls.certresolver=myresolver"
+      - "traefik.http.routers.zrosty_portal.rule=Host(`zrosty-hay.simple2b.net`)"
+      - "traefik.http.routers.zrosty_portal.tls=true"
+      - "traefik.http.routers.zrosty_portal.tls.certresolver=myresolver"
 
   api:
     image: simple2b/zrosty-hay:0.1
@@ -41,9 +41,9 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.tenkabel.rule=Host(`api.zrosty-hay.simple2b.net`)"
-      - "traefik.http.routers.tenkabel.tls=true"
-      - "traefik.http.routers.tenkabel.tls.certresolver=myresolver"
+      - "traefik.http.routers.zrosty_api.rule=Host(`api.zrosty-hay.simple2b.net`)"
+      - "traefik.http.routers.zrosty_api.tls=true"
+      - "traefik.http.routers.zrosty_api.tls.certresolver=myresolver"
 
 volumes:
   db_data:
