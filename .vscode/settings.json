@@ -17,7 +17,8 @@
     "tailwindcss",
     "werkzeug",
     "wsgi",
-    "wtforms"
+    "wtforms",
+    "zrosty"
   ],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,

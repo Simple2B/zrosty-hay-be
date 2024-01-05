@@ -1,6 +1,6 @@
 {
-  "name": "Zrosty-Hay",
-  "version": "0.0.1",
+  "name": "zrosty-hay",
+  "version": "0.0.0",
   "description": "Zrosty-Hay Portal",
   "main": "index.js",
   "scripts": {

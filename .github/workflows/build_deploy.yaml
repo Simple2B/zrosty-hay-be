@@ -8,7 +8,7 @@ on:
 env:
   DOCKER_LOGIN: simple2b
   IMAGE_NAME: simple2b/zrosty-hay
-  DEPLOY_HOST: ${{ secrets.SSH_HOST_IP_PROD }}
+  DEPLOY_HOST: ${{ secrets.SSH_HOST_IP_STAGING }}
   DEPLOY_USER_NAME: ${{ secrets.SSH_USER }}
   DEPLOY_SSH_KEY: ${{ secrets.SSH_KEY }}
   DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT }}
