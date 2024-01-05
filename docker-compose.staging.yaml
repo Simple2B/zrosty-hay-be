@@ -25,6 +25,11 @@ services:
       - db
     ports:
       - 127.0.0.1:${LOCAL_WEB_PORT:-8001}:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tenkabel.rule=Host(`zrosty-hay.simple2b.net`)"
+      - "traefik.http.routers.tenkabel.tls=true"
+      - "traefik.http.routers.tenkabel.tls.certresolver=myresolver"
 
   api:
     image: simple2b/zrosty-hay:0.1
@@ -38,6 +43,11 @@ services:
       - db
     ports:
       - 127.0.0.1:${LOCAL_API_PORT:-8002}:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tenkabel.rule=Host(`api.zrosty-hay.simple2b.net`)"
+      - "traefik.http.routers.tenkabel.tls=true"
+      - "traefik.http.routers.tenkabel.tls.certresolver=myresolver"
 
 volumes:
   db_data:
