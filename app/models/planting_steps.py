@@ -1,8 +1,13 @@
+from typing import TYPE_CHECKING
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from app.database import db
 from .utils import ModelMixin
+
+if TYPE_CHECKING:
+    from .planting_program import PlantingProgram
 
 
 class PlantingStep(db.Model, ModelMixin):
@@ -19,3 +24,9 @@ class PlantingStep(db.Model, ModelMixin):
     instruction: orm.Mapped[str] = orm.mapped_column(
         sa.String(2046), default="", nullable=True
     )
+    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
+        back_populates="steps"
+    )
+
+    def __repr__(self):
+        return f"<PlantingStep: {self.id}>"

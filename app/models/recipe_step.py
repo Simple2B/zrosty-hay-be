@@ -1,9 +1,15 @@
+from typing import TYPE_CHECKING
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 
 from app.database import db
 from .utils import ModelMixin, generate_uuid
+
+
+if TYPE_CHECKING:
+    from .recipe import Recipe
 
 
 class RecipeStep(db.Model, ModelMixin):
@@ -29,3 +35,7 @@ class RecipeStep(db.Model, ModelMixin):
     instruction: orm.Mapped[str] = orm.mapped_column(
         sa.String(2046), default="", nullable=True
     )
+    recipe: orm.Mapped["Recipe"] = orm.relationship(back_populates="steps")
+
+    def __repr__(self):
+        return f"<RecipeStep: {self.id}>"

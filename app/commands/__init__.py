@@ -20,9 +20,14 @@ def init(app: Flask):
         @click.option("--count", default=100, type=int)
         def db_populate(count: int):
             """Fill DB by dummy data."""
-            from test_flask.db import populate
+            from test_flask.db import (
+                populate,
+                create_plant_varieties,
+            )
 
-            populate(count)
+            # populate(count)
+            create_plant_varieties()
+
             print(f"DB populated by {count} instancies")
 
     @app.cli.command("create-admin")

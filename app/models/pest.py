@@ -46,3 +46,6 @@ class Pest(db.Model, ModelMixin):
     plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
         secondary=plant_variety_pest, back_populates="pests"
     )
+
+    def __repr__(self):
+        return f"<Id: {self.id}, Pest: {self.name}>"

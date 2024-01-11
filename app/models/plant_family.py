@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from .plant_variety import PlantVariety
     from .illness import Illness
     from .pest import Pest
-    from .condition import Condition
 
 
 class PlantFamily(db.Model, ModelMixin):
@@ -42,14 +41,16 @@ class PlantFamily(db.Model, ModelMixin):
     features: orm.Mapped[str] = orm.mapped_column(
         sa.String(1024), default="", nullable=True
     )
-    condition: orm.Mapped["Condition"] = orm.relationship("Condition", uselist=False)
 
-    illness: orm.Mapped[List["Illness"]] = orm.relationship(
+    illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="plant_families"
     )
     pests: orm.Mapped[List["Pest"]] = orm.relationship(
         secondary=plant_family_pest, back_populates="plant_families"
     )
-    plants: orm.Mapped[List["PlantVariety"]] = orm.relationship(
-        secondary=plant_family_plant, back_populates="plant_families"
+    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
+        back_populates="family"
     )
+
+    def __repr__(self):
+        return f"<Id: {self.id}, PlantFamily: {self.name}>"

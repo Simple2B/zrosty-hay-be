@@ -35,7 +35,7 @@ class Recipe(db.Model, ModelMixin):
     )
 
     plant_ingredients: orm.Mapped[List["PlantFamily"]] = orm.relationship(
-        back_populates="recipes", secondary=plant_family_recipe
+        secondary=plant_family_recipe
     )
     additional_ingredients: orm.Mapped[str] = orm.mapped_column(
         sa.String(1024), default="", nullable=True
@@ -44,3 +44,6 @@ class Recipe(db.Model, ModelMixin):
     steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(
         order_by="RecipeStep.step_number", back_populates="recipe"
     )
+
+    def __repr__(self):
+        return f"<Id: {self.id}, Recipe: {self.name}>"

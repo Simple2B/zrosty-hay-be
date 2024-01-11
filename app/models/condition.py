@@ -20,15 +20,15 @@ class Condition(db.Model, ModelMixin):
     planting_max_temperature: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, nullable=True
     )
+
     is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(
         sa.Boolean, default=True, nullable=True
     )
     is_sun_loving: orm.Mapped[bool] = orm.mapped_column(
         sa.Boolean, default=False, nullable=True
     )
-    ground_ph: orm.Mapped[int] = orm.mapped_column(
-        sa.String(64), nullable=True, nullable=True
-    )
-    ground_type: orm.Mapped[str] = orm.mapped_column(
-        sa.String(256), nullable=True, nullable=True
-    )
+    ground_ph: orm.Mapped[int] = orm.mapped_column(sa.String(64), nullable=True)
+    ground_type: orm.Mapped[str] = orm.mapped_column(sa.String(256), nullable=True)
+
+    def __repr__(self):
+        return f"<Condition: {self.id}>"

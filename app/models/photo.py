@@ -18,3 +18,6 @@ class Photo(db.Model, ModelMixin):
     path: orm.Mapped[str] = orm.mapped_column(
         sa.String(1024), default="", nullable=True
     )
+
+    def __repr__(self):
+        return f"<Photo: {self.id}>"
