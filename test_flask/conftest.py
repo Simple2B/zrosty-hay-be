@@ -5,7 +5,7 @@ from flask.testing import FlaskClient
 
 from app import create_app, db
 from app import models as m
-from test_flask.utils import register
+from test_flask.utils import login, register
 
 
 load_dotenv("test_flask/test.env")
@@ -56,4 +56,10 @@ def populate(client: FlaskClient):
             email=f"user{i+1}@mail.com",
         ).save(False)
     db.session.commit()
+    yield client
+
+
+@pytest.fixture
+def login_client(client: FlaskClient):
+    login(client)
     yield client
