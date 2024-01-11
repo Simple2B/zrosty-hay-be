@@ -10,17 +10,27 @@ class Condition(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
+    # Foreign keys
     plant_variety_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, sa.ForeignKey("plant_varieties.id"), nullable=False
     )
 
+    # Fields
+    general_info: orm.Mapped[str] = orm.mapped_column(
+        sa.String(2048), default="", nullable=True
+    )
+    temperature_info: orm.Mapped[str] = orm.mapped_column(
+        sa.String(2048), default="", nullable=True
+    )
+    watering_info: orm.Mapped[str] = orm.mapped_column(
+        sa.String(2048), default="", nullable=True
+    )
     planting_min_temperature: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, nullable=True
     )
     planting_max_temperature: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, nullable=True
     )
-
     is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(
         sa.Boolean, default=True, nullable=True
     )

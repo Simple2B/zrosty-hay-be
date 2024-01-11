@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from .pest import Pest
     from .condition import Condition
     from .plant_family import PlantFamily
+    from .planting_program import PlantingProgram
 
 
 class PlantVariety(db.Model, ModelMixin):
@@ -25,16 +26,17 @@ class PlantVariety(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
+    # Foreign keys
     plant_family_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, sa.ForeignKey("plant_families.id"), nullable=False
     )
 
+    # Fields
     name: orm.Mapped[str] = orm.mapped_column(
         sa.String(64),
         unique=True,
         nullable=False,
     )
-
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         sa.DateTime,
         default=datetime.utcnow,
@@ -43,12 +45,12 @@ class PlantVariety(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-
     features: orm.Mapped[str] = orm.mapped_column(
         sa.String(1024), default="", nullable=True
     )
-    condition: orm.Mapped["Condition"] = orm.relationship(uselist=False)
 
+    # Relationships
+    condition: orm.Mapped["Condition"] = orm.relationship(uselist=False)
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_variety_illness, back_populates="plant_varieties"
     )
@@ -59,6 +61,9 @@ class PlantVariety(db.Model, ModelMixin):
         back_populates="plant_varieties"
     )
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
+    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
+        "PlantingProgram", back_populates="plant_variety", uselist=False
+    )
 
     def __repr__(self):
         return f"<Id: {self.id}, PlantVariety: {self.name}>"

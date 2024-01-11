@@ -21,12 +21,13 @@ class Illness(db.Model, ModelMixin):
     __tablename__ = "illnesses"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+
+    # Fields
     name: orm.Mapped[str] = orm.mapped_column(
         sa.String(64),
         unique=True,
         nullable=False,
     )
-
     uuid: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=generate_uuid,
@@ -41,6 +42,7 @@ class Illness(db.Model, ModelMixin):
         sa.String(1024), default="", nullable=True
     )
 
+    # Relationships
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=illness_photo)
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="illnesses"

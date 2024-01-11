@@ -1,3 +1,4 @@
+import enum
 from typing import Self
 from datetime import datetime
 from uuid import uuid4
@@ -15,6 +16,11 @@ from app import schema as s
 
 def gen_password_reset_id() -> str:
     return str(uuid4())
+
+
+class UserRole(enum.Enum):
+    user = "user"
+    admin = "admin"
 
 
 class User(db.Model, UserMixin, ModelMixin):
@@ -45,7 +51,15 @@ class User(db.Model, UserMixin, ModelMixin):
         sa.String(64),
         default=gen_password_reset_id,
     )
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.false())
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean, server_default=sa.false()
+    )
+    role: orm.Mapped[str] = orm.mapped_column(
+        sa.String(32), default=UserRole.user.value
+    )
+    anonym_username: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
+    country: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
+    city: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
 
     @property
     def password(self):

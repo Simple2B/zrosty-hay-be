@@ -22,26 +22,25 @@ class PlantFamily(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
+    # Fields
     uuid: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=generate_uuid,
     )
-
     name: orm.Mapped[str] = orm.mapped_column(
         sa.String(64),
         unique=True,
         nullable=False,
     )
-
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         sa.DateTime,
         default=datetime.utcnow,
     )
-
     features: orm.Mapped[str] = orm.mapped_column(
         sa.String(1024), default="", nullable=True
     )
 
+    # Relationships
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="plant_families"
     )

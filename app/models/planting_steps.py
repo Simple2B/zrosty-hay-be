@@ -15,15 +15,19 @@ class PlantingStep(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
+    # Foreign keys
     planting_program_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, sa.ForeignKey("planting_programs.id"), nullable=False
     )
 
+    # Fields
     day: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
     step_number: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
     instruction: orm.Mapped[str] = orm.mapped_column(
         sa.String(2046), default="", nullable=True
     )
+
+    # Relationships
     planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
         back_populates="steps"
     )

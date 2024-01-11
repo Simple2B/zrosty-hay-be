@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: b98635b854b6
+Revision ID: 8bdf8d956d39
 Revises: 
-Create Date: 2024-01-11 11:27:10.010162
+Create Date: 2024-01-11 22:35:38.598198
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b98635b854b6'
+revision = '8bdf8d956d39'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -52,12 +52,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_families')),
     sa.UniqueConstraint('name', name=op.f('uq_plant_families_name'))
     )
-    op.create_table('planting_programs',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('uuid', sa.String(length=36), nullable=False),
-    sa.Column('planting_time', sa.Integer(), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_programs'))
-    )
     op.create_table('recipes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
@@ -77,6 +71,10 @@ def upgrade():
     sa.Column('unique_id', sa.String(length=36), nullable=False),
     sa.Column('reset_password_uid', sa.String(length=64), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), server_default=sa.text('0'), nullable=False),
+    sa.Column('role', sa.String(length=32), nullable=False),
+    sa.Column('anonym_username', sa.String(length=256), nullable=False),
+    sa.Column('country', sa.String(length=256), nullable=False),
+    sa.Column('city', sa.String(length=256), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
     sa.UniqueConstraint('email', name=op.f('uq_users_email')),
     sa.UniqueConstraint('username', name=op.f('uq_users_username'))
@@ -127,15 +125,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_varieties')),
     sa.UniqueConstraint('name', name=op.f('uq_plant_varieties_name'))
     )
-    op.create_table('planting_steps',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('planting_program_id', sa.Integer(), nullable=False),
-    sa.Column('day', sa.Integer(), nullable=False),
-    sa.Column('step_number', sa.Integer(), nullable=False),
-    sa.Column('instruction', sa.String(length=2046), nullable=True),
-    sa.ForeignKeyConstraint(['planting_program_id'], ['planting_programs.id'], name=op.f('fk_planting_steps_planting_program_id_planting_programs')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_steps'))
-    )
     op.create_table('recipe_photos',
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('photo_id', sa.Integer(), nullable=False),
@@ -157,6 +146,9 @@ def upgrade():
     op.create_table('conditions',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
+    sa.Column('general_info', sa.String(length=2048), nullable=True),
+    sa.Column('temperature_info', sa.String(length=2048), nullable=True),
+    sa.Column('watering_info', sa.String(length=2048), nullable=True),
     sa.Column('planting_min_temperature', sa.Integer(), nullable=True),
     sa.Column('planting_max_temperature', sa.Integer(), nullable=True),
     sa.Column('is_moisture_loving', sa.Boolean(), nullable=True),
@@ -168,10 +160,10 @@ def upgrade():
     )
     op.create_table('feedbacks',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('text', sa.String(length=1024), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
+    sa.Column('text', sa.String(length=1024), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_feedbacks_plant_variety_id_plant_varieties')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_feedbacks_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_feedbacks'))
@@ -204,11 +196,31 @@ def upgrade():
     sa.ForeignKeyConstraint(['plant_variety_photo_id'], ['plant_varieties.id'], name=op.f('fk_plant_variety_photos_plant_variety_photo_id_plant_varieties')),
     sa.PrimaryKeyConstraint('plant_variety_photo_id', 'photo_id', name=op.f('pk_plant_variety_photos'))
     )
+    op.create_table('planting_programs',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('plant_variety_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('planting_time', sa.Integer(), nullable=True),
+    sa.Column('harvest_time', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_planting_programs_plant_variety_id_plant_varieties')),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_programs'))
+    )
+    op.create_table('planting_steps',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('planting_program_id', sa.Integer(), nullable=False),
+    sa.Column('day', sa.Integer(), nullable=False),
+    sa.Column('step_number', sa.Integer(), nullable=False),
+    sa.Column('instruction', sa.String(length=2046), nullable=True),
+    sa.ForeignKeyConstraint(['planting_program_id'], ['planting_programs.id'], name=op.f('fk_planting_steps_planting_program_id_planting_programs')),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_steps'))
+    )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('planting_steps')
+    op.drop_table('planting_programs')
     op.drop_table('plant_variety_photos')
     op.drop_table('plant_variety_pests')
     op.drop_table('plant_variety_illnesses')
@@ -217,7 +229,6 @@ def downgrade():
     op.drop_table('conditions')
     op.drop_table('recipe_steps')
     op.drop_table('recipe_photos')
-    op.drop_table('planting_steps')
     op.drop_table('plant_varieties')
     op.drop_table('plant_family_recipes')
     op.drop_table('plant_family_pests')
@@ -226,7 +237,6 @@ def downgrade():
     op.drop_table('illness_photos')
     op.drop_table('users')
     op.drop_table('recipes')
-    op.drop_table('planting_programs')
     op.drop_table('plant_families')
     op.drop_table('photos')
     op.drop_table('pests')
