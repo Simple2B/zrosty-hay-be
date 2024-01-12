@@ -7,7 +7,6 @@ from sqlalchemy import orm
 
 from app.database import db
 from .utils import ModelMixin, generate_uuid
-from .plant_family_plant import plant_family_plant
 from .plant_family_illness import plant_family_illness
 from .plant_family_pest import plant_family_pest
 
