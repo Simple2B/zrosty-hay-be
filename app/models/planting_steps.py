@@ -23,14 +23,10 @@ class PlantingStep(db.Model, ModelMixin):
     # Fields
     day: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
     step_number: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
-    instruction: orm.Mapped[str] = orm.mapped_column(
-        sa.String(2046), default="", nullable=True
-    )
+    instruction: orm.Mapped[str] = orm.mapped_column(sa.String(2046), default="", nullable=True)
 
     # Relationships
-    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
-        back_populates="steps"
-    )
+    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(back_populates="steps")
 
     def __repr__(self):
         return f"<PlantingStep: {self.id}>"

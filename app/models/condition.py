@@ -16,27 +16,13 @@ class Condition(db.Model, ModelMixin):
     )
 
     # Fields
-    general_info: orm.Mapped[str] = orm.mapped_column(
-        sa.String(2048), default="", nullable=True
-    )
-    temperature_info: orm.Mapped[str] = orm.mapped_column(
-        sa.String(2048), default="", nullable=True
-    )
-    watering_info: orm.Mapped[str] = orm.mapped_column(
-        sa.String(2048), default="", nullable=True
-    )
-    planting_min_temperature: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer, nullable=True
-    )
-    planting_max_temperature: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer, nullable=True
-    )
-    is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(
-        sa.Boolean, default=True, nullable=True
-    )
-    is_sun_loving: orm.Mapped[bool] = orm.mapped_column(
-        sa.Boolean, default=False, nullable=True
-    )
+    general_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="", nullable=True)
+    temperature_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="", nullable=True)
+    watering_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="", nullable=True)
+    planting_min_temperature: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=True)
+    planting_max_temperature: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=True)
+    is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=True, nullable=True)
+    is_sun_loving: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False, nullable=True)
     ground_ph: orm.Mapped[int] = orm.mapped_column(sa.String(64), nullable=True)
     ground_type: orm.Mapped[str] = orm.mapped_column(sa.String(256), nullable=True)
 

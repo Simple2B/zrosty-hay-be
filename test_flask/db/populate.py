@@ -92,9 +92,7 @@ def get_plant_families() -> list[m.PlantFamily]:
         db.session.add(plant_family)
         plant_families.append(plant_family)
         plant_family.pests.extend(faker.random_choices(elements=pests, length=3))
-        plant_family.illnesses.extend(
-            faker.random_choices(elements=illnesses, length=3)
-        )
+        plant_family.illnesses.extend(faker.random_choices(elements=illnesses, length=3))
     db.session.commit()
     return plant_families
 
@@ -107,15 +105,11 @@ def create_plant_varieties() -> list[m.PlantFamily]:
     for index in range(10):
         plant_variety = m.PlantVariety(
             name=f"PlantVariety_{index}",
-            plant_family_id=faker.random_choices(elements=plant_families, length=1)[
-                0
-            ].id,
+            plant_family_id=faker.random_choices(elements=plant_families, length=1)[0].id,
         )
         db.session.add(plant_variety)
         plant_variety.pests.extend(faker.random_choices(elements=pests, length=3))
-        plant_variety.illnesses.extend(
-            faker.random_choices(elements=illnesses, length=3)
-        )
+        plant_variety.illnesses.extend(faker.random_choices(elements=illnesses, length=3))
         plant_varieties.append(plant_variety)
     db.session.commit()
     return plant_varieties
