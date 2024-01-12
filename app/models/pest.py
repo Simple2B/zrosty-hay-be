@@ -32,8 +32,12 @@ class Pest(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    symptoms: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
-    treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    symptoms: orm.Mapped[str] = orm.mapped_column(
+        sa.String(1024), default="", nullable=True
+    )
+    treatment: orm.Mapped[str] = orm.mapped_column(
+        sa.String(1024), default="", nullable=True
+    )
 
     # Relationships
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=pest_photo)
@@ -46,3 +50,6 @@ class Pest(db.Model, ModelMixin):
 
     def __repr__(self):
         return f"<Id: {self.id}, Pest: {self.name}>"
+
+    def __str__(self):
+        return f"{self.name}"

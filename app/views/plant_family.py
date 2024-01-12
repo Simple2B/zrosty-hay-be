@@ -58,47 +58,58 @@ def create():
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
     if request.method == "POST":
         if form.validate_on_submit():
-            pass
-            # illness = m.Illness(
-            #     name=form.name.data,
-            #     reason=form.reason.data,
-            #     symptoms=form.symptoms.data,
-            #     treatment=form.treatment.data,
-            #     # photos=form.photos.data,
-            # )
-            # log(log.INFO, "Form submitted. Illness: [%s]", illness)
-            # flash("Illness added!", "success")
-            # illness.save()
-        else:
-            flash("Error with creating new Illness", "danger")
+            pests = db.session.scalars(
+                sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
+            )
+            illness = db.session.scalars(
+                sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
+            )
+            plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
+            plant_family.pests.extend(pests)
+            plant_family.illnesses.extend(illness)
+            flash("PlantFamily added!", "success")
+            plant_family.save()
+            log(log.INFO, "Form submitted. PlantFamily: [%s]", plant_family)
+        if form.errors:
+            log(log.INFO, "Form error [%s]", form.errors)
+            flash(f"{form.errors}", "danger")
+        return redirect(url_for("plant_family.get_all"))
 
     return render_template("plant_family/modal_form.html", form=form)
 
 
-# @bp.route("/detail/<int:illness_id>", methods=["GET", "POST"])
-# @login_required
-# def detail(illness_id: int):
-#     form = f.IllnessForm()
+@bp.route("/detail/<int:plant_family_id>", methods=["GET", "POST"])
+@login_required
+def detail(plant_family_id: int):
+    form = f.PlantFamilyForm()
+    form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
+    form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
+    plant_family = db.session.get(m.PlantFamily, plant_family_id)
+    if not plant_family:
+        log(log.INFO, "Error can't find illness id:[%d]", plant_family_id)
+        return "No Illness", 404
+    if request.method == "POST":
+        if form.validate_on_submit():
+            # TODO
+            # illness.name = form.name.data
+            # illness.reason = form.reason.data
+            # illness.symptoms = form.symptoms.data
+            # illness.treatment = form.treatment.data
+            log(log.INFO, "Illness updated! [%s]", plant_family)
+            flash("Illness updated!", "success")
+            # plant_family.save()
+        if form.errors:
+            log(log.INFO, "Form error Illness! [%s]", form.errors)
+            flash(f"{form.errors}", "danger")
+        return redirect(url_for("illness.get_all"))
 
-#     illness = db.session.get(m.Illness, illness_id)
-#     if not illness:
-#         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
-#         return "No Illness", 404
-#     if request.method == "POST":
-#         if form.validate_on_submit():
-#             illness.name = form.name.data
-#             illness.reason = form.reason.data
-#             illness.symptoms = form.symptoms.data
-#             illness.treatment = form.treatment.data
-#             log(log.INFO, "Illness updated! [%s]", illness)
-#             flash("Illness updated!", "success")
-#             illness.save()
-#         if form.errors:
-#             log(log.INFO, "Form error Illness! [%s]", form.errors)
-#             flash(f"{form.errors}", "danger")
-#         return redirect(url_for("illness.get_all"))
-
-#     return render_template("illness/edit.html", form=form, illness=illness)
+    form.name.data = plant_family.name
+    form.features.data = plant_family.features
+    # form.pests.select =
+    return render_template(
+        "plant_family/modal_form.html",
+        form=form,
+    )
 
 
 # @bp.route("/delete/<int:illness_id>", methods=["GET", "DELETE"])
