@@ -10,8 +10,6 @@ from .pest_photo import pest_photo
 from .plant_family_pest import plant_family_pest
 from .plant_variety_pest import plant_variety_pest
 
-from app import schema as s
-
 
 if TYPE_CHECKING:
     from .photo import Photo
