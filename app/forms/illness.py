@@ -27,7 +27,3 @@ class IllnessForm(FlaskForm):
     # )
 
     photos = MultipleFileField("photos")
-
-
-class UpdateIllnessForm(IllnessForm):
-    pest_id = StringField("illness_id", [DataRequired()])
