@@ -30,20 +30,12 @@ class Recipe(db.Model, ModelMixin):
         default=generate_uuid,
     )
 
-    cooking_time: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer, default=0, nullable=True
-    )
+    cooking_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
 
-    plant_ingredients: orm.Mapped[List["PlantFamily"]] = orm.relationship(
-        secondary=plant_family_recipe
-    )
-    additional_ingredients: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    plant_ingredients: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
+    additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
-    steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(
-        order_by="RecipeStep.step_number", back_populates="recipe"
-    )
+    steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(order_by="RecipeStep.step_number", back_populates="recipe")
 
     def __repr__(self):
         return f"<Id: {self.id}, Recipe: {self.name}>"

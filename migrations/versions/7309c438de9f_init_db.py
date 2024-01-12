@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 8bdf8d956d39
+Revision ID: 7309c438de9f
 Revises: 
-Create Date: 2024-01-11 22:35:38.598198
+Create Date: 2024-01-12 16:57:27.419883
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8bdf8d956d39'
+revision = '7309c438de9f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -168,13 +168,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_feedbacks_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_feedbacks'))
     )
-    op.create_table('plant_family_plant_varieties',
-    sa.Column('plant_variety_id', sa.Integer(), nullable=False),
-    sa.Column('plant_family_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_plant_family_plant_varieties_plant_family_id_plant_families')),
-    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_plant_family_plant_varieties_plant_variety_id_plant_varieties')),
-    sa.PrimaryKeyConstraint('plant_variety_id', 'plant_family_id', name=op.f('pk_plant_family_plant_varieties'))
-    )
     op.create_table('plant_variety_illnesses',
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
     sa.Column('illness_id', sa.Integer(), nullable=False),
@@ -224,7 +217,6 @@ def downgrade():
     op.drop_table('plant_variety_photos')
     op.drop_table('plant_variety_pests')
     op.drop_table('plant_variety_illnesses')
-    op.drop_table('plant_family_plant_varieties')
     op.drop_table('feedbacks')
     op.drop_table('conditions')
     op.drop_table('recipe_steps')

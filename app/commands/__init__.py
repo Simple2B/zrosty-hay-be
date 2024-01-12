@@ -21,7 +21,6 @@ def init(app: Flask):
         def db_populate(count: int):
             """Fill DB by dummy data."""
             from test_flask.db import (
-                populate,
                 create_plant_varieties,
             )
 

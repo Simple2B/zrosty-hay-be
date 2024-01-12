@@ -7,7 +7,6 @@ from sqlalchemy import orm
 
 from app.database import db
 from .utils import ModelMixin, generate_uuid
-from .plant_family_plant import plant_family_plant
 from .plant_family_illness import plant_family_illness
 from .plant_family_pest import plant_family_pest
 
@@ -36,20 +35,14 @@ class PlantFamily(db.Model, ModelMixin):
         sa.DateTime,
         default=datetime.utcnow,
     )
-    features: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     # Relationships
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="plant_families"
     )
-    pests: orm.Mapped[List["Pest"]] = orm.relationship(
-        secondary=plant_family_pest, back_populates="plant_families"
-    )
-    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
-        back_populates="family"
-    )
+    pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_family_pest, back_populates="plant_families")
+    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(back_populates="family")
 
     def __repr__(self):
         return f"<Id: {self.id}, PlantFamily: {self.name}>"

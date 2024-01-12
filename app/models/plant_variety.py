@@ -27,9 +27,7 @@ class PlantVariety(db.Model, ModelMixin):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     # Foreign keys
-    plant_family_id: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer, sa.ForeignKey("plant_families.id"), nullable=False
-    )
+    plant_family_id: orm.Mapped[int] = orm.mapped_column(sa.Integer, sa.ForeignKey("plant_families.id"), nullable=False)
 
     # Fields
     name: orm.Mapped[str] = orm.mapped_column(
@@ -45,21 +43,15 @@ class PlantVariety(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    features: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     # Relationships
     condition: orm.Mapped["Condition"] = orm.relationship(uselist=False)
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_variety_illness, back_populates="plant_varieties"
     )
-    pests: orm.Mapped[List["Pest"]] = orm.relationship(
-        secondary=plant_variety_pest, back_populates="plant_varieties"
-    )
-    family: orm.Mapped[List["PlantFamily"]] = orm.relationship(
-        back_populates="plant_varieties"
-    )
+    pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_variety_pest, back_populates="plant_varieties")
+    family: orm.Mapped[List["PlantFamily"]] = orm.relationship(back_populates="plant_varieties")
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
     planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
         "PlantingProgram", back_populates="plant_variety", uselist=False

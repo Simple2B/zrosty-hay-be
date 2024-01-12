@@ -14,9 +14,7 @@ class Photo(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    path: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    path: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     def __repr__(self):
         return f"<Photo: {self.id}>"

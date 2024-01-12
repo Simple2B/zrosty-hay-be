@@ -32,15 +32,9 @@ class Illness(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    reason: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
-    symptoms: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
-    treatment: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    reason: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    symptoms: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     # Relationships
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=illness_photo)
