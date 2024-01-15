@@ -25,6 +25,7 @@ class Condition(db.Model, ModelMixin):
     is_sun_loving: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False, nullable=True)
     ground_ph: orm.Mapped[int] = orm.mapped_column(sa.String(64), nullable=True)
     ground_type: orm.Mapped[str] = orm.mapped_column(sa.String(256), nullable=True)
+    can_plant_indoors: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False, nullable=True)
 
     def __repr__(self):
         return f"<Condition: {self.id}>"
