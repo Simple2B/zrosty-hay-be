@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 7309c438de9f
+Revision ID: 3eedb7413f07
 Revises: 
-Create Date: 2024-01-12 16:57:27.419883
+Create Date: 2024-01-15 16:50:13.546289
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7309c438de9f'
+revision = '3eedb7413f07'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('reason', sa.String(length=1024), nullable=True),
     sa.Column('symptoms', sa.String(length=1024), nullable=True),
     sa.Column('treatment', sa.String(length=1024), nullable=True),
@@ -32,6 +35,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('symptoms', sa.String(length=1024), nullable=True),
     sa.Column('treatment', sa.String(length=1024), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_pests')),
@@ -40,7 +46,11 @@ def upgrade():
     op.create_table('photos',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
-    sa.Column('path', sa.String(length=1024), nullable=True),
+    sa.Column('url_path', sa.String(length=512), nullable=True),
+    sa.Column('original_name', sa.String(length=256), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_photos'))
     )
     op.create_table('plant_families',
@@ -48,6 +58,8 @@ def upgrade():
     sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('features', sa.String(length=1024), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_families')),
     sa.UniqueConstraint('name', name=op.f('uq_plant_families_name'))
@@ -56,6 +68,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('cooking_time', sa.Integer(), nullable=True),
     sa.Column('additional_ingredients', sa.String(length=1024), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_recipes')),
@@ -67,7 +82,10 @@ def upgrade():
     sa.Column('email', sa.String(length=128), nullable=False),
     sa.Column('password_hash', sa.String(length=256), nullable=False),
     sa.Column('activated', sa.Boolean(), nullable=False),
+    sa.Column('google_id', sa.String(length=256), nullable=False),
+    sa.Column('apple_id', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('unique_id', sa.String(length=36), nullable=False),
     sa.Column('reset_password_uid', sa.String(length=64), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), server_default=sa.text('0'), nullable=False),
@@ -119,8 +137,20 @@ def upgrade():
     sa.Column('plant_family_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('features', sa.String(length=1024), nullable=True),
+    sa.Column('general_info', sa.String(length=2048), nullable=True),
+    sa.Column('temperature_info', sa.String(length=2048), nullable=True),
+    sa.Column('watering_info', sa.String(length=2048), nullable=True),
+    sa.Column('planting_min_temperature', sa.Integer(), nullable=True),
+    sa.Column('planting_max_temperature', sa.Integer(), nullable=True),
+    sa.Column('is_moisture_loving', sa.Boolean(), nullable=True),
+    sa.Column('is_sun_loving', sa.Boolean(), nullable=True),
+    sa.Column('ground_ph', sa.String(length=64), nullable=True),
+    sa.Column('ground_type', sa.String(length=256), nullable=True),
+    sa.Column('can_plant_indoors', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_plant_varieties_plant_family_id_plant_families')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_varieties')),
     sa.UniqueConstraint('name', name=op.f('uq_plant_varieties_name'))
@@ -137,26 +167,14 @@ def upgrade():
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('step_number', sa.Integer(), nullable=False),
     sa.Column('instruction', sa.String(length=2046), nullable=True),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_recipe_steps_recipe_id_recipes')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_recipe_steps')),
     sa.UniqueConstraint('name', name=op.f('uq_recipe_steps_name'))
-    )
-    op.create_table('conditions',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('plant_variety_id', sa.Integer(), nullable=False),
-    sa.Column('general_info', sa.String(length=2048), nullable=True),
-    sa.Column('temperature_info', sa.String(length=2048), nullable=True),
-    sa.Column('watering_info', sa.String(length=2048), nullable=True),
-    sa.Column('planting_min_temperature', sa.Integer(), nullable=True),
-    sa.Column('planting_max_temperature', sa.Integer(), nullable=True),
-    sa.Column('is_moisture_loving', sa.Boolean(), nullable=True),
-    sa.Column('is_sun_loving', sa.Boolean(), nullable=True),
-    sa.Column('ground_ph', sa.String(length=64), nullable=True),
-    sa.Column('ground_type', sa.String(length=256), nullable=True),
-    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_conditions_plant_variety_id_plant_varieties')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_conditions'))
     )
     op.create_table('feedbacks',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -164,6 +182,8 @@ def upgrade():
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
     sa.Column('text', sa.String(length=1024), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_feedbacks_plant_variety_id_plant_varieties')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_feedbacks_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_feedbacks'))
@@ -189,10 +209,20 @@ def upgrade():
     sa.ForeignKeyConstraint(['plant_variety_photo_id'], ['plant_varieties.id'], name=op.f('fk_plant_variety_photos_plant_variety_photo_id_plant_varieties')),
     sa.PrimaryKeyConstraint('plant_variety_photo_id', 'photo_id', name=op.f('pk_plant_variety_photos'))
     )
+    op.create_table('plant_variety_recipe',
+    sa.Column('recipe_id', sa.Integer(), nullable=False),
+    sa.Column('plant_variety_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_plant_variety_recipe_plant_variety_id_plant_varieties')),
+    sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_plant_variety_recipe_recipe_id_recipes')),
+    sa.PrimaryKeyConstraint('recipe_id', 'plant_variety_id', name=op.f('pk_plant_variety_recipe'))
+    )
     op.create_table('planting_programs',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('planting_time', sa.Integer(), nullable=True),
     sa.Column('harvest_time', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_planting_programs_plant_variety_id_plant_varieties')),
@@ -201,8 +231,10 @@ def upgrade():
     op.create_table('planting_steps',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('planting_program_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('day', sa.Integer(), nullable=False),
-    sa.Column('step_number', sa.Integer(), nullable=False),
     sa.Column('instruction', sa.String(length=2046), nullable=True),
     sa.ForeignKeyConstraint(['planting_program_id'], ['planting_programs.id'], name=op.f('fk_planting_steps_planting_program_id_planting_programs')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_steps'))
@@ -214,11 +246,11 @@ def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('planting_steps')
     op.drop_table('planting_programs')
+    op.drop_table('plant_variety_recipe')
     op.drop_table('plant_variety_photos')
     op.drop_table('plant_variety_pests')
     op.drop_table('plant_variety_illnesses')
     op.drop_table('feedbacks')
-    op.drop_table('conditions')
     op.drop_table('recipe_steps')
     op.drop_table('recipe_photos')
     op.drop_table('plant_varieties')

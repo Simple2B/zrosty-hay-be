@@ -39,10 +39,13 @@ class User(db.Model, UserMixin, ModelMixin):
     )
     password_hash: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     activated: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
+    google_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
+    apple_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         sa.DateTime,
         default=datetime.utcnow,
     )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     unique_id: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=gen_password_reset_id,

@@ -35,6 +35,8 @@ class PlantFamily(db.Model, ModelMixin):
         sa.DateTime,
         default=datetime.utcnow,
     )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
     features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     # Relationships
