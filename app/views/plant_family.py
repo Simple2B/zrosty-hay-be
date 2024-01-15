@@ -22,13 +22,13 @@ bp = Blueprint("plant_family", __name__, url_prefix="/plant-family")
 @login_required
 def get_all():
     q = request.args.get("q", type=str, default=None)
-    query = m.PlantFamily.select().order_by(m.PlantFamily.id)
+    query = m.PlantFamily.select().order_by(m.PlantFamily.id.desc())
     count_query = sa.select(sa.func.count()).select_from(m.PlantFamily)
     if q:
         query = (
             m.PlantFamily.select()
             .where(m.PlantFamily.name.ilike(f"%{q}%"))
-            .order_by(m.PlantFamily.id)
+            .order_by(m.PlantFamily.id.desc())
         )
         count_query = (
             sa.select(sa.func.count())
@@ -120,20 +120,3 @@ def detail(plant_family_id: int):
     return render_template(
         "plant_family/modal_form.html", form=form, plant_family_id=plant_family.id
     )
-
-
-# @bp.route("/delete/<int:illness_id>", methods=["GET", "DELETE"])
-# @login_required
-# def delete(illness_id: int):
-#     illness = db.session.get(m.Illness, illness_id)
-#     if not illness:
-#         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
-#         return "No Illness", 404
-
-#     if request.method == "DELETE":
-#         db.session.delete(illness)
-#         db.session.commit()
-#         log(log.INFO, "Illness deleted. id: [%d]", illness_id)
-#         return "success", 200
-
-#     return render_template("illness/confirm_delete.html", illness_id=illness_id)

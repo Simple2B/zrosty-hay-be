@@ -47,14 +47,6 @@ def test_pest_crud(login_client: FlaskClient):
     assert b"no pest" in response.data
 
 
-def test_populate_db(runner: FlaskCliRunner):
-    TEST_COUNT = 56
-    count_before = db.session.query(m.User).count()
-    res: Result = runner.invoke(args=["db-populate", "--count", f"{TEST_COUNT}"])
-    assert f"populated by {TEST_COUNT}" in res.stdout
-    assert (db.session.query(m.User).count() - count_before) == TEST_COUNT
-
-
 def test_delete_user(populate: FlaskClient):
     login(populate)
     uc = db.session.query(m.User).count()

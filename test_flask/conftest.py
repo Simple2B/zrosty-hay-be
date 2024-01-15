@@ -6,6 +6,7 @@ from flask.testing import FlaskClient
 from app import create_app, db
 from app import models as m
 from test_flask.utils import login, register
+from .db import get_plant_families
 
 
 load_dotenv("test_flask/test.env")
@@ -57,6 +58,11 @@ def populate(client: FlaskClient):
         ).save(False)
     db.session.commit()
     yield client
+
+
+@pytest.fixture
+def add_fake_plant_families() -> list[m.PlantFamily]:
+    return get_plant_families()
 
 
 @pytest.fixture

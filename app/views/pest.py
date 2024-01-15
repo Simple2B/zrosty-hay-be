@@ -62,8 +62,6 @@ def save():
         pest.treatment = form.treatment.data
         # pest.photos = form.photos.data
         pest.save()
-        # if form.next_url.data:
-        #     return redirect(form.next_url.data)
         return redirect(url_for("pest.get_all"))
 
     else:
