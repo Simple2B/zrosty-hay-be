@@ -25,25 +25,15 @@ def get_all():
     query = m.Illness.select().order_by(m.Illness.id)
     count_query = sa.select(sa.func.count()).select_from(m.Illness)
     if q:
-        query = (
-            m.Illness.select()
-            .where(m.Illness.name.ilike(f"%{q}%"))
-            .order_by(m.Illness.id)
-        )
-        count_query = (
-            sa.select(sa.func.count())
-            .where(m.Illness.name.ilike(f"%{q}%"))
-            .select_from(m.Illness)
-        )
+        query = m.Illness.select().where(m.Illness.name.ilike(f"%{q}%")).order_by(m.Illness.id)
+        count_query = sa.select(sa.func.count()).where(m.Illness.name.ilike(f"%{q}%")).select_from(m.Illness)
 
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
         "illness/illnesses.html",
         illnesses=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(
-                pagination.per_page
-            )
+            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -56,9 +46,7 @@ def detail(illness_id: int):
     form = f.IllnessForm()
 
     if form.name.data and db.session.scalar(
-        sa.Select(m.Illness.name).where(
-            m.Illness.name == form.name.data, m.Illness.id != illness_id
-        )
+        sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.id != illness_id)
     ):
         log(log.INFO, "Illness name already exist! [%s]", form.name.data)
         flash("Illness name already exist!", "danger")
@@ -90,9 +78,7 @@ def detail(illness_id: int):
 def create():
     form = f.IllnessForm()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
-    ):
+    if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
         log(log.INFO, "Illness name already exist! [%s]", form.name.data)
         flash("Illness name already exist!", "danger")
         return redirect(url_for("illness.get_all"))

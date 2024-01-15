@@ -10,25 +10,19 @@ def test_illness_crud(login_client: FlaskClient):
         symptoms="test_symptoms",
         treatment="test_treatment",
     )
-    response = login_client.post(
-        "/illness/create", data=illness_data, follow_redirects=True
-    )
+    response = login_client.post("/illness/create", data=illness_data, follow_redirects=True)
     assert response.status_code == 200
     assert b"Illness added!" in response.data
     illness: m.Illness = db.session.scalars(m.Illness.select()).first()
     assert illness
 
     # update
-    response = login_client.get(
-        f"/illness/detail/{illness.id}", data=illness_data, follow_redirects=True
-    )
+    response = login_client.get(f"/illness/detail/{illness.id}", data=illness_data, follow_redirects=True)
     assert response.status_code == 200
     assert illness.name.encode("utf-8") in response.data
     NEW_NAME = "new name"
     illness_data["name"] = NEW_NAME
-    response = login_client.post(
-        f"/illness/detail/{illness.id}", data=illness_data, follow_redirects=True
-    )
+    response = login_client.post(f"/illness/detail/{illness.id}", data=illness_data, follow_redirects=True)
     assert response.status_code == 200
     assert NEW_NAME.encode("utf-8") in response.data
     db.session.refresh(illness)

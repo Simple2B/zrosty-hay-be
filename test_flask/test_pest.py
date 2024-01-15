@@ -34,14 +34,10 @@ def test_pest_crud(login_client: FlaskClient):
     assert response.status_code == 200
 
     # test delete
-    response = login_client.delete(
-        f"/pest/delete/{pest.id}", data=pest_data, follow_redirects=True
-    )
+    response = login_client.delete(f"/pest/delete/{pest.id}", data=pest_data, follow_redirects=True)
     assert response.status_code == 200
     assert b"ok" in response.data
-    response = login_client.delete(
-        f"/pest/delete/{pest.id}", data=pest_data, follow_redirects=True
-    )
+    response = login_client.delete(f"/pest/delete/{pest.id}", data=pest_data, follow_redirects=True)
     assert response.status_code == 404
     assert b"no pest" in response.data
 

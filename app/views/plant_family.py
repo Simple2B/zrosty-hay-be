@@ -25,25 +25,15 @@ def get_all():
     query = m.PlantFamily.select().order_by(m.PlantFamily.id.desc())
     count_query = sa.select(sa.func.count()).select_from(m.PlantFamily)
     if q:
-        query = (
-            m.PlantFamily.select()
-            .where(m.PlantFamily.name.ilike(f"%{q}%"))
-            .order_by(m.PlantFamily.id.desc())
-        )
-        count_query = (
-            sa.select(sa.func.count())
-            .where(m.PlantFamily.name.ilike(f"%{q}%"))
-            .select_from(m.PlantFamily)
-        )
+        query = m.PlantFamily.select().where(m.PlantFamily.name.ilike(f"%{q}%")).order_by(m.PlantFamily.id.desc())
+        count_query = sa.select(sa.func.count()).where(m.PlantFamily.name.ilike(f"%{q}%")).select_from(m.PlantFamily)
 
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
         "plant_family/plant_families.html",
         plant_families=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(
-                pagination.per_page
-            )
+            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -57,20 +47,14 @@ def create():
     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
-    ):
+    if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
         flash("Plan Family name already exist!", "danger")
         return redirect(url_for("plant_family.get_all"))
 
     if request.method == "POST" and form.validate_on_submit():
-        pests = db.session.scalars(
-            sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
-        )
-        illness = db.session.scalars(
-            sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
-        )
+        pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
+        illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
         plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
         plant_family.pests.extend(pests)
         plant_family.illnesses.extend(illness)
@@ -94,9 +78,7 @@ def detail(plant_family_id: int):
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
 
     if form.name.data and db.session.scalar(
-        sa.Select(m.PlantFamily.name).where(
-            m.PlantFamily.name == form.name.data, m.PlantFamily.id != plant_family_id
-        )
+        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data, m.PlantFamily.id != plant_family_id)
     ):
         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
         flash("Plan Family name already exist!", "danger")
@@ -113,9 +95,7 @@ def detail(plant_family_id: int):
             plant_family.name = form.name.data
             plant_family.features = form.features.data
 
-            new_pests = db.session.scalars(
-                sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
-            ).all()
+            new_pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
 
             new_illnesses = db.session.scalars(
                 sa.Select(m.Illness).where(m.Illness.name.in_(form.illnesses.data))
@@ -135,6 +115,4 @@ def detail(plant_family_id: int):
     form.features.data = plant_family.features
     form.pests.data = [pest.name for pest in plant_family.pests]
     form.illnesses.data = [illness.name for illness in plant_family.illnesses]
-    return render_template(
-        "plant_family/modal_form.html", form=form, plant_family_id=plant_family.id
-    )
+    return render_template("plant_family/modal_form.html", form=form, plant_family_id=plant_family.id)

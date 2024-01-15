@@ -36,16 +36,10 @@ class Pest(db.Model, ModelMixin):
         sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
-    symptoms: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
-    treatment: orm.Mapped[str] = orm.mapped_column(
-        sa.String(1024), default="", nullable=True
-    )
+    symptoms: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
 
     # Relationships
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=pest_photo)

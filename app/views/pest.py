@@ -26,20 +26,14 @@ def get_all():
     count_query = sa.select(sa.func.count()).select_from(m.Pest)
     if q:
         query = m.Pest.select().where(m.Pest.name.ilike(f"%{q}%")).order_by(m.Pest.id)
-        count_query = (
-            sa.select(sa.func.count())
-            .where(m.Pest.name.ilike(f"%{q}%"))
-            .select_from(m.Pest)
-        )
+        count_query = sa.select(sa.func.count()).where(m.Pest.name.ilike(f"%{q}%")).select_from(m.Pest)
 
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
         "pest/pests.html",
         pests=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(
-                pagination.per_page
-            )
+            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -52,9 +46,7 @@ def save():
     form = f.UpdatePestForm()
 
     if form.name.data and db.session.scalar(
-        sa.Select(m.Pest.name).where(
-            m.Pest.name == form.name.data, m.Pest.id != form.pest_id.data
-        )
+        sa.Select(m.Pest.name).where(m.Pest.name == form.name.data, m.Pest.id != form.pest_id.data)
     ):
         log(log.INFO, "Pest name already exist! [%s]", form.name.data)
         flash("Pest name already exist!", "danger")
@@ -85,9 +77,7 @@ def save():
 def create():
     form = f.PestForm()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)
-    ):
+    if form.name.data and db.session.scalar(sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)):
         log(log.INFO, "Pest name already exist! [%s]", form.name.data)
         flash("Pest name already exist!", "danger")
         return redirect(url_for("pest.get_all"))
