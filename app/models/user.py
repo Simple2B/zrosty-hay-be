@@ -45,9 +45,7 @@ class User(db.Model, UserMixin, ModelMixin):
         sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     unique_id: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=gen_password_reset_id,
@@ -56,12 +54,8 @@ class User(db.Model, UserMixin, ModelMixin):
         sa.String(64),
         default=gen_password_reset_id,
     )
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(
-        sa.Boolean, server_default=sa.false()
-    )
-    role: orm.Mapped[str] = orm.mapped_column(
-        sa.String(32), default=UserRole.user.value
-    )
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.false())
+    role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
     anonym_username: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     country: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     city: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
