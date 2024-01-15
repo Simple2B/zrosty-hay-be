@@ -85,30 +85,40 @@ def detail(plant_family_id: int):
     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
     plant_family = db.session.get(m.PlantFamily, plant_family_id)
+
     if not plant_family:
-        log(log.INFO, "Error can't find illness id:[%d]", plant_family_id)
-        return "No Illness", 404
+        log(log.INFO, "Error can't find plant_family id:[%d]", plant_family_id)
+        return "No Plant family", 404
+
     if request.method == "POST":
         if form.validate_on_submit():
-            # TODO
-            # illness.name = form.name.data
-            # illness.reason = form.reason.data
-            # illness.symptoms = form.symptoms.data
-            # illness.treatment = form.treatment.data
-            log(log.INFO, "Illness updated! [%s]", plant_family)
-            flash("Illness updated!", "success")
-            # plant_family.save()
+            plant_family.name = form.name.data
+            plant_family.features = form.features.data
+
+            new_pests = db.session.scalars(
+                sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
+            ).all()
+
+            new_illnesses = db.session.scalars(
+                sa.Select(m.Illness).where(m.Illness.name.in_(form.illnesses.data))
+            ).all()
+
+            plant_family.pests = new_pests
+            plant_family.illnesses = new_illnesses
+            log(log.INFO, "Plant_family updated! [%s]", plant_family)
+            flash("Plant family updated!", "success")
+            plant_family.save()
         if form.errors:
-            log(log.INFO, "Form error Illness! [%s]", form.errors)
+            log(log.INFO, "Form error Plant family! [%s]", form.errors)
             flash(f"{form.errors}", "danger")
-        return redirect(url_for("illness.get_all"))
+        return redirect(url_for("plant_family.get_all"))
 
     form.name.data = plant_family.name
     form.features.data = plant_family.features
-    # form.pests.select =
+    form.pests.data = [pest.name for pest in plant_family.pests]
+    form.illnesses.data = [illness.name for illness in plant_family.illnesses]
     return render_template(
-        "plant_family/modal_form.html",
-        form=form,
+        "plant_family/modal_form.html", form=form, plant_family_id=plant_family.id
     )
 
 

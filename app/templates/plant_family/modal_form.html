@@ -2,7 +2,11 @@
 <div class="modal" id="modal-plant-family-from">
   <div class="modal-underlay" onclick="closeModal()"></div>
   <div class="modal-content">
-    <form action="{{ url_for('plant_family.create') }}" method="POST"
+    {% set form_action = "plant_family.create" %}
+    {% if plant_family_id %}
+    {% set form_action = "plant_family.detail" %}
+    {% endif %}
+    <form action="{{ url_for(form_action, plant_family_id=plant_family_id) }}" method="POST"
       class="w-[600px] relative bg-white rounded-lg shadow dark:bg-gray-700 p-4">
       <!-- Modal header -->
       {{ form.hidden_tag() }}
