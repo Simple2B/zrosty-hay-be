@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 8def94696c70
+Revision ID: 3eedb7413f07
 Revises: 
-Create Date: 2024-01-15 16:42:53.363482
+Create Date: 2024-01-15 16:50:13.546289
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8def94696c70'
+revision = '3eedb7413f07'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -150,6 +150,7 @@ def upgrade():
     sa.Column('is_sun_loving', sa.Boolean(), nullable=True),
     sa.Column('ground_ph', sa.String(length=64), nullable=True),
     sa.Column('ground_type', sa.String(length=256), nullable=True),
+    sa.Column('can_plant_indoors', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_plant_varieties_plant_family_id_plant_families')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_varieties')),
     sa.UniqueConstraint('name', name=op.f('uq_plant_varieties_name'))
