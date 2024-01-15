@@ -1,5 +1,5 @@
 from typing import List, TYPE_CHECKING
-
+from datetime import datetime
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -28,14 +28,28 @@ class PlantingProgram(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    planting_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
-    harvest_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
+    created_at: orm.Mapped[datetime] = orm.mapped_column(
+        sa.DateTime,
+        default=datetime.utcnow,
+    )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(
+        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
+    planting_time: orm.Mapped[int] = orm.mapped_column(
+        sa.Integer, default=0, nullable=True
+    )
+    harvest_time: orm.Mapped[int] = orm.mapped_column(
+        sa.Integer, default=0, nullable=True
+    )
 
     # Relationships
     steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(
         order_by="PlantingStep.step_number", back_populates="planting_program"
     )
-    plant_variety: orm.Mapped["PlantVariety"] = orm.relationship("PlantVariety", back_populates="planting_program")
+    plant_variety: orm.Mapped["PlantVariety"] = orm.relationship(
+        "PlantVariety", back_populates="planting_program"
+    )
 
     def __repr__(self):
         return f"<PlantingProgram: {self.id}>"
