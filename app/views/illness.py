@@ -55,6 +55,15 @@ def get_all():
 def detail(illness_id: int):
     form = f.IllnessForm()
 
+    if form.name.data and db.session.scalar(
+        sa.Select(m.Illness.name).where(
+            m.Illness.name == form.name.data, m.Illness.id != illness_id
+        )
+    ):
+        log(log.INFO, "Illness name already exist! [%s]", form.name.data)
+        flash("Illness name already exist!", "danger")
+        return redirect(url_for("illness.get_all"))
+
     illness = db.session.get(m.Illness, illness_id)
     if not illness:
         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
@@ -80,6 +89,14 @@ def detail(illness_id: int):
 @login_required
 def create():
     form = f.IllnessForm()
+
+    if form.name.data and db.session.scalar(
+        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
+    ):
+        log(log.INFO, "Illness name already exist! [%s]", form.name.data)
+        flash("Illness name already exist!", "danger")
+        return redirect(url_for("illness.get_all"))
+
     if form.validate_on_submit():
         illness = m.Illness(
             name=form.name.data,

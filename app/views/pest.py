@@ -50,6 +50,16 @@ def get_all():
 @login_required
 def save():
     form = f.UpdatePestForm()
+
+    if form.name.data and db.session.scalar(
+        sa.Select(m.Pest.name).where(
+            m.Pest.name == form.name.data, m.Pest.id != form.pest_id.data
+        )
+    ):
+        log(log.INFO, "Pest name already exist! [%s]", form.name.data)
+        flash("Pest name already exist!", "danger")
+        return redirect(url_for("pest.get_all"))
+
     if form.validate_on_submit():
         query = m.Pest.select().where(m.Pest.id == int(form.pest_id.data))
         pest: m.Pest | None = db.session.scalar(query)
@@ -74,6 +84,14 @@ def save():
 @login_required
 def create():
     form = f.PestForm()
+
+    if form.name.data and db.session.scalar(
+        sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)
+    ):
+        log(log.INFO, "Pest name already exist! [%s]", form.name.data)
+        flash("Pest name already exist!", "danger")
+        return redirect(url_for("pest.get_all"))
+
     if form.validate_on_submit():
         pest = m.Pest(
             name=form.name.data,
@@ -85,6 +103,7 @@ def create():
         flash("Pest added!", "success")
         pest.save()
     else:
+        log(log.ERROR, "Error with creating new pest")
         flash("Error with creating new pest", "danger")
 
     return redirect(url_for("pest.get_all"))

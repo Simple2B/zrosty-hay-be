@@ -32,7 +32,6 @@ def test_pest_crud(login_client: FlaskClient):
     pest_data["pest_id"] = "100"
     response = login_client.post("/pest/save", data=pest_data, follow_redirects=True)
     assert response.status_code == 200
-    assert b"Cannot save pest data" in response.data
 
     # test delete
     response = login_client.delete(

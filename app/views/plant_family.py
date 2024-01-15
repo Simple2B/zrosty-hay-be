@@ -56,23 +56,31 @@ def create():
     form = f.PlantFamilyForm()
     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            pests = db.session.scalars(
-                sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
-            )
-            illness = db.session.scalars(
-                sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
-            )
-            plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
-            plant_family.pests.extend(pests)
-            plant_family.illnesses.extend(illness)
-            flash("PlantFamily added!", "success")
-            plant_family.save()
-            log(log.INFO, "Form submitted. PlantFamily: [%s]", plant_family)
-        if form.errors:
-            log(log.INFO, "Form error [%s]", form.errors)
-            flash(f"{form.errors}", "danger")
+
+    if form.name.data and db.session.scalar(
+        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
+    ):
+        log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
+        flash("Plan Family name already exist!", "danger")
+        return redirect(url_for("plant_family.get_all"))
+
+    if request.method == "POST" and form.validate_on_submit():
+        pests = db.session.scalars(
+            sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
+        )
+        illness = db.session.scalars(
+            sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
+        )
+        plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
+        plant_family.pests.extend(pests)
+        plant_family.illnesses.extend(illness)
+        flash("PlantFamily added!", "success")
+        plant_family.save()
+        log(log.INFO, "Form submitted. PlantFamily: [%s]", plant_family)
+        return redirect(url_for("plant_family.get_all"))
+    if form.errors:
+        log(log.INFO, "Form error [%s]", form.errors)
+        flash(f"{form.errors}", "danger")
         return redirect(url_for("plant_family.get_all"))
 
     return render_template("plant_family/modal_form.html", form=form)
@@ -84,6 +92,16 @@ def detail(plant_family_id: int):
     form = f.PlantFamilyForm()
     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
+
+    if form.name.data and db.session.scalar(
+        sa.Select(m.PlantFamily.name).where(
+            m.PlantFamily.name == form.name.data, m.PlantFamily.id != plant_family_id
+        )
+    ):
+        log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
+        flash("Plan Family name already exist!", "danger")
+        return redirect(url_for("plant_family.get_all"))
+
     plant_family = db.session.get(m.PlantFamily, plant_family_id)
 
     if not plant_family:
