@@ -35,7 +35,9 @@ def get_all():
     return render_template(
         "illness/illnesses.html",
         illnesses=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
+            query.offset((pagination.page - 1) * pagination.per_page).limit(
+                pagination.per_page
+            )
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -47,19 +49,22 @@ def get_all():
 def detail(illness_id: int):
     form = f.IllnessForm()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.id != illness_id)
-    ):
-        log(log.INFO, "Illness name already exist! [%s]", form.name.data)
-        flash("Illness name already exist!", "danger")
-        return redirect(url_for("illness.get_all"))
-
     illness = db.session.get(m.Illness, illness_id)
     if not illness or illness.is_deleted:
         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
         return "No Illness", 404
 
     if request.method == "POST" and form.validate_on_submit():
+        is_name_exist = db.session.scalar(
+            sa.Select(m.Illness.name).where(
+                m.Illness.name == form.name.data, m.Illness.id != illness_id
+            )
+        )
+        if is_name_exist:
+            log(log.INFO, "Illness name already exist! [%s]", form.name.data)
+            flash("Illness name already exist!", "danger")
+            return redirect(url_for("illness.get_all"))
+
         illness.name = form.name.data
         illness.reason = form.reason.data
         illness.symptoms = form.symptoms.data
@@ -86,18 +91,21 @@ def detail(illness_id: int):
 def create():
     form = f.IllnessForm()
 
-    if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
-        log(log.INFO, "Illness name already exist! [%s]", form.name.data)
-        flash("Illness name already exist!", "danger")
-        return redirect(url_for("illness.get_all"))
-
     if request.method == "POST" and form.validate_on_submit():
+        is_name_exist = db.session.scalar(
+            sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
+        )
+
+        if is_name_exist:
+            flash("Illness name already exist!", "danger")
+            return redirect(url_for("illness.get_all"))
+
         illness = m.Illness(
             name=form.name.data,
             reason=form.reason.data,
             symptoms=form.symptoms.data,
             treatment=form.treatment.data,
-            # photos=form.photos.data,
+            # TODO photos=form.photos.data,
         )
         log(log.INFO, "Form submitted. Illness: [%s]", illness)
         flash("Illness added!", "success")
