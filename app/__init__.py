@@ -24,7 +24,6 @@ def create_app(environment="development"):
         pest_blueprint,
         illness_blueprint,
         plant_family_blueprint,
-        plant_variety_blueprint,
     )
     from app import models as m
 
@@ -52,7 +51,6 @@ def create_app(environment="development"):
     app.register_blueprint(pest_blueprint)
     app.register_blueprint(illness_blueprint)
     app.register_blueprint(plant_family_blueprint)
-    app.register_blueprint(plant_variety_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader
