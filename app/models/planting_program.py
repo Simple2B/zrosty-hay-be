@@ -19,23 +19,17 @@ class PlantingProgram(db.Model, ModelMixin):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     # Foreign keys
-    plant_variety_id: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer, sa.ForeignKey("plant_varieties.id"), nullable=False
-    )
+    plant_variety_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("plant_varieties.id"))
 
     # Fields
-    uuid: orm.Mapped[str] = orm.mapped_column(
-        sa.String(36),
-        default=generate_uuid,
-    )
+    uuid: orm.Mapped[str] = orm.mapped_column(sa.String(36), default=generate_uuid, index=True)
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
-    planting_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
-    harvest_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
+    planting_time: orm.Mapped[int] = orm.mapped_column(default=0)
+    harvest_time: orm.Mapped[int] = orm.mapped_column(default=0)
 
     # Relationships
     steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(back_populates="planting_program")

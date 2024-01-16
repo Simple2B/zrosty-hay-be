@@ -28,18 +28,15 @@ class RecipeStep(db.Model, ModelMixin):
     )
     name: orm.Mapped[str] = orm.mapped_column(
         sa.String(64),
-        unique=True,
-        nullable=False,
     )
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
-    step_number: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
-    instruction: orm.Mapped[str] = orm.mapped_column(sa.String(2046), default="", nullable=True)
+    step_number: orm.Mapped[int] = orm.mapped_column()
+    instruction: orm.Mapped[str] = orm.mapped_column(sa.Text, default="")
 
     # Relationships
     recipe: orm.Mapped["Recipe"] = orm.relationship(back_populates="steps")

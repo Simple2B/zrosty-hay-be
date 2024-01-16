@@ -1,3 +1,4 @@
+import enum
 from typing import List, TYPE_CHECKING
 from datetime import datetime
 
@@ -16,6 +17,12 @@ if TYPE_CHECKING:
     from .pest import Pest
 
 
+class PlantFamilyType(enum.Enum):
+    vegetable = "vegetable"
+    fruit = "fruit"
+    berry = "berry"
+
+
 class PlantFamily(db.Model, ModelMixin):
     __tablename__ = "plant_families"
 
@@ -26,18 +33,16 @@ class PlantFamily(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-    name: orm.Mapped[str] = orm.mapped_column(
-        sa.String(64),
-        unique=True,
-        nullable=False,
-    )
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
-    features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
+    features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
+
+    # enum value
+    type_of: orm.Mapped[str] = orm.mapped_column(sa.String(16))
 
     # Relationships
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(

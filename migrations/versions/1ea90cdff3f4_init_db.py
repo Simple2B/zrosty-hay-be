@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 3eedb7413f07
+Revision ID: 1ea90cdff3f4
 Revises: 
-Create Date: 2024-01-15 16:50:13.546289
+Create Date: 2024-01-16 10:16:46.248251
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3eedb7413f07'
+revision = '1ea90cdff3f4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,12 +25,26 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('reason', sa.String(length=1024), nullable=True),
-    sa.Column('symptoms', sa.String(length=1024), nullable=True),
-    sa.Column('treatment', sa.String(length=1024), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_illnesses')),
-    sa.UniqueConstraint('name', name=op.f('uq_illnesses_name'))
+    sa.Column('reason', sa.String(length=1024), nullable=False),
+    sa.Column('symptoms', sa.String(length=1024), nullable=False),
+    sa.Column('treatment', sa.String(length=1024), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_illnesses'))
     )
+    with op.batch_alter_table('illnesses', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_illnesses_name'), ['name'], unique=True)
+
+    op.create_table('locations',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('country', sa.String(length=256), nullable=False),
+    sa.Column('region', sa.String(length=256), nullable=False),
+    sa.Column('city', sa.String(length=256), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_locations'))
+    )
+    with op.batch_alter_table('locations', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_locations_city'), ['city'], unique=False)
+        batch_op.create_index(batch_op.f('ix_locations_country'), ['country'], unique=False)
+
     op.create_table('pests',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
@@ -38,15 +52,17 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('symptoms', sa.String(length=1024), nullable=True),
-    sa.Column('treatment', sa.String(length=1024), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_pests')),
-    sa.UniqueConstraint('name', name=op.f('uq_pests_name'))
+    sa.Column('symptoms', sa.String(length=1024), nullable=False),
+    sa.Column('treatment', sa.String(length=1024), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_pests'))
     )
+    with op.batch_alter_table('pests', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_pests_name'), ['name'], unique=True)
+
     op.create_table('photos',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
-    sa.Column('url_path', sa.String(length=512), nullable=True),
+    sa.Column('url_path', sa.String(length=512), nullable=False),
     sa.Column('original_name', sa.String(length=256), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
@@ -60,10 +76,13 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('features', sa.String(length=1024), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_families')),
-    sa.UniqueConstraint('name', name=op.f('uq_plant_families_name'))
+    sa.Column('features', sa.String(length=1024), nullable=False),
+    sa.Column('type_of', sa.String(length=16), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_families'))
     )
+    with op.batch_alter_table('plant_families', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_plant_families_name'), ['name'], unique=True)
+
     op.create_table('recipes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
@@ -71,32 +90,14 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('cooking_time', sa.Integer(), nullable=True),
-    sa.Column('additional_ingredients', sa.String(length=1024), nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipes')),
-    sa.UniqueConstraint('name', name=op.f('uq_recipes_name'))
+    sa.Column('cooking_time', sa.Integer(), nullable=False),
+    sa.Column('additional_ingredients', sa.String(length=1024), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipes'))
     )
-    op.create_table('users',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=64), nullable=False),
-    sa.Column('email', sa.String(length=128), nullable=False),
-    sa.Column('password_hash', sa.String(length=256), nullable=False),
-    sa.Column('activated', sa.Boolean(), nullable=False),
-    sa.Column('google_id', sa.String(length=256), nullable=False),
-    sa.Column('apple_id', sa.String(length=256), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
-    sa.Column('unique_id', sa.String(length=36), nullable=False),
-    sa.Column('reset_password_uid', sa.String(length=64), nullable=False),
-    sa.Column('is_deleted', sa.Boolean(), server_default=sa.text('0'), nullable=False),
-    sa.Column('role', sa.String(length=32), nullable=False),
-    sa.Column('anonym_username', sa.String(length=256), nullable=False),
-    sa.Column('country', sa.String(length=256), nullable=False),
-    sa.Column('city', sa.String(length=256), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
-    sa.UniqueConstraint('email', name=op.f('uq_users_email')),
-    sa.UniqueConstraint('username', name=op.f('uq_users_username'))
-    )
+    with op.batch_alter_table('recipes', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_recipes_name'), ['name'], unique=True)
+        batch_op.create_index(batch_op.f('ix_recipes_uuid'), ['uuid'], unique=False)
+
     op.create_table('illness_photos',
     sa.Column('illness_id', sa.Integer(), nullable=False),
     sa.Column('photo_id', sa.Integer(), nullable=False),
@@ -140,21 +141,24 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
-    sa.Column('features', sa.String(length=1024), nullable=True),
-    sa.Column('general_info', sa.String(length=2048), nullable=True),
-    sa.Column('temperature_info', sa.String(length=2048), nullable=True),
-    sa.Column('watering_info', sa.String(length=2048), nullable=True),
-    sa.Column('planting_min_temperature', sa.Integer(), nullable=True),
-    sa.Column('planting_max_temperature', sa.Integer(), nullable=True),
-    sa.Column('is_moisture_loving', sa.Boolean(), nullable=True),
-    sa.Column('is_sun_loving', sa.Boolean(), nullable=True),
-    sa.Column('ground_ph', sa.String(length=64), nullable=True),
-    sa.Column('ground_type', sa.String(length=256), nullable=True),
-    sa.Column('can_plant_indoors', sa.Boolean(), nullable=True),
+    sa.Column('features', sa.String(length=1024), nullable=False),
+    sa.Column('general_info', sa.String(length=2048), nullable=False),
+    sa.Column('temperature_info', sa.String(length=2048), nullable=False),
+    sa.Column('watering_info', sa.String(length=2048), nullable=False),
+    sa.Column('planting_min_temperature', sa.Float(), nullable=True),
+    sa.Column('planting_max_temperature', sa.Float(), nullable=True),
+    sa.Column('is_moisture_loving', sa.Boolean(), nullable=False),
+    sa.Column('is_sun_loving', sa.Boolean(), nullable=False),
+    sa.Column('ground_ph', sa.Float(), nullable=True),
+    sa.Column('ground_type', sa.String(length=256), nullable=False),
+    sa.Column('can_plant_indoors', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_plant_varieties_plant_family_id_plant_families')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_varieties')),
-    sa.UniqueConstraint('name', name=op.f('uq_plant_varieties_name'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_plant_varieties'))
     )
+    with op.batch_alter_table('plant_varieties', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_plant_varieties_name'), ['name'], unique=True)
+        batch_op.create_index(batch_op.f('ix_plant_varieties_uuid'), ['uuid'], unique=False)
+
     op.create_table('recipe_photos',
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('photo_id', sa.Integer(), nullable=False),
@@ -171,16 +175,37 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('step_number', sa.Integer(), nullable=False),
-    sa.Column('instruction', sa.String(length=2046), nullable=True),
+    sa.Column('instruction', sa.Text(), nullable=False),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_recipe_steps_recipe_id_recipes')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipe_steps')),
-    sa.UniqueConstraint('name', name=op.f('uq_recipe_steps_name'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipe_steps'))
     )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('location_id', sa.Integer(), nullable=True),
+    sa.Column('username', sa.String(length=64), nullable=False),
+    sa.Column('email', sa.String(length=128), nullable=False),
+    sa.Column('password_hash', sa.String(length=256), nullable=False),
+    sa.Column('activated', sa.Boolean(), nullable=False),
+    sa.Column('google_id', sa.String(length=256), nullable=False),
+    sa.Column('apple_id', sa.String(length=256), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('unique_id', sa.String(length=36), nullable=False),
+    sa.Column('reset_password_uid', sa.String(length=64), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.Column('role', sa.String(length=32), nullable=False),
+    sa.ForeignKeyConstraint(['location_id'], ['locations.id'], name=op.f('fk_users_location_id_locations')),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_users'))
+    )
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_users_email'), ['email'], unique=True)
+        batch_op.create_index(batch_op.f('ix_users_username'), ['username'], unique=True)
+
     op.create_table('feedbacks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('plant_variety_id', sa.Integer(), nullable=False),
-    sa.Column('text', sa.String(length=1024), nullable=True),
+    sa.Column('text', sa.String(length=512), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
@@ -223,11 +248,14 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('planting_time', sa.Integer(), nullable=True),
-    sa.Column('harvest_time', sa.Integer(), nullable=True),
+    sa.Column('planting_time', sa.Integer(), nullable=False),
+    sa.Column('harvest_time', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_planting_programs_plant_variety_id_plant_varieties')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_programs'))
     )
+    with op.batch_alter_table('planting_programs', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_planting_programs_uuid'), ['uuid'], unique=False)
+
     op.create_table('planting_steps',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('planting_program_id', sa.Integer(), nullable=False),
@@ -235,7 +263,7 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('day', sa.Integer(), nullable=False),
-    sa.Column('instruction', sa.String(length=2046), nullable=True),
+    sa.Column('instruction', sa.Text(), nullable=False),
     sa.ForeignKeyConstraint(['planting_program_id'], ['planting_programs.id'], name=op.f('fk_planting_steps_planting_program_id_planting_programs')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_steps'))
     )
@@ -245,24 +273,53 @@ def upgrade():
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('planting_steps')
+    with op.batch_alter_table('planting_programs', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_planting_programs_uuid'))
+
     op.drop_table('planting_programs')
     op.drop_table('plant_variety_recipe')
     op.drop_table('plant_variety_photos')
     op.drop_table('plant_variety_pests')
     op.drop_table('plant_variety_illnesses')
     op.drop_table('feedbacks')
+    with op.batch_alter_table('users', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_users_username'))
+        batch_op.drop_index(batch_op.f('ix_users_email'))
+
+    op.drop_table('users')
     op.drop_table('recipe_steps')
     op.drop_table('recipe_photos')
+    with op.batch_alter_table('plant_varieties', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_plant_varieties_uuid'))
+        batch_op.drop_index(batch_op.f('ix_plant_varieties_name'))
+
     op.drop_table('plant_varieties')
     op.drop_table('plant_family_recipes')
     op.drop_table('plant_family_pests')
     op.drop_table('plant_family_illnesses')
     op.drop_table('pest_photos')
     op.drop_table('illness_photos')
-    op.drop_table('users')
+    with op.batch_alter_table('recipes', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_recipes_uuid'))
+        batch_op.drop_index(batch_op.f('ix_recipes_name'))
+
     op.drop_table('recipes')
+    with op.batch_alter_table('plant_families', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_plant_families_name'))
+
     op.drop_table('plant_families')
     op.drop_table('photos')
+    with op.batch_alter_table('pests', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_pests_name'))
+
     op.drop_table('pests')
+    with op.batch_alter_table('locations', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_locations_country'))
+        batch_op.drop_index(batch_op.f('ix_locations_city'))
+
+    op.drop_table('locations')
+    with op.batch_alter_table('illnesses', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_illnesses_name'))
+
     op.drop_table('illnesses')
     # ### end Alembic commands ###

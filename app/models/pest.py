@@ -23,23 +23,18 @@ class Pest(db.Model, ModelMixin):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     # Fields
-    name: orm.Mapped[str] = orm.mapped_column(
-        sa.String(64),
-        unique=True,
-        nullable=False,
-    )
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
     uuid: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=generate_uuid,
     )
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
-    symptoms: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
-    treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
+    symptoms: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
+    treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
 
     # Relationships
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=pest_photo)
