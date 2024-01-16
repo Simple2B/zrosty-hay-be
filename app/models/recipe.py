@@ -22,25 +22,17 @@ class Recipe(db.Model, ModelMixin):
     __tablename__ = "recipes"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    name: orm.Mapped[str] = orm.mapped_column(
-        sa.String(64),
-        unique=True,
-        nullable=False,
-    )
+    name: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
 
-    uuid: orm.Mapped[str] = orm.mapped_column(
-        sa.String(36),
-        default=generate_uuid,
-    )
+    uuid: orm.Mapped[str] = orm.mapped_column(sa.String(36), default=generate_uuid, index=True)
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
-    cooking_time: orm.Mapped[int] = orm.mapped_column(sa.Integer, default=0, nullable=True)
-    additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="", nullable=True)
+    cooking_time: orm.Mapped[int] = orm.mapped_column(default=0)
+    additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
 
     # Relationships
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
