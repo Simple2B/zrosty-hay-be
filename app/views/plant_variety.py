@@ -1,13 +1,10 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-)
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required
 import sqlalchemy as sa
 from app.controllers import create_pagination
 
 from app import models as m, db
+from app import forms as f
 from app.logger import log
 
 
@@ -22,49 +19,66 @@ def get_all():
     query = m.PlantVariety.select().order_by(m.PlantVariety.id.desc())
     count_query = sa.select(sa.func.count()).select_from(m.PlantVariety)
     if q:
-        query = m.PlantVariety.select().where(m.PlantVariety.name.ilike(f"%{q}%")).order_by(m.PlantVariety.id.desc())
-        count_query = sa.select(sa.func.count()).where(m.PlantVariety.name.ilike(f"%{q}%")).select_from(m.PlantVariety)
+        query = (
+            m.PlantVariety.select()
+            .where(m.PlantVariety.name.ilike(f"%{q}%"))
+            .order_by(m.PlantVariety.id.desc())
+        )
+        count_query = (
+            sa.select(sa.func.count())
+            .where(m.PlantVariety.name.ilike(f"%{q}%"))
+            .select_from(m.PlantVariety)
+        )
 
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
         "plant_variety/plant_varieties.html",
         plant_varieties=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
+            query.offset((pagination.page - 1) * pagination.per_page).limit(
+                pagination.per_page
+            )
         ).scalars(),
         page=pagination,
         search_query=q,
     )
 
 
-# @bp.route("/create", methods=["GET", "POST"])
-# @login_required
-# def create():
-#     form = f.PlantFamilyForm()
-#     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
-#     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
+@bp.route("/add", methods=["GET", "POST"])
+@login_required
+def add():
+    form = f.PlantVarietyForm()
 
-#     if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
-#         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
-#         flash("Plan Family name already exist!", "danger")
-#         return redirect(url_for("plant_family.get_all"))
+    # form.pests.choices = db.session.scalars(sa.Select(m.Pest.name)).all()
+    # form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name)).all()
 
-#     if request.method == "POST" and form.validate_on_submit():
-#         pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
-#         illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
-#         plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
-#         plant_family.pests.extend(pests)
-#         plant_family.illnesses.extend(illness)
-#         flash("PlantFamily added!", "success")
-#         plant_family.save()
-#         log(log.INFO, "Form submitted. PlantFamily: [%s]", plant_family)
-#         return redirect(url_for("plant_family.get_all"))
-#     if form.errors:
-#         log(log.INFO, "Form error [%s]", form.errors)
-#         flash(f"{form.errors}", "danger")
-#         return redirect(url_for("plant_family.get_all"))
+    if form.name.data and db.session.scalar(
+        sa.Select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data)
+    ):
+        log(log.INFO, "PlantVariety name already exist! [%s]", form.name.data)
+        flash("Plan Variety name already exist!", "danger")
+        return redirect(url_for("plant_variety.get_all"))
 
-#     return render_template("plant_family/modal_form.html", form=form)
+    if request.method == "POST" and form.validate_on_submit():
+        # pests = db.session.scalars(
+        #     sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
+        # )
+        # illness = db.session.scalars(
+        #     sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
+        # )
+        # plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
+        # plant_family.pests.extend(pests)
+        # plant_family.illnesses.extend(illness)
+        # flash("PlantFamily added!", "success")
+        # plant_family.save()
+        # log(log.INFO, "Form submitted. PlantFamily: [%s]", plant_family)
+        return redirect(url_for("plant_variety.get_all"))
+    if form.errors:
+        log(log.INFO, "Form error [%s]", form.errors)
+        flash(f"{form.errors}", "danger")
+        return redirect(url_for("plant_variety.get_all"))
+
+    return render_template("plant_variety/form.html", form=form)
 
 
 # @bp.route("/detail/<int:plant_family_id>", methods=["GET", "POST"])
