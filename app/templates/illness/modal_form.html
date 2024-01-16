@@ -2,12 +2,18 @@
 <div class="modal" id="modal-edit-illness">
     <div class="modal-underlay" onclick="closeModal()"></div>
     <div class="modal-content">
-        <form action="{{ url_for('illness.detail', illness_id=illness.id ) }}" method="POST"
+        {% set form_action = "illness.create" %}
+        {% set title = "Create" %}
+        {% if illness_id %}
+        {% set title = "Update" %}
+        {% set form_action = "illness.detail" %}
+        {% endif %}
+        <form action="{{ url_for(form_action, illness_id=illness_id) }}" method="POST"
             class="w-[1/2] relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
             {{ form.hidden_tag() }}
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white"> Add new illness </h3>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white"> {{ title }} illness </h3>
             </div>
             <div class="p-6 space-y-6">
                 <div class="grid grid-cols-6 gap-6">
@@ -16,14 +22,15 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                         <input type="text" name="name"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Name" value="{{ illness.name }}" required />
+                            placeholder="Name" value="{{ form.name.data if form.name.data else '' }}" required />
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="reason"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
                         <textarea name="reason"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024" placeholder="Enter reason">{{ illness.reason }}</textarea>
+                            minlength="3" maxlength="1024"
+                            placeholder="Enter reason">{% if form.reason.data %} {{ form.reason.data }} {%endif%}</textarea>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="symptoms"
@@ -31,7 +38,7 @@
                         <textarea name="symptoms"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             minlength="3" maxlength="1024"
-                            placeholder="Enter symptoms">{{ illness.symptoms }}</textarea>
+                            placeholder="Enter symptoms">{% if form.symptoms.data %} {{ form.symptoms.data }} {%endif%}</textarea>
 
                     </div>
                     <div class="col-span-6 sm:col-span-3">
@@ -40,7 +47,7 @@
                         <textarea name="treatment"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             minlength="3" maxlength="1024"
-                            placeholder="Enter treatment">{{ illness.treatment }}</textarea>
+                            placeholder="Enter treatment">{% if form.treatment.data %} {{ form.treatment.data }} {%endif%}</textarea>
                     </div>
 
                 </div>
@@ -49,7 +56,7 @@
             <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button name="submit" type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Updated illness </button>
+                    Save </button>
             </div>
         </form>
     </div>

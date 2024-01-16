@@ -31,9 +31,7 @@ class Illness(db.Model, ModelMixin):
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
     )
-    updated_at: orm.Mapped[datetime] = orm.mapped_column(
-        default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
     reason: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")

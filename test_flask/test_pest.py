@@ -1,6 +1,4 @@
-from flask import current_app as app
-from flask.testing import FlaskClient, FlaskCliRunner
-from click.testing import Result
+from flask.testing import FlaskClient
 from app import models as m, db
 from test_flask.utils import login
 

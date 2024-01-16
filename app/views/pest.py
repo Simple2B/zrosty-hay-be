@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import (
     Blueprint,
     render_template,
@@ -22,12 +23,13 @@ bp = Blueprint("pest", __name__, url_prefix="/pest")
 @login_required
 def get_all():
     q = request.args.get("q", type=str, default=None)
-    query = m.Pest.select().order_by(m.Pest.id)
-    count_query = sa.select(sa.func.count()).select_from(m.Pest)
-    if q:
-        query = m.Pest.select().where(m.Pest.name.ilike(f"%{q}%")).order_by(m.Pest.id)
-        count_query = sa.select(sa.func.count()).where(m.Pest.name.ilike(f"%{q}%")).select_from(m.Pest)
+    where = sa.and_(m.Pest.is_deleted.is_(False))
 
+    if q:
+        where = sa.and_(m.Pest.name.ilike(f"%{q}%"), m.Pest.is_deleted.is_(False))
+
+    query = m.Pest.select().where(where).order_by(m.Pest.id.desc())
+    count_query = sa.select(sa.func.count()).where(where).select_from(m.Pest)
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
@@ -55,7 +57,7 @@ def save():
     if form.validate_on_submit():
         query = m.Pest.select().where(m.Pest.id == int(form.pest_id.data))
         pest: m.Pest | None = db.session.scalar(query)
-        if not pest:
+        if not pest or pest.is_deleted:
             log(log.ERROR, "Not found pest by id : [%s]", form.pest_id.data)
             flash("Cannot save pest data", "danger")
             return redirect(url_for("pest.get_all"))
@@ -102,13 +104,16 @@ def create():
 @bp.route("/delete/<int:id>", methods=["DELETE"])
 @login_required
 def delete(id: int):
-    pest = db.session.scalar(m.Pest.select().where(m.Pest.id == id))
-    if not pest:
+    pest = db.session.get(m.Pest, id)
+    if not pest or pest.is_deleted:
         log(log.INFO, "There is no pest with id: [%s]", id)
         flash("There is no such pest", "danger")
         return "no pest", 404
 
-    db.session.delete(pest)
+    pest.is_deleted = True
+    pest.name = f"{pest.name}-deleted_at: {datetime.now()}"
+    pest.plant_families = []
+    pest.plant_varieties = []
     db.session.commit()
     log(log.INFO, "Pest deleted. Pest: [%s]", pest)
     flash("Pest deleted!", "success")

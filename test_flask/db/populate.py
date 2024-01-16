@@ -88,6 +88,7 @@ def get_plant_families() -> list[m.PlantFamily]:
         plant_family = m.PlantFamily(
             name=f"PlantFamily_{index}",
             features=f"Features_{index}",
+            type_of=m.PlantFamilyType.vegetable.value,
         )
         db.session.add(plant_family)
         plant_families.append(plant_family)

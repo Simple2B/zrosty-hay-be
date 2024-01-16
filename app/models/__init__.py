@@ -6,7 +6,7 @@ from .photo import Photo
 from .feedback import Feedback
 from .illness import Illness
 from .pest import Pest
-from .plant_family import PlantFamily
+from .plant_family import PlantFamily, PlantFamilyType
 from .plant_variety import PlantVariety
 from .planting_program import PlantingProgram
 from .planting_steps import PlantingStep

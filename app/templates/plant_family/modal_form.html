@@ -30,6 +30,21 @@
             placeholder="Enter features">{% if form.features.data %} {{ form.features.data }} {%endif%}</textarea>
         </div>
       </div>
+      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
+        {{ form.type_of.label }}</label>
+      <select id="countries" name="type_of"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option selected disabled>Choose a type</option>
+
+        {% for value, name in form.type_of.choices %}
+        {% if form.type_of.data and form.type_of.data == value %}
+        <option value={{ value }} selected>{{ name }}</option>
+        {% else %}
+        <option value={{ value }}>{{ name }}</option>
+        {% endif %}
+        {%endfor%}
+      </select>
+      <!-- <div>{{ form.type_of }}</div> -->
       <div class="p-2">
         <div>Pests</div>
         <div

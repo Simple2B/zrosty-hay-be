@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import (
     Blueprint,
     render_template,
@@ -22,12 +24,12 @@ bp = Blueprint("illness", __name__, url_prefix="/illness")
 @login_required
 def get_all():
     q = request.args.get("q", type=str, default=None)
-    query = m.Illness.select().order_by(m.Illness.id)
-    count_query = sa.select(sa.func.count()).select_from(m.Illness)
+    where = sa.and_(m.Illness.is_deleted.is_(False))
     if q:
-        query = m.Illness.select().where(m.Illness.name.ilike(f"%{q}%")).order_by(m.Illness.id)
-        count_query = sa.select(sa.func.count()).where(m.Illness.name.ilike(f"%{q}%")).select_from(m.Illness)
+        where = sa.and_(m.Illness.is_deleted.is_(False), m.Illness.name.ilike(f"%{q}%"))
 
+    query = m.Illness.select().where(where).order_by(m.Illness.id.desc())
+    count_query = sa.select(sa.func.count()).where(where).select_from(m.Illness)
     pagination = create_pagination(total=db.session.scalar(count_query))
 
     return render_template(
@@ -53,27 +55,33 @@ def detail(illness_id: int):
         return redirect(url_for("illness.get_all"))
 
     illness = db.session.get(m.Illness, illness_id)
-    if not illness:
+    if not illness or illness.is_deleted:
         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
         return "No Illness", 404
-    if request.method == "POST":
-        if form.validate_on_submit():
-            illness.name = form.name.data
-            illness.reason = form.reason.data
-            illness.symptoms = form.symptoms.data
-            illness.treatment = form.treatment.data
-            log(log.INFO, "Illness updated! [%s]", illness)
-            flash("Illness updated!", "success")
-            illness.save()
-        if form.errors:
-            log(log.INFO, "Form error Illness! [%s]", form.errors)
-            flash(f"{form.errors}", "danger")
+
+    if request.method == "POST" and form.validate_on_submit():
+        illness.name = form.name.data
+        illness.reason = form.reason.data
+        illness.symptoms = form.symptoms.data
+        illness.treatment = form.treatment.data
+        log(log.INFO, "Illness updated! [%s]", illness)
+        flash("Illness updated!", "success")
+        illness.save()
+        return redirect(url_for("illness.get_all"))
+    if form.errors:
+        log(log.INFO, "Form error Illness! [%s]", form.errors)
+        flash(f"{form.errors}", "danger")
         return redirect(url_for("illness.get_all"))
 
-    return render_template("illness/edit.html", form=form, illness=illness)
+    form.name.data = illness.name
+    form.reason.data = illness.reason
+    form.symptoms.data = illness.symptoms
+    form.treatment.data = illness.treatment
+
+    return render_template("illness/modal_form.html", form=form, illness_id=illness_id)
 
 
-@bp.route("/create", methods=["POST"])
+@bp.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
     form = f.IllnessForm()
@@ -83,7 +91,7 @@ def create():
         flash("Illness name already exist!", "danger")
         return redirect(url_for("illness.get_all"))
 
-    if form.validate_on_submit():
+    if request.method == "POST" and form.validate_on_submit():
         illness = m.Illness(
             name=form.name.data,
             reason=form.reason.data,
@@ -94,22 +102,27 @@ def create():
         log(log.INFO, "Form submitted. Illness: [%s]", illness)
         flash("Illness added!", "success")
         illness.save()
-    else:
+        return redirect(url_for("illness.get_all"))
+    if form.errors:
         flash("Error with creating new Illness", "danger")
+        return redirect(url_for("illness.get_all"))
 
-    return redirect(url_for("illness.get_all"))
+    return render_template("illness/modal_form.html", form=form, illness_id=None)
 
 
 @bp.route("/delete/<int:illness_id>", methods=["GET", "DELETE"])
 @login_required
 def delete(illness_id: int):
     illness = db.session.get(m.Illness, illness_id)
-    if not illness:
+    if not illness or illness.is_deleted:
         log(log.INFO, "Error can't find illness id:[%d]", illness_id)
         return "No Illness", 404
 
     if request.method == "DELETE":
-        db.session.delete(illness)
+        illness.is_deleted = True
+        illness.name = f"{illness.name}-deleted_at: {datetime.now()}"
+        illness.plant_families = []
+        illness.plant_varieties = []
         db.session.commit()
         log(log.INFO, "Illness deleted. id: [%d]", illness_id)
         return "success", 200
