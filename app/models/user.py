@@ -1,3 +1,4 @@
+import enum
 from typing import Self
 from datetime import datetime
 from uuid import uuid4
@@ -17,26 +18,27 @@ def gen_password_reset_id() -> str:
     return str(uuid4())
 
 
+class UserRole(enum.Enum):
+    user = "user"
+    admin = "admin"
+
+
 class User(db.Model, UserMixin, ModelMixin):
     __tablename__ = "users"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    username: orm.Mapped[str] = orm.mapped_column(
-        sa.String(64),
-        unique=True,
-        nullable=False,
-    )
-    email: orm.Mapped[str] = orm.mapped_column(
-        sa.String(128),
-        unique=True,
-        nullable=False,
-    )
+
+    location_id: orm.Mapped[int | None] = orm.mapped_column(sa.ForeignKey("locations.id"))
+    username: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
+    email: orm.Mapped[str] = orm.mapped_column(sa.String(128), unique=True, index=True)
     password_hash: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
-    activated: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, default=False)
+    activated: orm.Mapped[bool] = orm.mapped_column(default=False)
+    google_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
+    apple_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     created_at: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DateTime,
         default=datetime.utcnow,
     )
+    updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
     unique_id: orm.Mapped[str] = orm.mapped_column(
         sa.String(36),
         default=gen_password_reset_id,
@@ -45,7 +47,8 @@ class User(db.Model, UserMixin, ModelMixin):
         sa.String(64),
         default=gen_password_reset_id,
     )
-    is_deleted: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.false())
+    is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
+    role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
 
     @property
     def password(self):
