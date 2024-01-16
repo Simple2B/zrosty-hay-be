@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 4f089c5a5ed5
+Revision ID: 1ea90cdff3f4
 Revises: 
-Create Date: 2024-01-16 09:46:44.919408
+Create Date: 2024-01-16 10:16:46.248251
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4f089c5a5ed5'
+revision = '1ea90cdff3f4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,6 +36,7 @@ def upgrade():
     op.create_table('locations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('country', sa.String(length=256), nullable=False),
+    sa.Column('region', sa.String(length=256), nullable=False),
     sa.Column('city', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_locations'))
@@ -148,7 +149,7 @@ def upgrade():
     sa.Column('planting_max_temperature', sa.Float(), nullable=True),
     sa.Column('is_moisture_loving', sa.Boolean(), nullable=False),
     sa.Column('is_sun_loving', sa.Boolean(), nullable=False),
-    sa.Column('ground_ph', sa.String(length=64), nullable=False),
+    sa.Column('ground_ph', sa.Float(), nullable=True),
     sa.Column('ground_type', sa.String(length=256), nullable=False),
     sa.Column('can_plant_indoors', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_plant_varieties_plant_family_id_plant_families')),

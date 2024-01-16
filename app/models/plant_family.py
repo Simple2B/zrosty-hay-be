@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 class PlantFamilyType(enum.Enum):
     vegetable = "vegetable"
     fruit = "fruit"
+    berry = "berry"
 
 
 class PlantFamily(db.Model, ModelMixin):

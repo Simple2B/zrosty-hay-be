@@ -48,7 +48,7 @@ class PlantVariety(db.Model, ModelMixin):
     planting_max_temperature: orm.Mapped[float | None] = orm.mapped_column()
     is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(default=True)
     is_sun_loving: orm.Mapped[bool] = orm.mapped_column(default=False)
-    ground_ph: orm.Mapped[str] = orm.mapped_column(sa.String(64), default="")
+    ground_ph: orm.Mapped[float | None] = orm.mapped_column()
     ground_type: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     can_plant_indoors: orm.Mapped[bool] = orm.mapped_column(default=False)
 

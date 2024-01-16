@@ -13,6 +13,7 @@ class Location(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     country: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="", index=True)
+    region: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     city: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="", index=True)
 
     created_at: orm.Mapped[datetime] = orm.mapped_column(
