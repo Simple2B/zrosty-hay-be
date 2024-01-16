@@ -35,9 +35,7 @@ def get_all():
     return render_template(
         "illness/illnesses.html",
         illnesses=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(
-                pagination.per_page
-            )
+            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -56,9 +54,7 @@ def detail(illness_id: int):
 
     if request.method == "POST" and form.validate_on_submit():
         is_name_exist = db.session.scalar(
-            sa.Select(m.Illness.name).where(
-                m.Illness.name == form.name.data, m.Illness.id != illness_id
-            )
+            sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.id != illness_id)
         )
         if is_name_exist:
             log(log.INFO, "Illness name already exist! [%s]", form.name.data)
@@ -92,9 +88,7 @@ def create():
     form = f.IllnessForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        is_name_exist = db.session.scalar(
-            sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
-        )
+        is_name_exist = db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data))
 
         if is_name_exist:
             flash("Illness name already exist!", "danger")

@@ -25,9 +25,7 @@ def get_all():
     where = sa.and_(m.PlantFamily.is_deleted.is_(False))
 
     if q:
-        where = sa.and_(
-            m.PlantFamily.name.ilike(f"%{q}%"), m.PlantFamily.is_deleted.is_(False)
-        )
+        where = sa.and_(m.PlantFamily.name.ilike(f"%{q}%"), m.PlantFamily.is_deleted.is_(False))
 
     query = m.PlantFamily.select().where(where).order_by(m.PlantFamily.id.desc())
     count_query = sa.select(sa.func.count()).where(where).select_from(m.PlantFamily)
@@ -36,9 +34,7 @@ def get_all():
     return render_template(
         "plant_family/plant_families.html",
         plant_families=db.session.execute(
-            query.offset((pagination.page - 1) * pagination.per_page).limit(
-                pagination.per_page
-            )
+            query.offset((pagination.page - 1) * pagination.per_page).limit(pagination.per_page)
         ).scalars(),
         page=pagination,
         search_query=q,
@@ -49,30 +45,18 @@ def get_all():
 @login_required
 def create():
     form = f.PlantFamilyForm()
-    form.pests.choices = db.session.scalars(
-        sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))
-    ).all()
-    form.illnesses.choices = db.session.scalars(
-        sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
-    ).all()
+    form.pests.choices = db.session.scalars(sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
+    form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)
-    ):
+    if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
         flash("Plan Family name already exist!", "danger")
         return redirect(url_for("plant_family.get_all"))
 
     if request.method == "POST" and form.validate_on_submit():
-        pests = db.session.scalars(
-            sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))
-        )
-        illness = db.session.scalars(
-            sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))
-        )
-        plant_family = m.PlantFamily(
-            name=form.name.data, features=form.name.data, type_of=form.type_of.data
-        )
+        pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
+        illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
+        plant_family = m.PlantFamily(name=form.name.data, features=form.name.data, type_of=form.type_of.data)
         plant_family.pests.extend(pests)
         plant_family.illnesses.extend(illness)
         flash("PlantFamily added!", "success")
@@ -91,12 +75,8 @@ def create():
 @login_required
 def detail(plant_family_id: int):
     form = f.PlantFamilyForm()
-    form.pests.choices = db.session.scalars(
-        sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))
-    ).all()
-    form.illnesses.choices = db.session.scalars(
-        sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
-    ).all()
+    form.pests.choices = db.session.scalars(sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
+    form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
     plant_family = db.session.get(m.PlantFamily, plant_family_id)
 
@@ -120,15 +100,11 @@ def detail(plant_family_id: int):
         plant_family.type_of = form.type_of.data
 
         new_pests = db.session.scalars(
-            sa.Select(m.Pest).where(
-                m.Pest.name.in_(form.pests.data), m.Pest.is_deleted.is_(False)
-            )
+            sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data), m.Pest.is_deleted.is_(False))
         ).all()
 
         new_illnesses = db.session.scalars(
-            sa.Select(m.Illness).where(
-                m.Illness.name.in_(form.illnesses.data), m.Illness.is_deleted.is_(False)
-            )
+            sa.Select(m.Illness).where(m.Illness.name.in_(form.illnesses.data), m.Illness.is_deleted.is_(False))
         ).all()
 
         plant_family.pests = new_pests
@@ -148,6 +124,4 @@ def detail(plant_family_id: int):
     form.illnesses.data = [illness.name for illness in plant_family.illnesses]
     form.type_of.data = plant_family.type_of
 
-    return render_template(
-        "plant_family/modal_form.html", form=form, plant_family_id=plant_family.id
-    )
+    return render_template("plant_family/modal_form.html", form=form, plant_family_id=plant_family.id)
