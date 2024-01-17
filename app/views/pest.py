@@ -22,6 +22,8 @@ bp = Blueprint("pest", __name__, url_prefix="/pest")
 @bp.route("/", methods=["GET"])
 @login_required
 def get_all():
+    update_form = f.UpdatePestForm()
+    add_form = f.PestForm()
     log(log.INFO, "Get all pests")
     q = request.args.get("q", type=str, default=None)
     where = sa.and_(m.Pest.is_deleted.is_(False))
@@ -40,6 +42,8 @@ def get_all():
         ).scalars(),
         page=pagination,
         search_query=q,
+        update_form=update_form,
+        add_form=add_form,
     )
 
 
