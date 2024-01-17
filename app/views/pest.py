@@ -47,14 +47,9 @@ def get_all():
 def save():
     form = f.UpdatePestForm()
 
-    if form.name.data and db.session.scalar(
+    if form.validate_on_submit() and not db.session.scalar(
         sa.Select(m.Pest.name).where(m.Pest.name == form.name.data, m.Pest.id != form.pest_id.data)
     ):
-        log(log.INFO, "Pest name already exist! [%s]", form.name.data)
-        flash("Pest name already exist!", "danger")
-        return redirect(url_for("pest.get_all"))
-
-    if form.validate_on_submit():
         query = m.Pest.select().where(m.Pest.id == int(form.pest_id.data))
         pest: m.Pest | None = db.session.scalar(query)
         if not pest or pest.is_deleted:
@@ -79,12 +74,7 @@ def save():
 def create():
     form = f.PestForm()
 
-    if form.name.data and db.session.scalar(sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)):
-        log(log.INFO, "Pest name already exist! [%s]", form.name.data)
-        flash("Pest name already exist!", "danger")
-        return redirect(url_for("pest.get_all"))
-
-    if form.validate_on_submit():
+    if form.validate_on_submit() and not db.session.scalar(sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)):
         pest = m.Pest(
             name=form.name.data,
             symptoms=form.symptoms.data,
