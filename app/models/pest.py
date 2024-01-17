@@ -45,5 +45,15 @@ class Pest(db.Model, ModelMixin):
         secondary=plant_variety_pest, back_populates="pests"
     )
 
+    @property
+    def json(self):
+        from app.schema import Pest as PestSchema
+
+        pest = PestSchema.model_validate(self)
+        return pest.model_dump_json()
+
     def __repr__(self):
         return f"<Id: {self.id}, Pest: {self.name}>"
+
+    def __str__(self):
+        return f"{self.name}"

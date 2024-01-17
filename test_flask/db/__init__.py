@@ -1,2 +1,7 @@
 # ruff: noqa: F401
-from .populate import populate, gen_test_items, create_plant_varieties
+from .populate import (
+    populate,
+    gen_test_items,
+    create_plant_varieties,
+    get_plant_families,
+)

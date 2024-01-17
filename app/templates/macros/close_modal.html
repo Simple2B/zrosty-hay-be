@@ -1,0 +1,10 @@
+{% macro closeModal(unique_id) -%}
+<script>
+    function closeModal() {
+        const modal = document.getElementById("{{ unique_id }}");
+        if (modal) {
+            modal.remove()
+        }
+    }
+</script>
+{%- endmacro %}

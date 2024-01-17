@@ -1,0 +1,57 @@
+{% from "macros/close_modal.html" import closeModal with context %}
+<div class="modal" id="modal-plant-family-from">
+  <div class="modal-underlay" onclick="closeModal()"></div>
+  <div class="modal-content">
+    {% set form_action = "plant_family.create" %}
+    {% set title = "Add new plant family" %}
+    {% if plant_family_id %}
+    {% set title = "Edit plant family" %}
+    {% set form_action = "plant_family.detail" %}
+    {% endif %}
+    <form action="{{ url_for(form_action, plant_family_id=plant_family_id) }}" method="POST"
+      class="w-[600px] relative bg-white rounded-lg shadow dark:bg-gray-700 p-4">
+      <!-- Modal header -->
+      {{ form.hidden_tag() }}
+      <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
+      </div>
+      <div class="flex w-full gap-4">
+        <div class="w-1/2">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+          <input type="text" name="name"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Name" value="{{form.name.data if form.name.data else '' }}" required />
+        </div>
+        <div class="w-1/2">
+          <label for="features" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">features</label>
+          <textarea name="features"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            minlength="3" maxlength="1024"
+            placeholder="Enter features">{% if form.features.data %} {{ form.features.data }} {%endif%}</textarea>
+        </div>
+      </div>
+      <div class="p-2">
+        <div>Pests</div>
+        <div
+          class="max-h-24 p-2.5 overflow-y-auto shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          {{ form.pests }}
+        </div>
+      </div>
+      <div class="p-2">
+        <div>Illnesses</div>
+        <div
+          class="max-h-24 p-2.5 overflow-y-auto shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          {{ form.illnesses }}
+        </div>
+      </div>
+      <!-- Modal footer -->
+      <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <button name="submit" type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Save </button>
+      </div>
+    </form>
+  </div>
+  {{ closeModal("modal-plant-family-from") }}
+  <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet" />
+</div>

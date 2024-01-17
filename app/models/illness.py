@@ -28,7 +28,6 @@ class Illness(db.Model, ModelMixin):
         sa.String(36),
         default=generate_uuid,
     )
-
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
     )
@@ -50,3 +49,6 @@ class Illness(db.Model, ModelMixin):
 
     def __repr__(self):
         return f"<Id: {self.id}, Illness: {self.name}>"
+
+    def __str__(self):
+        return f"{self.name}"
