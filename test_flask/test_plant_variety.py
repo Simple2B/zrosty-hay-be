@@ -22,12 +22,8 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
     res = login_client.get("/plant-variety/add")
     assert res.status_code == 200
     assert b'<form action="/plant-variety/add" method="POST">' in res.data
-    pest_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3
-    )
-    illness_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3
-    )
+    pest_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
     plant_variety_data = dict(
         plant_family_id=plant_family.id,
         name="test plant family",
@@ -45,9 +41,7 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
         pests=pest_names,
         illnesses=illness_names,
     )
-    res = login_client.post(
-        "/plant-variety/add", data=plant_variety_data, follow_redirects=True
-    )
+    res = login_client.post("/plant-variety/add", data=plant_variety_data, follow_redirects=True)
     assert res.status_code == 200
     assert b"test plant family" in res.data
     plant_variety = db.session.get(m.PlantVariety, len(plant_varieties) + 1)
@@ -59,16 +53,9 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
     # update
     res = login_client.get(f"/plant-variety/{plant_variety.uuid}/edit")
     assert res.status_code == 200
-    assert (
-        f'<form action="/plant-variety/{plant_variety.uuid}/edit" method="POST">'.encode(
-            "utf-8"
-        )
-        in res.data
-    )
+    assert f'<form action="/plant-variety/{plant_variety.uuid}/edit" method="POST">'.encode("utf-8") in res.data
     assert plant_variety.name.encode("utf-8") in res.data
-    illness_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3
-    )
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
     NEW_NAME = "updated plant variety name"
     del plant_variety_data["plant_family_id"]
     plant_variety_data["name"] = NEW_NAME
@@ -82,6 +69,4 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
     assert NEW_NAME.encode("utf-8") in res.data
     db.session.refresh(plant_variety)
     assert plant_variety.name == NEW_NAME
-    assert [
-        illness.name for illness in plant_variety.illnesses
-    ].sort() == illness_names.sort()
+    assert [illness.name for illness in plant_variety.illnesses].sort() == illness_names.sort()

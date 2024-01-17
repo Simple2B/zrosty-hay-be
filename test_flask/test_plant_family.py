@@ -20,12 +20,8 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     res = login_client.get("/plant-family/create")
     assert res.status_code == 200
     assert b"Add new plant family" in res.data
-    pest_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3
-    )
-    illness_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3
-    )
+    pest_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
     plant_family_data = dict(
         name="test plant family",
         features="test plant family features",
@@ -33,9 +29,7 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
         pests=pest_names,
         illnesses=illness_names,
     )
-    res = login_client.post(
-        "/plant-family/create", data=plant_family_data, follow_redirects=True
-    )
+    res = login_client.post("/plant-family/create", data=plant_family_data, follow_redirects=True)
     assert res.status_code == 200
     assert b"test plant family" in res.data
     plant_family = db.session.get(m.PlantFamily, len(plant_families) + 1)
@@ -47,9 +41,7 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     assert res.status_code == 200
     assert b"Edit plant family" in res.data
     assert plant_family.name.encode("utf-8") in res.data
-    illness_names = faker.random_choices(
-        elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3
-    )
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
     NEW_NAME = "updated plant family name"
     plant_family_data["name"] = NEW_NAME
     plant_family_data["illnesses"] = illness_names
@@ -62,6 +54,4 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     assert NEW_NAME.encode("utf-8") in res.data
     plant_family = db.session.get(m.PlantFamily, plant_family.id)
     assert plant_family.name == NEW_NAME
-    assert [
-        illness.name for illness in plant_family.illnesses
-    ].sort() == illness_names.sort()
+    assert [illness.name for illness in plant_family.illnesses].sort() == illness_names.sort()
