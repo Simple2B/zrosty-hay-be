@@ -78,39 +78,44 @@ def detail(plant_family_id: int):
     form.pests.choices = db.session.scalars(sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
     form.illnesses.choices = db.session.scalars(sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
-    if form.name.data and db.session.scalar(
-        sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data, m.PlantFamily.id != plant_family_id)
-    ):
-        log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
-        flash("Plan Family name already exist!", "danger")
-        return redirect(url_for("plant_family.get_all"))
-
     plant_family = db.session.get(m.PlantFamily, plant_family_id)
 
     if not plant_family:
         log(log.INFO, "Error can't find plant_family id:[%d]", plant_family_id)
         return "No Plant family", 404
 
-    if request.method == "POST":
-        if form.validate_on_submit():
-            plant_family.name = form.name.data
-            plant_family.features = form.features.data
-            plant_family.type_of = form.type_of.data
+    if request.method == "POST" and form.validate_on_submit():
+        is_name_exist = db.session.scalar(
+            sa.Select(m.PlantFamily.name).where(
+                m.PlantFamily.name == form.name.data,
+                m.PlantFamily.id != plant_family_id,
+            )
+        )
+        if is_name_exist:
+            log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
+            flash("Plan Family name already exist!", "danger")
+            return redirect(url_for("plant_family.get_all"))
+        plant_family.name = form.name.data
+        plant_family.features = form.features.data
+        plant_family.type_of = form.type_of.data
 
-            new_pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
+        new_pests = db.session.scalars(
+            sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data), m.Pest.is_deleted.is_(False))
+        ).all()
 
-            new_illnesses = db.session.scalars(
-                sa.Select(m.Illness).where(m.Illness.name.in_(form.illnesses.data))
-            ).all()
+        new_illnesses = db.session.scalars(
+            sa.Select(m.Illness).where(m.Illness.name.in_(form.illnesses.data), m.Illness.is_deleted.is_(False))
+        ).all()
 
-            plant_family.pests = new_pests
-            plant_family.illnesses = new_illnesses
-            log(log.INFO, "Plant_family updated! [%s]", plant_family)
-            flash("Plant family updated!", "success")
-            plant_family.save()
-        if form.errors:
-            log(log.INFO, "Form error Plant family! [%s]", form.errors)
-            flash(f"{form.errors}", "danger")
+        plant_family.pests = new_pests
+        plant_family.illnesses = new_illnesses
+        log(log.INFO, "Plant_family updated! [%s]", plant_family)
+        flash("Plant family updated!", "success")
+        plant_family.save()
+        return redirect(url_for("plant_family.get_all"))
+    if form.errors:
+        log(log.INFO, "Form error Plant family! [%s]", form.errors)
+        flash(f"{form.errors}", "danger")
         return redirect(url_for("plant_family.get_all"))
 
     form.name.data = plant_family.name
