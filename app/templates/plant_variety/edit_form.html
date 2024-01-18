@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% from "macros/slideshow.html" import slidesShow with context %}
 {% block content %}
 <div class="h-full  relative overflow-x-auto shadow-md sm:rounded-lg p-4">
-    <form action="{{ url_for('plant_variety.edit', uuid=uuid) }}" method="POST">
+    <form action="{{ url_for('plant_variety.edit', uuid=plant_variety.uuid) }}" method="POST"
+        enctype="multipart/form-data">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
             {{ form.hidden_tag() }}
             <div>
@@ -98,20 +100,28 @@
                 <label for="can_plant_indoors" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Can
                     plant indoors</label>
             </div>
-
+            <div class="col-span-6 sm:col-span-2">
+                <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
+                    photos</label>
+                {{ form.photos }}
+            </div>
         </div>
+        {% if plant_variety.photos %}
+        {{ slidesShow(plant_variety.photos) }}
+        {% endif %}
         <div class="w-full flex justify-around">
-            <div>
+            <div class="h-60 overflow-y-auto">
                 <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pests</label>
                 <div>{{ form.pests }}</div>
             </div>
-            <div>
+            <div class="h-60 overflow-y-auto">
                 <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Illnesses</label>
                 <div>
                     {{ form.illnesses }}
                 </div>
             </div>
         </div>
+
 
         <button type="submit"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>

@@ -6,7 +6,7 @@ from app.controllers import create_pagination
 from app import models as m, db
 from app import forms as f
 from app.logger import log
-
+from app import s3bucket
 
 bp = Blueprint("plant_variety", __name__, url_prefix="/plant-variety")
 
@@ -48,14 +48,11 @@ def add():
             sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
         ).all()
 
-    if request.method == "POST" and form.validate_on_submit():
-        if form.name.data and db.session.scalar(
-            sa.Select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data)
-        ):
-            log(log.INFO, "PlantVariety name already exist! [%s]", form.name.data)
-            flash("Plan Variety name already exist!", "danger")
-            return redirect(url_for("plant_variety.get_all"))
-
+    if (
+        request.method == "POST"
+        and form.validate_on_submit()
+        and not db.session.scalar(sa.Select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data))
+    ):
         plant_family = db.session.get(m.PlantFamily, form.plant_family_id.data)
         if not plant_family:
             log(
@@ -84,6 +81,15 @@ def add():
         )
         plant_variety.pests.extend(pests)
         plant_variety.illnesses.extend(illness)
+
+        for photo in form.photos.data:
+            try:
+                plant_variety._photos.append(s3bucket.create_photo(photo, "plant_varieties"))
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
+                flash("Error with add photo to new plant variety", "danger")
+                return redirect(url_for("plant_variety.get_all"))
+
         flash("Plant Variety added!", "success")
         plant_variety.save()
         log(log.INFO, "Form submitted. Plant Variety: [%s]", plant_variety)
@@ -152,6 +158,15 @@ def edit(uuid: str):
         plant_variety.can_plant_indoors = form.can_plant_indoors.data
         plant_variety.pests = pests
         plant_variety.illnesses = illness
+
+        for photo in form.photos.data:
+            try:
+                plant_variety._photos.append(s3bucket.create_photo(photo, "plant_varieties"))
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
+                flash("Error with add photo to new plant variety", "danger")
+                return redirect(url_for("plant_variety.get_all"))
+
         flash("Plant Variety updated!", "success")
         plant_variety.save()
         log(log.INFO, "Form submitted. Plant Variety: [%s]", plant_variety)
@@ -161,4 +176,4 @@ def edit(uuid: str):
         flash(f"{form.errors}", "danger")
         return redirect(url_for("plant_variety.get_all"))
 
-    return render_template("plant_variety/edit_form.html", form=form, uuid=uuid)
+    return render_template("plant_variety/edit_form.html", form=form, plant_variety=plant_variety)

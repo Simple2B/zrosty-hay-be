@@ -8,6 +8,7 @@ from wtforms import (
     widgets,
 )
 from wtforms.validators import DataRequired, Length
+from .photo import UploadPhotoForm
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -15,7 +16,7 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 
-class PlantVarietyForm(FlaskForm):
+class PlantVarietyForm(UploadPhotoForm, FlaskForm):
     name = StringField("name", [DataRequired(), Length(1, 64)])
     features = StringField("features", [Length(0, 1024)], default="")
     general_info = StringField("general_info", [Length(0, 2048)], default="")
