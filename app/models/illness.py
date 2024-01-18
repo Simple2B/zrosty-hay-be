@@ -39,13 +39,17 @@ class Illness(db.Model, ModelMixin):
     treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
 
     # Relationships
-    photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=illness_photo)
+    _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=illness_photo)
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="illnesses"
     )
     plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
         secondary=plant_variety_illness, back_populates="illnesses"
     )
+
+    @property
+    def photos(self) -> List["Photo"]:
+        return [photo for photo in self._photos if not photo.is_deleted]
 
     def __repr__(self):
         return f"<Id: {self.id}, Illness: {self.name}>"

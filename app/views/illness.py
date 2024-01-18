@@ -15,7 +15,7 @@ from app.controllers import create_pagination
 from app import models as m, db
 from app import forms as f
 from app.logger import log
-
+from app import s3bucket
 
 bp = Blueprint("illness", __name__, url_prefix="/illness")
 
@@ -42,29 +42,43 @@ def get_all():
     )
 
 
-@bp.route("/detail/<int:illness_id>", methods=["GET", "POST"])
+@bp.route("/<uuid>/edit", methods=["GET", "POST"])
 @login_required
-def detail(illness_id: int):
+def edit(uuid: int):
     form = f.IllnessForm()
 
-    illness = db.session.get(m.Illness, illness_id)
+    illness: m.Illness | None = db.session.scalar(sa.Select(m.Illness).where(m.Illness.uuid == uuid))
     if not illness or illness.is_deleted:
-        log(log.INFO, "Error can't find illness id:[%d]", illness_id)
+        log(log.INFO, "Error can't find illness id:[%d]", uuid)
         return "No Illness", 404
 
-    if request.method == "POST" and form.validate_on_submit():
-        is_name_exist = db.session.scalar(
-            sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.id != illness_id)
-        )
-        if is_name_exist:
-            log(log.INFO, "Illness name already exist! [%s]", form.name.data)
-            flash("Illness name already exist!", "danger")
-            return redirect(url_for("illness.get_all"))
+    if request.method == "GET":
+        form.name.data = illness.name
+        form.reason.data = illness.reason
+        form.symptoms.data = illness.symptoms
+        form.treatment.data = illness.treatment
+        return render_template("illness/edit.html", form=form, illness=illness)
 
+    if (
+        request.method == "POST"
+        and form.validate_on_submit()
+        and not db.session.scalar(
+            sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.uuid != uuid)
+        )
+    ):
         illness.name = form.name.data
         illness.reason = form.reason.data
         illness.symptoms = form.symptoms.data
         illness.treatment = form.treatment.data
+
+        for photo in form.photos.data:
+            try:
+                illness._photos.append(s3bucket.create_photo(photo, "illnesses"))
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new illness: [%s]", error)
+                flash("Error with add photo to new illness", "danger")
+                return redirect(url_for("illness.get_all"))
+
         log(log.INFO, "Illness updated! [%s]", illness)
         flash("Illness updated!", "success")
         illness.save()
@@ -72,14 +86,8 @@ def detail(illness_id: int):
     if form.errors:
         log(log.INFO, "Form error Illness! [%s]", form.errors)
         flash(f"{form.errors}", "danger")
-        return redirect(url_for("illness.get_all"))
 
-    form.name.data = illness.name
-    form.reason.data = illness.reason
-    form.symptoms.data = illness.symptoms
-    form.treatment.data = illness.treatment
-
-    return render_template("illness/modal_form.html", form=form, illness_id=illness_id)
+    return redirect(url_for("illness.get_all"))
 
 
 @bp.route("/create", methods=["GET", "POST"])
@@ -87,20 +95,26 @@ def detail(illness_id: int):
 def create():
     form = f.IllnessForm()
 
-    if request.method == "POST" and form.validate_on_submit():
-        is_name_exist = db.session.scalar(sa.Select(m.Illness.name).where(m.Illness.name == form.name.data))
-
-        if is_name_exist:
-            flash("Illness name already exist!", "danger")
-            return redirect(url_for("illness.get_all"))
-
+    if (
+        request.method == "POST"
+        and form.validate_on_submit()
+        and not db.session.scalar(sa.Select(m.Illness.name).where(m.Illness.name == form.name.data))
+    ):
         illness = m.Illness(
             name=form.name.data,
             reason=form.reason.data,
             symptoms=form.symptoms.data,
             treatment=form.treatment.data,
-            # TODO photos=form.photos.data,
         )
+
+        for photo in form.photos.data:
+            try:
+                illness._photos.append(s3bucket.create_photo(photo, "illnesses"))
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new illness: [%s]", error)
+                flash("Error with add photo to new illness", "danger")
+                return redirect(url_for("illness.get_all"))
+
         log(log.INFO, "Form submitted. Illness: [%s]", illness)
         flash("Illness added!", "success")
         illness.save()
@@ -109,7 +123,7 @@ def create():
         flash("Error with creating new Illness", "danger")
         return redirect(url_for("illness.get_all"))
 
-    return render_template("illness/modal_form.html", form=form, illness_id=None)
+    return render_template("illness/add.html", form=form, illness_id=None)
 
 
 @bp.route("/delete/<int:illness_id>", methods=["GET", "DELETE"])

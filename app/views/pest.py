@@ -22,7 +22,6 @@ bp = Blueprint("pest", __name__, url_prefix="/pest")
 @bp.route("/", methods=["GET"])
 @login_required
 def get_all():
-    update_form = f.UpdatePestForm()
     add_form = f.PestForm()
     log(log.INFO, "Get all pests")
     q = request.args.get("q", type=str, default=None)
@@ -42,7 +41,6 @@ def get_all():
         ).scalars(),
         page=pagination,
         search_query=q,
-        update_form=update_form,
         add_form=add_form,
     )
 
@@ -71,7 +69,7 @@ def edit(uuid: str):
         pest.treatment = form.treatment.data
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo))
+                pest._photos.append(s3bucket.create_photo(photo, "pests"))
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")
@@ -80,10 +78,10 @@ def edit(uuid: str):
         pest.save()
         return redirect(url_for("pest.get_all"))
 
-    else:
+    if form.errors:
         log(log.ERROR, "Pest save errors: [%s]", form.errors)
         flash(f"{form.errors}", "danger")
-        return redirect(url_for("pest.get_all"))
+    return redirect(url_for("pest.get_all"))
 
 
 @bp.route("/create", methods=["POST"])
@@ -99,7 +97,7 @@ def create():
         )
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo))
+                pest._photos.append(s3bucket.create_photo(photo, "pests"))
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")

@@ -1,19 +1,13 @@
 {% from "macros/close_modal.html" import closeModal with context %}
-<div class="modal" id="modal-edit-illness">
+<div class="modal" id="modal-add-illness">
     <div class="modal-underlay" onclick="closeModal()"></div>
     <div class="modal-content">
-        {% set form_action = "illness.create" %}
-        {% set title = "Create" %}
-        {% if illness_id %}
-        {% set title = "Update" %}
-        {% set form_action = "illness.detail" %}
-        {% endif %}
-        <form action="{{ url_for(form_action, illness_id=illness_id) }}" method="POST"
+        <form action="{{ url_for('illness.create') }}" method="POST" enctype="multipart/form-data"
             class="w-[1/2] relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
             {{ form.hidden_tag() }}
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white"> {{ title }} illness </h3>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white"> Add illness </h3>
             </div>
             <div class="p-6 space-y-6">
                 <div class="grid grid-cols-6 gap-6">
@@ -22,23 +16,21 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                         <input type="text" name="name"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Name" value="{{ form.name.data if form.name.data else '' }}" required />
+                            placeholder="Name" required />
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="reason"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
                         <textarea name="reason"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024"
-                            placeholder="Enter reason">{% if form.reason.data %} {{ form.reason.data }} {%endif%}</textarea>
+                            minlength="3" maxlength="1024" placeholder="Enter reason"></textarea>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="symptoms"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Symptoms</label>
                         <textarea name="symptoms"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024"
-                            placeholder="Enter symptoms">{% if form.symptoms.data %} {{ form.symptoms.data }} {%endif%}</textarea>
+                            minlength="3" maxlength="1024" placeholder="Enter symptoms"></textarea>
 
                     </div>
                     <div class="col-span-6 sm:col-span-3">
@@ -46,10 +38,13 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Treatment</label>
                         <textarea name="treatment"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024"
-                            placeholder="Enter treatment">{% if form.treatment.data %} {{ form.treatment.data }} {%endif%}</textarea>
+                            minlength="3" maxlength="1024" placeholder="Enter treatment"></textarea>
                     </div>
-
+                    <div class="col-span-6 sm:col-span-3">
+                        <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Photos</label>
+                        {{ form.photos }}
+                    </div>
                 </div>
             </div>
             <!-- Modal footer -->
@@ -60,6 +55,6 @@
             </div>
         </form>
     </div>
-    {{ closeModal("modal-edit-illness") }}
+    {{ closeModal("modal-add-illness") }}
     <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet" />
 </div>
