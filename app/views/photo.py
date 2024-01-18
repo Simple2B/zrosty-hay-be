@@ -1,30 +1,23 @@
-from datetime import datetime
-
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    flash,
-    redirect,
-    url_for,
-)
-from flask_login import login_required
+from flask import Blueprint, request, render_template
 import sqlalchemy as sa
-from app.controllers import create_pagination
 
 from app import models as m, db
-from app import forms as f
 from app.logger import log
 
 
-bp = Blueprint("photos", __name__, url_prefix="/photos")
+bp = Blueprint("photo", __name__, url_prefix="/photos")
 
 
-def get_all():
-    log(log.INFO, "Get all photos")
-    # q = request.args.get("q", type=str, default=None)
-    # where = sa.and_(m.Photo.is_deleted.is_(False))
+@bp.route("/<uuid>", methods=["GET", "DELETE"])
+def delete(uuid: str):
+    log(log.INFO, "Delete photo: [%s]", uuid)
+    if request.method == "GET":
+        return render_template("photo/confirm_delete.html", uuid=uuid)
 
-    return render_template(
-        "photo/photos.html",
-    )
+    photo: m.Photo | None = db.session.scalar(sa.Select(m.Photo).where(m.Photo.uuid == uuid))
+    if not photo or photo.is_deleted:
+        log(log.ERROR, "Photo not found: [%s]", uuid)
+        return "Not found", 404
+    photo.is_deleted = True
+    db.session.commit()
+    return "success", 200
