@@ -1,51 +1,41 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    SelectMultipleField,
     StringField,
-    SubmitField,
-    ValidationError,
     BooleanField,
-    IntegerField,
+    FloatField,
+    SelectField,
+    SelectMultipleField,
+    widgets,
 )
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
-from app import models as m
-from app import db
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class PlantVarietyForm(FlaskForm):
-    next_url = StringField("next_url")
-    plant_family_id = IntegerField("plant_family_id", [DataRequired()])
-    name = StringField("name", [DataRequired()])
-    features = StringField("features")
-    illnesses = SelectMultipleField("illnesses", choices=[], validate_choice=False)
-    pests = SelectMultipleField("pests", choices=[], validate_choice=False)
-
-    # condition
-    planting_min_temperature = IntegerField("planting_min_temperature")
-    planting_max_temperature = IntegerField("planting_max_temperature")
+    name = StringField("name", [DataRequired(), Length(1, 64)])
+    features = StringField("features", [Length(0, 1024)], default="")
+    general_info = StringField("general_info", [Length(0, 2048)], default="")
+    temperature_info = StringField("temperature_info", [Length(0, 2048)], default="")
+    watering_info = StringField("watering_info", [Length(0, 2048)], default="")
+    planting_min_temperature = FloatField("planting_min_temperature")
+    planting_max_temperature = FloatField("planting_max_temperature")
     is_moisture_loving = BooleanField("is_moisture_loving")
     is_sun_loving = BooleanField("is_sun_loving")
-    ground_ph = IntegerField("ground_ph")
-    ground_type = StringField("ground_type")
+    ground_ph = FloatField("ground_ph")
+    ground_type = StringField("ground_type", [Length(0, 256)], default="")
+    can_plant_indoors = BooleanField("can_plant_indoors")
 
-    submit = SubmitField("Save")
-    # TODO: add photos
-
-    def validate_name(self, field):
-        query = (
-            m.PlantVariety.select()
-            .where(m.PlantVariety.name == field.data)
-            .where(m.PlantVariety.id != int(self.plant_variety_id.data))
-        )
-        if db.session.scalar(query) is not None:
-            raise ValidationError("Plant with this name already exists.")
+    pests = MultiCheckboxField("pests", choices=[], validate_choice=False)
+    illnesses = MultiCheckboxField("illnesses", choices=[], validate_choice=False)
 
 
-class NewPlantVarietyForm(FlaskForm):
-    submit = SubmitField("Save")
-
-    def validate_name(self, field):
-        query = m.PlantVariety.select().where(m.PlantVariety.name == field.data)
-        if db.session.scalar(query) is not None:
-            raise ValidationError("Plant with this name already exists")
+class PlantFamilyAddForm(PlantVarietyForm):
+    plant_family_id = SelectField(
+        "plant_family_id",
+        [DataRequired()],
+        validate_choice=False,
+    )

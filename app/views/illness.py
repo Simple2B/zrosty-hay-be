@@ -88,7 +88,7 @@ def create():
     form = f.IllnessForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        is_name_exist = db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data))
+        is_name_exist = db.session.scalar(sa.Select(m.Illness.name).where(m.Illness.name == form.name.data))
 
         if is_name_exist:
             flash("Illness name already exist!", "danger")

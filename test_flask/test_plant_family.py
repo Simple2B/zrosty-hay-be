@@ -3,14 +3,15 @@ import sqlalchemy as sa
 from faker import Faker
 
 from app import models as m, db
+from .db import FakeData
 
 faker = Faker()
 
 
-def test_plant_families_cru(login_client: FlaskClient, add_fake_plant_families: list[m.PlantFamily]):
+def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     """CRU (Create, Read, Update) tests for plant family"""
     # read
-    plant_families = add_fake_plant_families
+    plant_families = add_fake_data.plant_families
     res = login_client.get("/plant-family/")
     assert res.status_code == 200
     assert plant_families[-1].name.encode("utf-8") in res.data
