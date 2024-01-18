@@ -21,6 +21,7 @@ bp = Blueprint("plant_family", __name__, url_prefix="/plant-family")
 @bp.route("/", methods=["GET"])
 @login_required
 def get_all():
+    log(log.INFO, "Get all plant_families")
     q = request.args.get("q", type=str, default=None)
     where = sa.and_(m.PlantFamily.is_deleted.is_(False))
 
