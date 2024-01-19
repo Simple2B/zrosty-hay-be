@@ -1,27 +1,22 @@
-from typing import TYPE_CHECKING
-
 import uuid
 
 import boto3
 import botocore
 from pathlib import Path
 
-from flask import Flask
-from app.logger import log
+from app import models as m
 
-if TYPE_CHECKING:
-    from app.models import Photo
+from app.logger import log
+from config import BaseConfig
 
 
 class S3Bucket:
-    def init_app(self, app: Flask):
-        self.bucket_name = app.config["AWS_BUCKET_NAME"]
-        self.aws_domain = app.config["AWS_S3_DOMAIN"]
-        self.app_name = app.config["APP_NAME"]
+    def init_app(self, config: BaseConfig):
+        self.bucket_name = config.AWS_BUCKET_NAME
+        self.aws_domain = config.AWS_S3_DOMAIN
+        self.app_name = config.APP_NAME
         self.s3 = boto3.client(
-            "s3",
-            aws_access_key_id=app.config["AWS_ACCESS_KEY"],
-            aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+            "s3", aws_access_key_id=config.AWS_ACCESS_KEY, aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY
         )
 
     def _generate_img_uid(self):
@@ -29,7 +24,6 @@ class S3Bucket:
 
     def create_photo(self, file, folder_name: str = "") -> "Photo":
         log(log.INFO, "Uploading file to s3 bucket")
-        from app.models import Photo
 
         extension_files = file.filename.split(".")[-1]
         original_file_name = file.filename
@@ -53,4 +47,4 @@ class S3Bucket:
             raise TypeError(error.response["Error"]["Message"])
         url_path = f"https://{self.aws_domain}/{self.bucket_name}/" + str(img_path)
 
-        return Photo(uuid=uuid, original_name=original_file_name, url_path=url_path)
+        return m.Photo(uuid=uuid, original_name=original_file_name, url_path=url_path)
