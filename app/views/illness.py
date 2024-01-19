@@ -47,7 +47,7 @@ def get_all():
 def edit(uuid: int):
     form = f.IllnessForm()
 
-    illness: m.Illness | None = db.session.scalar(sa.Select(m.Illness).where(m.Illness.uuid == uuid))
+    illness = db.session.scalar(sa.select(m.Illness).where(m.Illness.uuid == uuid))
     if not illness or illness.is_deleted:
         log(log.INFO, "Error can't find illness id:[%d]", uuid)
         return "No Illness", 404
@@ -63,7 +63,7 @@ def edit(uuid: int):
         request.method == "POST"
         and form.validate_on_submit()
         and not db.session.scalar(
-            sa.Select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.uuid != uuid)
+            sa.select(m.Illness.name).where(m.Illness.name == form.name.data, m.Illness.uuid != uuid)
         )
     ):
         illness.name = form.name.data
@@ -73,7 +73,9 @@ def edit(uuid: int):
 
         for photo in form.photos.data:
             try:
-                illness._photos.append(s3bucket.create_photo(photo, "illnesses"))
+                illness._photos.append(
+                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="illnesses")
+                )
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new illness: [%s]", error)
                 flash("Error with add photo to new illness", "danger")
@@ -98,7 +100,7 @@ def create():
     if (
         request.method == "POST"
         and form.validate_on_submit()
-        and not db.session.scalar(sa.Select(m.Illness.name).where(m.Illness.name == form.name.data))
+        and not db.session.scalar(sa.select(m.Illness.name).where(m.Illness.name == form.name.data))
     ):
         illness = m.Illness(
             name=form.name.data,
@@ -109,7 +111,9 @@ def create():
 
         for photo in form.photos.data:
             try:
-                illness._photos.append(s3bucket.create_photo(photo, "illnesses"))
+                illness._photos.append(
+                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="illnesses")
+                )
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new illness: [%s]", error)
                 flash("Error with add photo to new illness", "danger")
