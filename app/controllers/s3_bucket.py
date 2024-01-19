@@ -54,7 +54,3 @@ class S3Bucket:
         url_path = f"https://{self.aws_domain}/{self.bucket_name}/" + str(img_path)
 
         return Photo(uuid=uuid, original_name=original_file_name, url_path=url_path)
-
-    # def delete_img(self, file_url: str):
-    #     file_path = file_url.replace(f"https://{self.bucket_name}/", "").strip()
-    #     self.s3.delete_object(Bucket=self.bucket_name, Key=file_path)
