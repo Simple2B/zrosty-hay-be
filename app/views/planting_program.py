@@ -11,9 +11,8 @@ from app import s3bucket
 bp = Blueprint("planting_program", __name__, url_prefix="/planting-programs")
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/", methods=["GET"])
 @login_required
-def add():
-    form = f.PlantProgramForm()
-
-    return render_template("planting_program/add.html", form=form)
+def add_step():
+    form = f.StepForm()
+    return render_template("planting_program/step_form.html", form=form)

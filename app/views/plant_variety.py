@@ -194,4 +194,27 @@ def programs(uuid: str):
 
     programs = plant_variety.programs
 
-    return render_template("plant_variety/plant_variety_programs.html", programs=programs)
+    return render_template("plant_variety/plant_variety_programs.html", programs=programs, uuid=uuid)
+
+
+@bp.route("/<uuid>/programs/add", methods=["GET", "POST"])
+@login_required
+def add_program(uuid: str):
+    plant_variety: m.PlantVariety | None = db.session.scalar(
+        sa.Select(m.PlantVariety).where(m.PlantVariety.uuid == uuid)
+    )
+    if not plant_variety:
+        log(log.INFO, "Error can't find plant_variety uuid:[%s]", uuid)
+        flash("Plant family not exist!", "danger")
+        return redirect(url_for("plant_variety.get_all"))
+
+    form = f.PlantProgramForm()
+    if request.method == "POST" and form.validate_on_submit():
+        print(form)
+
+    if form.errors:
+        flash(f"Form error: {form.errors}", "danger")
+
+    programs = plant_variety.programs
+
+    return render_template("planting_program/add.html", form=form, programs=programs, uuid=uuid)
