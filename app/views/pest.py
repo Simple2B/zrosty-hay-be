@@ -49,7 +49,7 @@ def get_all():
 @login_required
 def edit(uuid: str):
     form = f.PestForm()
-    pest: m.Pest | None = db.session.scalar(sa.Select(m.Pest).where(m.Pest.uuid == uuid))
+    pest = db.session.scalar(sa.select(m.Pest).where(m.Pest.uuid == uuid))
     if not pest or pest.is_deleted:
         log(log.ERROR, "Not found pest by uuid: [%s]", uuid)
         flash("Cannot save pest data", "danger")
@@ -69,11 +69,13 @@ def edit(uuid: str):
         pest.treatment = form.treatment.data
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo, "pests"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")
                 return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         pest.save()
         return redirect(url_for("pest.get_all"))
@@ -89,7 +91,7 @@ def edit(uuid: str):
 def create():
     form = f.PestForm()
 
-    if form.validate_on_submit() and not db.session.scalar(sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)):
+    if form.validate_on_submit() and not db.session.scalar(sa.select(m.Pest.name).where(m.Pest.name == form.name.data)):
         pest = m.Pest(
             name=form.name.data,
             symptoms=form.symptoms.data,
@@ -97,11 +99,14 @@ def create():
         )
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo, "pests"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")
                 return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
+
         log(log.INFO, "Form submitted. Pest: [%s]", pest)
         flash("Pest added!", "success")
         pest.save()

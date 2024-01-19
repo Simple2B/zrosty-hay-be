@@ -40,18 +40,18 @@ def add():
     form = f.PlantFamilyAddForm()
     if request.method == "GET":
         form.plant_family_id.choices = db.session.execute(
-            sa.Select(m.PlantFamily.id, m.PlantFamily.name).where(m.PlantFamily.is_deleted.is_(False))
+            sa.select(m.PlantFamily.id, m.PlantFamily.name).where(m.PlantFamily.is_deleted.is_(False))
         ).all()
 
-        form.pests.choices = db.session.scalars(sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
+        form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
         form.illnesses.choices = db.session.scalars(
-            sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
+            sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
         ).all()
 
     if (
         request.method == "POST"
         and form.validate_on_submit()
-        and not db.session.scalar(sa.Select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data))
+        and not db.session.scalar(sa.select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data))
     ):
         plant_family = db.session.get(m.PlantFamily, form.plant_family_id.data)
         if not plant_family:
@@ -62,8 +62,8 @@ def add():
             )
             flash("Plant family not exist!", "danger")
             return redirect(url_for("plant_variety.get_all"))
-        pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
-        illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
+        pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
+        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
         plant_variety = m.PlantVariety(
             family=plant_family,
             name=form.name.data,
@@ -84,11 +84,12 @@ def add():
 
         for photo in form.photos.data:
             try:
-                plant_variety._photos.append(s3bucket.create_photo(photo, "plant_varieties"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="plant_varieties")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
                 flash("Error with add photo to new plant variety", "danger")
                 return redirect(url_for("plant_variety.get_all"))
+            plant_variety._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         flash("Plant Variety added!", "success")
         plant_variety.save()
@@ -115,9 +116,9 @@ def edit(uuid: str):
         return redirect(url_for("plant_variety.get_all"))
 
     if request.method == "GET":
-        form.pests.choices = db.session.scalars(sa.Select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
+        form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
         form.illnesses.choices = db.session.scalars(
-            sa.Select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
+            sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
         ).all()
         form.name.data = plant_variety.name
         form.features.data = plant_variety.features
@@ -142,8 +143,8 @@ def edit(uuid: str):
             flash("Plan Variety name already exist!", "danger")
             return redirect(url_for("plant_variety.get_all"))
 
-        pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
-        illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data))).all()
+        pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
+        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data))).all()
         plant_variety.name = form.name.data
         plant_variety.features = form.features.data
         plant_variety.general_info = form.general_info.data
@@ -161,11 +162,12 @@ def edit(uuid: str):
 
         for photo in form.photos.data:
             try:
-                plant_variety._photos.append(s3bucket.create_photo(photo, "plant_varieties"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="plant_varieties")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
                 flash("Error with add photo to new plant variety", "danger")
                 return redirect(url_for("plant_variety.get_all"))
+            plant_variety._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         flash("Plant Variety updated!", "success")
         plant_variety.save()

@@ -1,5 +1,5 @@
 from uuid import uuid4
-from app import db
+from app.database import db
 
 
 class ModelMixin(object):

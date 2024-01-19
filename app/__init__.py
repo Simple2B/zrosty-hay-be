@@ -47,7 +47,7 @@ def create_app(environment="development"):
     migration.init_app(app, db)
     login_manager.init_app(app)
     mail.init_app(app)
-    s3bucket.init_app(app)
+    s3bucket.init_app(configuration)
     # Register blueprints.
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)

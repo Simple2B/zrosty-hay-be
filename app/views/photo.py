@@ -14,7 +14,7 @@ def delete(uuid: str):
     if request.method == "GET":
         return render_template("photo/confirm_delete.html", uuid=uuid)
 
-    photo: m.Photo | None = db.session.scalar(sa.Select(m.Photo).where(m.Photo.uuid == uuid))
+    photo = db.session.scalar(sa.select(m.Photo).where(m.Photo.uuid == uuid))
     if not photo or photo.is_deleted:
         log(log.ERROR, "Photo not found: [%s]", uuid)
         return "Not found", 404
