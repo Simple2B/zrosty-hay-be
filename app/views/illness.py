@@ -44,7 +44,7 @@ def get_all():
 
 @bp.route("/<uuid>/edit", methods=["GET", "POST"])
 @login_required
-def edit(uuid: int):
+def edit(uuid: str):
     form = f.IllnessForm()
 
     illness = db.session.scalar(sa.select(m.Illness).where(m.Illness.uuid == uuid))
@@ -73,13 +73,13 @@ def edit(uuid: int):
 
         for photo in form.photos.data:
             try:
-                illness._photos.append(
-                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="illnesses")
-                )
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="illnesses")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new illness: [%s]", error)
                 flash("Error with add photo to new illness", "danger")
                 return redirect(url_for("illness.get_all"))
+
+            illness._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         log(log.INFO, "Illness updated! [%s]", illness)
         flash("Illness updated!", "success")
@@ -111,13 +111,13 @@ def create():
 
         for photo in form.photos.data:
             try:
-                illness._photos.append(
-                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="illnesses")
-                )
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="illnesses")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new illness: [%s]", error)
                 flash("Error with add photo to new illness", "danger")
                 return redirect(url_for("illness.get_all"))
+
+            illness._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         log(log.INFO, "Form submitted. Illness: [%s]", illness)
         flash("Illness added!", "success")

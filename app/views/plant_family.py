@@ -49,14 +49,14 @@ def create():
     form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
     form.illnesses.choices = db.session.scalars(sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
-    if form.name.data and db.session.scalar(sa.Select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
+    if form.name.data and db.session.scalar(sa.select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
         flash("Plan Family name already exist!", "danger")
         return redirect(url_for("plant_family.get_all"))
 
     if request.method == "POST" and form.validate_on_submit():
-        pests = db.session.scalars(sa.Select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
-        illness = db.session.scalars(sa.Select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
+        pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
+        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
         plant_family = m.PlantFamily(name=form.name.data, features=form.name.data, type_of=form.type_of.data)
         plant_family.pests.extend(pests)
         plant_family.illnesses.extend(illness)

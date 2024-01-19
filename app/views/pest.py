@@ -69,11 +69,13 @@ def edit(uuid: str):
         pest.treatment = form.treatment.data
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="pests"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")
                 return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         pest.save()
         return redirect(url_for("pest.get_all"))
@@ -97,11 +99,14 @@ def create():
         )
         for photo in form.photos.data:
             try:
-                pest._photos.append(s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="pests"))
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new pest: [%s]", error)
                 flash("Error with add photo to new pest", "danger")
                 return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
+
         log(log.INFO, "Form submitted. Pest: [%s]", pest)
         flash("Pest added!", "success")
         pest.save()

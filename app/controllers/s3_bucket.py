@@ -7,7 +7,7 @@ import boto3
 import botocore
 from pathlib import Path
 
-from app import models as m
+from app import schema as s
 
 from app.logger import log
 from config import BaseConfig
@@ -18,6 +18,7 @@ class S3Bucket:
     aws_domain: str
     aws_s3_base_dir: Path
     s3: boto3.client
+    aws_s3_base_url: str
 
     def init_app(self, config: BaseConfig):
         self.bucket_name = config.AWS_BUCKET_NAME
@@ -31,7 +32,7 @@ class S3Bucket:
     def _generate_img_uid(self):
         return str(uuid.uuid4())
 
-    def create_photo(self, file: io.BytesIO, file_name: str | None = None, folder_name: str = "") -> m.Photo:
+    def create_photo(self, file: io.BytesIO, folder_name: str = "") -> s.S3Photo:
         log(log.INFO, "Uploading file to s3 bucket")
 
         file_type = filetype.guess(file)
@@ -52,4 +53,4 @@ class S3Bucket:
             log(log.ERROR, "Error upload file to s3 bucket : [%s]", error.response["Error"]["Message"])
             raise TypeError(error.response["Error"]["Message"])
 
-        return m.Photo(uuid=uuid, original_name=file_name, url_path=urljoin(self.aws_s3_base_url, str(img_path)))
+        return s.S3Photo(uuid=uuid, url_path=urljoin(self.aws_s3_base_url, str(img_path)))

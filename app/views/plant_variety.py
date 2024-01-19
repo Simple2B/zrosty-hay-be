@@ -84,13 +84,12 @@ def add():
 
         for photo in form.photos.data:
             try:
-                plant_variety._photos.append(
-                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="plant_varieties")
-                )
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="plant_varieties")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
                 flash("Error with add photo to new plant variety", "danger")
                 return redirect(url_for("plant_variety.get_all"))
+            plant_variety._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         flash("Plant Variety added!", "success")
         plant_variety.save()
@@ -163,13 +162,12 @@ def edit(uuid: str):
 
         for photo in form.photos.data:
             try:
-                plant_variety._photos.append(
-                    s3bucket.create_photo(photo.stream, file_name=photo.filename, folder_name="plant_varieties")
-                )
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="plant_varieties")
             except TypeError as error:
                 log(log.ERROR, "Error with add photo new plant variety: [%s]", error)
                 flash("Error with add photo to new plant variety", "danger")
                 return redirect(url_for("plant_variety.get_all"))
+            plant_variety._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         flash("Plant Variety updated!", "success")
         plant_variety.save()
