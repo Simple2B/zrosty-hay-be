@@ -1,0 +1,32 @@
+{% from "macros/close_modal.html" import closeModal with context %}
+<div class="modal" id="modal-add-plant-program-from">
+    <div class="modal-underlay" onclick="closeModal()"></div>
+    <div class="modal-content">
+        <form action="" method="POST" class="w-[600px] relative bg-white rounded-lg shadow dark:bg-gray-700 p-4">
+            <!-- Modal header -->
+            {{ form.hidden_tag() }}
+            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Add</h3>
+            </div>
+            <div class="flex w-full gap-4">
+                <div class="w-1/2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Planting time</label>
+                    {{ form.planting_time }}
+                </div>
+            </div>
+            <div class="flex w-full gap-4">
+                <div class="w-1/2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harvest time</label>
+                    {{ form.harvest_time }}
+                </div>
+            </div>
+            <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button name="submit" type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Save new pest </button>
+            </div>
+        </form>
+    </div>
+    {{ closeModal("modal-add-plant-program-from") }}
+    <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet" />
+</div>
