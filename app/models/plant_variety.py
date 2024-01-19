@@ -59,9 +59,7 @@ class PlantVariety(db.Model, ModelMixin):
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_variety_pest, back_populates="plant_varieties")
     family: orm.Mapped["PlantFamily"] = orm.relationship(back_populates="plant_varieties")
     _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
-    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
-        "PlantingProgram", back_populates="plant_variety"
-    )
+    programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
     def photos(self) -> List["Photo"]:

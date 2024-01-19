@@ -8,7 +8,7 @@ from app import forms as f
 from app.logger import log
 from app import s3bucket
 
-bp = Blueprint("plant_variety", __name__, url_prefix="/plant-variety")
+bp = Blueprint("planting_program", __name__, url_prefix="/planting-programs")
 
 
 @bp.route("/", methods=["GET"])
@@ -177,19 +177,3 @@ def edit(uuid: str):
         return redirect(url_for("plant_variety.get_all"))
 
     return render_template("plant_variety/edit_form.html", form=form, plant_variety=plant_variety)
-
-
-@bp.route("/<uuid>/programs", methods=["GET"])
-@login_required
-def programs(uuid: str):
-    plant_variety: m.PlantVariety | None = db.session.scalar(
-        sa.Select(m.PlantVariety).where(m.PlantVariety.uuid == uuid)
-    )
-    if not plant_variety:
-        log(log.INFO, "Error can't find plant_variety uuid:[%s]", uuid)
-        flash("Plant family not exist!", "danger")
-        return redirect(url_for("plant_variety.get_all"))
-
-    programs = plant_variety.programs
-
-    return render_template("plant_variety/plant_variety_programs.html", programs=programs)
