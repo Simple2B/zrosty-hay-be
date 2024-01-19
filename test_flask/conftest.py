@@ -1,3 +1,4 @@
+import filetype
 import pytest
 from dotenv import load_dotenv
 from flask import Flask
@@ -7,7 +8,7 @@ from app import create_app, db
 from app import models as m
 from test_flask.utils import login, register
 from .db import FakeData, create_plant_varieties, get_plant_families
-
+from app import s3bucket
 
 load_dotenv("test_flask/test.env")
 
@@ -25,7 +26,10 @@ def app():
 
 
 @pytest.fixture()
-def client(app: Flask):
+def client(app: Flask, mocker):
+    mocker.patch.object(s3bucket, "create_photo", return_value=m.Photo(original_name="test_file", url_path="test_path"))
+    mocker.patch.object(filetype, "guess", return_value=True)
+    mocker.patch.object(filetype, "is_image", return_value=True)
     with app.test_client() as client:
         app_ctx = app.app_context()
         app_ctx.push()
