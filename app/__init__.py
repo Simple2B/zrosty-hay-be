@@ -7,12 +7,14 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 
 from app.logger import log
+from app.controllers import S3Bucket
 from .database import db
 
 # instantiate extensions
 login_manager = LoginManager()
 migration = Migrate()
 mail = Mail()
+s3bucket = S3Bucket()
 
 
 def create_app(environment="development"):
@@ -25,6 +27,7 @@ def create_app(environment="development"):
         illness_blueprint,
         plant_family_blueprint,
         plant_varieties_blueprint,
+        photos_blueprint,
     )
     from app import models as m
 
@@ -44,7 +47,7 @@ def create_app(environment="development"):
     migration.init_app(app, db)
     login_manager.init_app(app)
     mail.init_app(app)
-
+    s3bucket.init_app(configuration)
     # Register blueprints.
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
@@ -53,6 +56,7 @@ def create_app(environment="development"):
     app.register_blueprint(illness_blueprint)
     app.register_blueprint(plant_family_blueprint)
     app.register_blueprint(plant_varieties_blueprint)
+    app.register_blueprint(photos_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader

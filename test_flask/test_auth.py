@@ -4,7 +4,7 @@ from flask import url_for
 
 from app import mail
 from app import models as m
-from app import db
+from app.database import db
 from test_flask.utils import register, login, logout
 
 

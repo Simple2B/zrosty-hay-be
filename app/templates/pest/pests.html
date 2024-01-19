@@ -60,7 +60,7 @@
             <div class="text-base font-semibold">{{ pest.name }}</div>
         </td>
         <td class="p-4 space-x-2 whitespace-nowrap">
-          <button type="button" data-target="{{pest.json}}"
+          <a href="{{ url_for('pest.edit', uuid=pest.uuid) }}"
             class="pest-edit-button inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
@@ -69,7 +69,7 @@
                 clip-rule="evenodd"></path>
             </svg>
             Edit pest
-          </button>
+          </a>
           <button data-pest-id={{ pest.id }} type="button"
             class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 delete-pest-btn">
             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -166,7 +166,6 @@
 </div>
 {% endif %}
 </div>
-{% include 'pest/edit.html' %}
 {% include 'pest/add.html' %}
 <!-- prettier-ignore -->
 {% endblock %}

@@ -6,3 +6,4 @@ from .pest import bp as pest_blueprint
 from .illness import bp as illness_blueprint
 from .plant_family import bp as plant_family_blueprint
 from .plant_variety import bp as plant_varieties_blueprint
+from .photo import bp as photos_blueprint

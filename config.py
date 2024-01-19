@@ -46,6 +46,12 @@ class BaseConfig(BaseSettings):
     JWT_SECRET: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
+    # AWS
+    AWS_S3_DOMAIN: str
+    AWS_BUCKET_NAME: str
+    AWS_ACCESS_KEY: str
+    AWS_SECRET_ACCESS_KEY: str
+
     @staticmethod
     def configure(app):
         # Implement this method to do further configuration on your app.

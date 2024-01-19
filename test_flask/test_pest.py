@@ -1,3 +1,5 @@
+import io
+
 from flask.testing import FlaskClient
 from app import models as m, db
 from test_flask.utils import login
@@ -10,6 +12,7 @@ def test_pest_crud(login_client: FlaskClient):
         name=TEST_NAME,
         symptoms="test_symptoms",
         treatment="test_treatment",
+        photos=[(io.BytesIO(b"photos"), "test.jpg")],
     )
     response = login_client.post(
         "/pest/create",
@@ -18,18 +21,19 @@ def test_pest_crud(login_client: FlaskClient):
     assert response.status_code == 302
     pest: m.Pest = db.session.scalars(m.Pest.select()).first()
     assert pest
+    assert pest.photos
 
     # test updated
+    response = login_client.get(f"/pest/{pest.uuid}/edit", follow_redirects=True)
+    assert response.status_code == 200
+    assert pest.name.encode("utf-8") in response.data
+
     NEW_NAME = "some name"
-    pest_data["pest_id"] = str(pest.id)
     pest_data["name"] = NEW_NAME
-    response = login_client.post("/pest/save", data=pest_data, follow_redirects=True)
+    pest_data["photos"] = []
+    response = login_client.post(f"/pest/{pest.uuid}/edit", data=pest_data, follow_redirects=True)
     assert response.status_code == 200
     assert NEW_NAME.encode("utf-8") in response.data
-
-    pest_data["pest_id"] = "100"
-    response = login_client.post("/pest/save", data=pest_data, follow_redirects=True)
-    assert response.status_code == 200
 
     # test delete
     response = login_client.delete(f"/pest/delete/{pest.id}", data=pest_data, follow_redirects=True)

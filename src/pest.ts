@@ -39,13 +39,6 @@ const modalOptions: ModalOptions = {
 const modal: ModalInterface = new Modal($modalElement, modalOptions);
 const addModal: ModalInterface = new Modal($addpestModalElement, modalOptions);
 
-const $buttonElements = document.querySelectorAll('.pest-edit-button');
-$buttonElements.forEach(e =>
-  e.addEventListener('click', () => {
-    editPest(JSON.parse(e.getAttribute('data-target')));
-  }),
-);
-
 // closing add edit modal
 const $buttonClose = document.querySelector('#modalCloseButton');
 if ($buttonClose) {
@@ -89,17 +82,3 @@ deleteButtons.forEach(e => {
     }
   });
 });
-
-function editPest(pest: IPest) {
-  let input: HTMLInputElement = document.querySelector('#pest-edit-name');
-  input.value = pest.name;
-  input = document.querySelector('#pest-edit-id');
-  input.value = pest.id.toString();
-  input = document.querySelector('#pest-edit-symptoms');
-  input.value = pest.symptoms;
-  input = document.querySelector('#pest-edit-treatment');
-  input.value = pest.treatment;
-  input = document.querySelector('#pest-edit-next_url');
-  input.value = window.location.href;
-  modal.show();
-}

@@ -1,0 +1,23 @@
+{% macro slidesShow(photos = []) -%}
+<div class="slideshow-container h-60 flex flex-row" id="slideshow-container">
+    {% for photo in photos %}
+    <div class="my-slides fade hidden relative w-52 h-52" id="photo-{{photo.uuid}}">
+        <button class="absolute cursor-pointer top-2 right-14" hx-get="{{ url_for('photo.delete', uuid=photo.uuid) }}"
+            hx-target="body" hx-swap="beforeend">
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 18 20">
+                <path stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M1 5h16M7 8v8m4-8v8M7 1h4a1 1 0 0 1 1 1v3H6V2a1 1 0 0 1 1-1ZM3 5h12v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5Z" />
+            </svg>
+        </button>
+        <img class="h-40 w-40 rounded-lg" src="{{ photo.url_path }}" alt="{{ photo.origin_name }}" class="w-full">
+        <div class="text-lg font-bold">{{ photo.original_name }}</div>
+    </div>
+    {% endfor %}
+    <!-- Next and previous buttons -->
+    <a class="prev" id="prev-btn-slideshow">&#10094;</a>
+    <a class="next" id="next-btn-slideshow">&#10095;</a>
+</div>
+<link href="{{ url_for('static', filename='css/slideshow.css') }}" rel="stylesheet" />
+<script src="{{ url_for('static', filename='js/slideshow.js') }}" type="text/javascript" defer></script>
+{%- endmacro %}

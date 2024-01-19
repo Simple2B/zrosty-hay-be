@@ -1,3 +1,5 @@
+import io
+
 from flask.testing import FlaskClient
 import sqlalchemy as sa
 from faker import Faker
@@ -21,9 +23,9 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
     # create
     res = login_client.get("/plant-variety/add")
     assert res.status_code == 200
-    assert b'<form action="/plant-variety/add" method="POST">' in res.data
-    pest_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3)
-    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
+    assert b'action="/plant-variety/add" method="POST"' in res.data
+    pest_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Pest.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Illness.name)).all(), length=3)
     plant_variety_data = dict(
         plant_family_id=plant_family.id,
         name="test plant family",
@@ -40,22 +42,25 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
         can_plant_indoors=True,
         pests=pest_names,
         illnesses=illness_names,
+        photos=[(io.BytesIO(b"photos"), "test.jpg")],
     )
     res = login_client.post("/plant-variety/add", data=plant_variety_data, follow_redirects=True)
     assert res.status_code == 200
     assert b"test plant family" in res.data
     plant_variety = db.session.get(m.PlantVariety, len(plant_varieties) + 1)
     assert plant_variety
+    assert plant_variety.photos
     assert plant_variety.name == plant_variety_data["name"]
     assert plant_variety.family == plant_family
     assert [pest.name for pest in plant_variety.pests].sort() == pest_names.sort()
 
     # update
+    plant_variety_data["photos"] = []
     res = login_client.get(f"/plant-variety/{plant_variety.uuid}/edit")
     assert res.status_code == 200
-    assert f'<form action="/plant-variety/{plant_variety.uuid}/edit" method="POST">'.encode("utf-8") in res.data
+    assert f'action="/plant-variety/{plant_variety.uuid}/edit" method="POST'.encode("utf-8") in res.data
     assert plant_variety.name.encode("utf-8") in res.data
-    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Illness.name)).all(), length=3)
     NEW_NAME = "updated plant variety name"
     del plant_variety_data["plant_family_id"]
     plant_variety_data["name"] = NEW_NAME

@@ -3,7 +3,8 @@ from flask import Flask
 import sqlalchemy as sa
 from sqlalchemy import orm
 from app import models as m
-from app import db, forms
+from app.database import db
+from app import forms
 from app import schema as s
 
 

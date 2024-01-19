@@ -37,7 +37,7 @@ class Pest(db.Model, ModelMixin):
     treatment: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
 
     # Relationships
-    photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=pest_photo)
+    _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=pest_photo)
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(
         secondary=plant_family_pest, back_populates="pests"
     )
@@ -46,11 +46,8 @@ class Pest(db.Model, ModelMixin):
     )
 
     @property
-    def json(self):
-        from app.schema import Pest as PestSchema
-
-        pest = PestSchema.model_validate(self)
-        return pest.model_dump_json()
+    def photos(self) -> List["Photo"]:
+        return [photo for photo in self._photos if not photo.is_deleted]
 
     def __repr__(self):
         return f"<Id: {self.id}, Pest: {self.name}>"

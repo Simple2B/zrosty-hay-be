@@ -20,8 +20,8 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     res = login_client.get("/plant-family/create")
     assert res.status_code == 200
     assert b"Add new plant family" in res.data
-    pest_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Pest.name)).all(), length=3)
-    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
+    pest_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Pest.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Illness.name)).all(), length=3)
     plant_family_data = dict(
         name="test plant family",
         features="test plant family features",
@@ -41,7 +41,7 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     assert res.status_code == 200
     assert b"Edit plant family" in res.data
     assert plant_family.name.encode("utf-8") in res.data
-    illness_names = faker.random_choices(elements=db.session.scalars(sa.Select(m.Illness.name)).all(), length=3)
+    illness_names = faker.random_choices(elements=db.session.scalars(sa.select(m.Illness.name)).all(), length=3)
     NEW_NAME = "updated plant family name"
     plant_family_data["name"] = NEW_NAME
     plant_family_data["illnesses"] = illness_names

@@ -14,7 +14,7 @@ from app.controllers import create_pagination
 from app import models as m, db
 from app import forms as f
 from app.logger import log
-
+from app import s3bucket
 
 bp = Blueprint("pest", __name__, url_prefix="/pest")
 
@@ -22,7 +22,6 @@ bp = Blueprint("pest", __name__, url_prefix="/pest")
 @bp.route("/", methods=["GET"])
 @login_required
 def get_all():
-    update_form = f.UpdatePestForm()
     add_form = f.PestForm()
     log(log.INFO, "Get all pests")
     q = request.args.get("q", type=str, default=None)
@@ -42,36 +41,49 @@ def get_all():
         ).scalars(),
         page=pagination,
         search_query=q,
-        update_form=update_form,
         add_form=add_form,
     )
 
 
-@bp.route("/save", methods=["POST"])
+@bp.route("/<uuid>/edit", methods=["GET", "POST"])
 @login_required
-def save():
-    form = f.UpdatePestForm()
+def edit(uuid: str):
+    form = f.PestForm()
+    pest = db.session.scalar(sa.select(m.Pest).where(m.Pest.uuid == uuid))
+    if not pest or pest.is_deleted:
+        log(log.ERROR, "Not found pest by uuid: [%s]", uuid)
+        flash("Cannot save pest data", "danger")
+        return redirect(url_for("pest.get_all"))
+
+    if request.method == "GET":
+        form.name.data = pest.name
+        form.symptoms.data = pest.symptoms
+        form.treatment.data = pest.treatment
+        return render_template("pest/edit.html", form=form, pest=pest)
 
     if form.validate_on_submit() and not db.session.scalar(
-        sa.Select(m.Pest.name).where(m.Pest.name == form.name.data, m.Pest.id != form.pest_id.data)
+        sa.Select(m.Pest.name).where(m.Pest.name == form.name.data, m.Pest.uuid != uuid)
     ):
-        query = m.Pest.select().where(m.Pest.id == int(form.pest_id.data))
-        pest: m.Pest | None = db.session.scalar(query)
-        if not pest or pest.is_deleted:
-            log(log.ERROR, "Not found pest by id : [%s]", form.pest_id.data)
-            flash("Cannot save pest data", "danger")
-            return redirect(url_for("pest.get_all"))
         pest.name = form.name.data
         pest.symptoms = form.symptoms.data
         pest.treatment = form.treatment.data
-        # pest.photos = form.photos.data
+        for photo in form.photos.data:
+            try:
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new pest: [%s]", error)
+                flash("Error with add photo to new pest", "danger")
+                return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
+
         pest.save()
         return redirect(url_for("pest.get_all"))
 
-    else:
+    if form.errors:
         log(log.ERROR, "Pest save errors: [%s]", form.errors)
         flash(f"{form.errors}", "danger")
-        return redirect(url_for("pest.get_all"))
+    return redirect(url_for("pest.get_all"))
 
 
 @bp.route("/create", methods=["POST"])
@@ -79,13 +91,22 @@ def save():
 def create():
     form = f.PestForm()
 
-    if form.validate_on_submit() and not db.session.scalar(sa.Select(m.Pest.name).where(m.Pest.name == form.name.data)):
+    if form.validate_on_submit() and not db.session.scalar(sa.select(m.Pest.name).where(m.Pest.name == form.name.data)):
         pest = m.Pest(
             name=form.name.data,
             symptoms=form.symptoms.data,
             treatment=form.treatment.data,
-            # photos=form.photos.data,
         )
+        for photo in form.photos.data:
+            try:
+                s3_photo = s3bucket.create_photo(photo.stream, folder_name="pests")
+            except TypeError as error:
+                log(log.ERROR, "Error with add photo new pest: [%s]", error)
+                flash("Error with add photo to new pest", "danger")
+                return redirect(url_for("pest.get_all"))
+
+            pest._photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
+
         log(log.INFO, "Form submitted. Pest: [%s]", pest)
         flash("Pest added!", "success")
         pest.save()
@@ -115,5 +136,4 @@ def delete(id: int):
     pest.plant_varieties = []
     db.session.commit()
     log(log.INFO, "Pest deleted. Pest: [%s]", pest)
-    flash("Pest deleted!", "success")
     return "ok", 200
