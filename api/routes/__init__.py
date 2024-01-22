@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Request
 
 from .user import user_router
+from .plant import plant_router
 from .auth import router as auth_router
 
 # from .notify import notification_test_router
@@ -11,6 +12,7 @@ router = APIRouter(prefix="/api", tags=["API"])
 
 router.include_router(user_router)
 router.include_router(auth_router)
+router.include_router(plant_router)
 
 
 @router.get("/list-endpoints/")

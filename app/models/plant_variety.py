@@ -77,6 +77,23 @@ class PlantVariety(db.Model, ModelMixin):
     programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
+    def watering(self) -> CareType:
+        if self.water_volume < 500:
+            return CareType.easy
+        elif self.water_volume < 1000:
+            return CareType.normal
+        else:
+            return CareType.hard
+
+    @property
+    def size(self) -> str:
+        return f"{self.max_size}-{self.max_size}"
+
+    @property
+    def temperature(self) -> str:
+        return f"{self.planting_min_temperature}-{self.planting_max_temperature}°C"
+
+    @property
     def photos(self) -> List["Photo"]:
         return [photo for photo in self._photos if not photo.is_deleted]
 
