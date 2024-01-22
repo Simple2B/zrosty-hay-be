@@ -4,4 +4,4 @@ from wtforms.validators import DataRequired, Length
 
 
 class PlantingStepTypeForm(FlaskForm):
-    name = StringField("name", [DataRequired(), Length(1, 64)], render_kw={"placeholder": "Enter name"})
+    name = StringField("Name", [DataRequired(), Length(1, 64)], render_kw={"placeholder": "Enter name"})

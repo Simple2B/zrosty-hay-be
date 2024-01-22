@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: c2dea9830f6b
+Revision ID: 2f34baab056c
 Revises: 
-Create Date: 2024-01-22 11:52:15.970495
+Create Date: 2024-01-22 12:58:38.260419
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c2dea9830f6b'
+revision = '2f34baab056c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -85,6 +85,7 @@ def upgrade():
 
     op.create_table('planting_step_types',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
@@ -93,6 +94,7 @@ def upgrade():
     )
     with op.batch_alter_table('planting_step_types', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_planting_step_types_name'), ['name'], unique=True)
+        batch_op.create_index(batch_op.f('ix_planting_step_types_uuid'), ['uuid'], unique=False)
 
     op.create_table('recipes',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -323,6 +325,7 @@ def downgrade():
 
     op.drop_table('recipes')
     with op.batch_alter_table('planting_step_types', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_planting_step_types_uuid'))
         batch_op.drop_index(batch_op.f('ix_planting_step_types_name'))
 
     op.drop_table('planting_step_types')

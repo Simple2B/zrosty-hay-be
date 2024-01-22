@@ -1,0 +1,28 @@
+{% from "macros/close_modal.html" import closeModal with context %}
+<div class="modal" id="modal-add-planting-step-type">
+    <div class="modal-underlay" onclick="closeModal()"></div>
+    <div class="modal-content">
+        <form action="{{ url_for('planting_step_type.create') }}" method="POST" enctype="multipart/form-data"
+            class="w-[1/2] relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            {{ form.hidden_tag() }}
+            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white"> Add type </h3>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="flex flex-col gap-2">
+                    {{ form.name.label }}
+                    {{ form.name(class="rounded-lg") }}
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button name="submit" type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Save </button>
+            </div>
+        </form>
+    </div>
+    {{ closeModal("modal-add-planting-step-type") }}
+    <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet" />
+</div>

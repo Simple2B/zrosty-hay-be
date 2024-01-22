@@ -1,11 +1,12 @@
 <div class="w-full flex flex-row gap-4">
+    {{ form.hidden_tag() }}
     <div class="w-1/2">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Day</label>
-        {{ form.day }}
+        {{ form.day(class_="rounded-lg") }}
     </div>
 
     <div class="w-1/2">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Instruction</label>
-        {{ form.instruction }}
+        {{ form.instruction(class_="rounded-lg") }}
     </div>
 </div>

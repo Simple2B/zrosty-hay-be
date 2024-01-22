@@ -1,0 +1,18 @@
+<form id="step_type-{{step_type.id}}" method="POST"
+    action="{{ url_for('planting_step_type.edit', uuid=step_type.uuid) }}" class="flex justify-around bg-white border-b p-4 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50
+    dark:hover:bg-gray-600">
+    {{ form.hidden_tag() }}
+    <div class="w-1/3 flex items-center">
+        {{ step_type.id }}
+    </div>
+    <div class="w-1/3 flex items-center">
+        {{ form.name(class_="rounded-lg") }}
+    </div>
+    <div class="w-1/3 flex items-center text-gray-900 whitespace-nowrap dark:text-white">
+        <button type="submit"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+
+            Save
+        </button>
+    </div>
+</form>
