@@ -107,6 +107,10 @@ def create_plant_varieties() -> list[m.PlantFamily]:
         plant_variety = m.PlantVariety(
             name=f"PlantVariety_{index}",
             plant_family_id=faker.random_choices(elements=plant_families, length=1)[0].id,
+            min_size=1,
+            max_size=10,
+            humidity_percentage=70,
+            water_volume=30,
         )
         db.session.add(plant_variety)
         plant_variety.pests.extend(faker.random_choices(elements=pests, length=3))
