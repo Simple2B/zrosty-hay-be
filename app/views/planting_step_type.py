@@ -76,7 +76,7 @@ def edit(uuid: str):
         return render_template("planting_step_type/edit.html", form=form, step_type=step_type)
 
     if form.validate_on_submit() and not db.session.scalar(
-        sa.Select(m.PlantingStepType.name).where(
+        sa.select(m.PlantingStepType.name).where(
             m.PlantingStepType.name == form.name.data, m.PlantingStepType.uuid != uuid
         )
     ):
