@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 1ea90cdff3f4
+Revision ID: c2dea9830f6b
 Revises: 
-Create Date: 2024-01-16 10:16:46.248251
+Create Date: 2024-01-22 11:52:15.970495
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1ea90cdff3f4'
+revision = 'c2dea9830f6b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -83,6 +83,17 @@ def upgrade():
     with op.batch_alter_table('plant_families', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_plant_families_name'), ['name'], unique=True)
 
+    op.create_table('planting_step_types',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_step_types'))
+    )
+    with op.batch_alter_table('planting_step_types', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_planting_step_types_name'), ['name'], unique=True)
+
     op.create_table('recipes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
@@ -147,6 +158,11 @@ def upgrade():
     sa.Column('watering_info', sa.String(length=2048), nullable=False),
     sa.Column('planting_min_temperature', sa.Float(), nullable=True),
     sa.Column('planting_max_temperature', sa.Float(), nullable=True),
+    sa.Column('min_size', sa.Float(), nullable=False),
+    sa.Column('max_size', sa.Float(), nullable=False),
+    sa.Column('humidity_percentage', sa.Float(), nullable=False),
+    sa.Column('water_volume', sa.Float(), nullable=False),
+    sa.Column('care_type', sa.String(length=64), nullable=False),
     sa.Column('is_moisture_loving', sa.Boolean(), nullable=False),
     sa.Column('is_sun_loving', sa.Boolean(), nullable=False),
     sa.Column('ground_ph', sa.Float(), nullable=True),
@@ -259,12 +275,14 @@ def upgrade():
     op.create_table('planting_steps',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('planting_program_id', sa.Integer(), nullable=False),
+    sa.Column('step_type_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('day', sa.Integer(), nullable=False),
     sa.Column('instruction', sa.Text(), nullable=False),
     sa.ForeignKeyConstraint(['planting_program_id'], ['planting_programs.id'], name=op.f('fk_planting_steps_planting_program_id_planting_programs')),
+    sa.ForeignKeyConstraint(['step_type_id'], ['planting_step_types.id'], name=op.f('fk_planting_steps_step_type_id_planting_step_types')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_planting_steps'))
     )
     # ### end Alembic commands ###
@@ -304,6 +322,10 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_recipes_name'))
 
     op.drop_table('recipes')
+    with op.batch_alter_table('planting_step_types', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_planting_step_types_name'))
+
+    op.drop_table('planting_step_types')
     with op.batch_alter_table('plant_families', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_plant_families_name'))
 

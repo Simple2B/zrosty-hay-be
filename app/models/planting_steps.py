@@ -9,6 +9,7 @@ from .utils import ModelMixin
 
 if TYPE_CHECKING:
     from .planting_program import PlantingProgram
+    from .planting_step_type import PlantingStepType
 
 
 class PlantingStep(db.Model, ModelMixin):
@@ -18,6 +19,8 @@ class PlantingStep(db.Model, ModelMixin):
 
     # Foreign keys
     planting_program_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("planting_programs.id"))
+    step_type_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("planting_step_types.id"))
+
     # Fields
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
@@ -30,6 +33,7 @@ class PlantingStep(db.Model, ModelMixin):
 
     # Relationships
     planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(back_populates="steps")
+    step_type: orm.Mapped["PlantingStepType"] = orm.relationship()
 
     def __repr__(self):
         return f"<PlantingStep: {self.id}>"

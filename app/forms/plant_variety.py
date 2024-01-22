@@ -9,6 +9,7 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Length
 from .photo import UploadPhotoForm
+from app.models import CareType
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -29,6 +30,13 @@ class PlantVarietyForm(UploadPhotoForm, FlaskForm):
     ground_ph = FloatField("ground_ph")
     ground_type = StringField("ground_type", [Length(0, 256)], default="")
     can_plant_indoors = BooleanField("can_plant_indoors")
+
+    min_size = FloatField("min_size")
+    max_size = FloatField("max_size")
+    humidity_percentage = FloatField("humidity_percentage")
+    water_volume = FloatField("water_volume")
+
+    care_type = SelectField("care_type", [DataRequired()], choices=[(care.name, care.value) for care in CareType])
 
     pests = MultiCheckboxField("pests", choices=[], validate_choice=False)
     illnesses = MultiCheckboxField("illnesses", choices=[], validate_choice=False)

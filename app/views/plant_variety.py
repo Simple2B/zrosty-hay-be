@@ -73,6 +73,11 @@ def add():
             watering_info=form.watering_info.data,
             planting_min_temperature=form.planting_min_temperature.data,
             planting_max_temperature=form.planting_max_temperature.data,
+            min_size=form.min_size.data,
+            max_size=form.max_size.data,
+            humidity_percentage=form.humidity_percentage.data,
+            water_volume=form.water_volume.data,
+            care_type=form.care_type.data,
             is_moisture_loving=form.is_moisture_loving.data,
             is_sun_loving=form.is_sun_loving.data,
             ground_ph=form.ground_ph.data,
@@ -127,6 +132,11 @@ def edit(uuid: str):
         form.watering_info.data = plant_variety.watering_info
         form.planting_min_temperature.data = plant_variety.planting_min_temperature
         form.planting_max_temperature.data = plant_variety.planting_max_temperature
+        form.min_size.data = plant_variety.max_size
+        form.max_size.data = plant_variety.max_size
+        form.humidity_percentage = plant_variety.humidity_percentage
+        form.water_volume.data = plant_variety.water_volume
+        form.care_type.data = plant_variety.care_type
         form.is_moisture_loving.data = plant_variety.is_moisture_loving
         form.is_sun_loving.data = plant_variety.is_sun_loving
         form.ground_ph.data = plant_variety.ground_ph
@@ -152,6 +162,11 @@ def edit(uuid: str):
         plant_variety.watering_info = form.watering_info.data
         plant_variety.planting_min_temperature = form.planting_min_temperature.data
         plant_variety.planting_max_temperature = form.planting_max_temperature.data
+        plant_variety.min_size = form.min_size.data
+        plant_variety.max_size = form.max_size.data
+        plant_variety.humidity_percentage = form.humidity_percentage.data
+        plant_variety.water_volume = form.water_volume.data
+        plant_variety.care_type = form.care_type.data
         plant_variety.is_moisture_loving = form.is_moisture_loving.data
         plant_variety.is_sun_loving = form.is_sun_loving.data
         plant_variety.ground_ph = form.ground_ph.data
@@ -210,8 +225,9 @@ def add_program(uuid: str):
 
     form = f.PlantProgramForm()
     if request.method == "POST" and form.validate_on_submit():
-        print(form)
+        steps = tuple(zip(request.form.getlist("day"), request.form.getlist("instruction")))
 
+        return redirect(url_for("plant_variety.programs", uuid=uuid))
     if form.errors:
         flash(f"Form error: {form.errors}", "danger")
 
