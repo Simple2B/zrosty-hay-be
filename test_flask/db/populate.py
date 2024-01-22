@@ -118,3 +118,14 @@ def create_plant_varieties() -> list[m.PlantFamily]:
         plant_varieties.append(plant_variety)
     db.session.commit()
     return plant_varieties
+
+
+def create_planting_step_type() -> list[m.PlantingStepType]:
+    step_types = []
+    for index in range(10):
+        step_type = m.PlantingStepType(name=f"Need sun {index}")
+        db.session.add(step_type)
+        step_types.append(step_type)
+    db.session.commit()
+
+    return step_types

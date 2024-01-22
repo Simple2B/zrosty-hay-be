@@ -80,3 +80,29 @@ def test_plant_varieties_cru(login_client: FlaskClient, add_fake_data: FakeData)
     db.session.refresh(plant_variety)
     assert plant_variety.name == NEW_NAME
     assert [illness.name for illness in plant_variety.illnesses].sort() == illness_names.sort()
+
+
+def test_create_and_get_plant_variety_program(login_client: FlaskClient, add_fake_data: FakeData):
+    plant_variety = add_fake_data.plant_varieties[0]
+    res = login_client.get(f"/plant-variety/{plant_variety.uuid}/programs")
+
+    assert res.status_code == 200
+    assert b"Add program" in res.data
+
+    res = login_client.get(f"/plant-variety/{plant_variety.uuid}/programs/add")
+    assert res.status_code == 200
+    assert f"{plant_variety.uuid}".encode("utf-8") in res.data
+    step_type = add_fake_data.planting_step_types[0]
+
+    form_data = dict(
+        planting_time=10, harvest_time=10, day=["1"], instruction=["some text"], step_type_id=[step_type.id]
+    )
+
+    res = login_client.post(f"/plant-variety/{plant_variety.uuid}/programs/add", data=form_data, follow_redirects=True)
+    assert res.status_code == 200
+    program = db.session.get(m.PlantingProgram, 1)
+    assert program
+    assert program.planting_time == form_data["planting_time"]
+    assert program.harvest_time == form_data["harvest_time"]
+    assert program.steps
+    assert program.steps[0].step_type_id == step_type.id
