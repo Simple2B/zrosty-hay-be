@@ -225,7 +225,24 @@ def add_program(uuid: str):
 
     form = f.PlantProgramForm()
     if request.method == "POST" and form.validate_on_submit():
-        steps = tuple(zip(request.form.getlist("day"), request.form.getlist("instruction")))
+        new_program = m.PlantingProgram(
+            planting_time=form.planting_time.data, harvest_time=form.harvest_time.data, plant_variety=plant_variety
+        )
+        steps_data = tuple(
+            zip(request.form.getlist("step_type_id"), request.form.getlist("day"), request.form.getlist("instruction"))
+        )
+        for step in steps_data:
+            step_type_id, day, instruction = step
+            step_type = db.session.get(m.PlantingStepType, step_type_id)
+            if not step_type:
+                log(log.ERROR, "can't find step type step_type_id:[%s]", step_type_id)
+                flash("Error can't find step type", "danger")
+                return redirect(url_for("plant_variety.programs", uuid=uuid))
+
+            new_step = m.PlantingStep(day=day, instruction=instruction, step_type=step_type)
+            new_program.steps.append(new_step)
+
+        new_program.save()
 
         return redirect(url_for("plant_variety.programs", uuid=uuid))
     if form.errors:

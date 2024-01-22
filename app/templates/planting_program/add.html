@@ -7,19 +7,15 @@
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Add</h3>
         </div>
-        <div class="flex flex-row">
-            <div class="flex w-full gap-4">
-                <div class="w-1/2">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Planting time</label>
-                    {{ form.planting_time(class_="rounded-lg") }}
-                </div>
+        <div class="w-full flex flex-row">
+            <div class="w-1/2">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Planting time</label>
+                {{ form.planting_time(class_="rounded-lg") }}
             </div>
 
-            <div class="flex w-full gap-4">
-                <div class="w-1/2">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harvest time</label>
-                    {{ form.harvest_time(class_="rounded-lg") }}
-                </div>
+            <div class="w-1/2">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harvest time</label>
+                {{ form.harvest_time(class_="rounded-lg") }}
             </div>
         </div>
         <div id="program-steps" class="w-full flex flex-col gap-4 pt-4">
