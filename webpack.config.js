@@ -46,15 +46,6 @@ const pestConfig = {
   },
 };
 
-const plantProgramConfig = {
-  entry: {
-    main: './src/plant_program.ts',
-  },
-  output: {
-    path: path.resolve(__dirname, './app/static'),
-    filename: 'js/plant_program.js', // <--- Will be compiled to this single file
-  },
-};
 
 const slideShowConfig = {
   entry: {
@@ -66,7 +57,7 @@ const slideShowConfig = {
   },
 };
 
-const configs = [baseConfig, userConfig, pestConfig, plantProgramConfig, slideShowConfig].map(conf =>
+const configs = [baseConfig, userConfig, pestConfig,  slideShowConfig].map(conf =>
   merge(defaultConfig, conf),
 );
 
