@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 2f34baab056c
+Revision ID: 41d7e02df58f
 Revises: 
-Create Date: 2024-01-22 12:58:38.260419
+Create Date: 2024-01-23 10:25:28.008629
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2f34baab056c'
+revision = '41d7e02df58f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -158,8 +158,8 @@ def upgrade():
     sa.Column('general_info', sa.String(length=2048), nullable=False),
     sa.Column('temperature_info', sa.String(length=2048), nullable=False),
     sa.Column('watering_info', sa.String(length=2048), nullable=False),
-    sa.Column('planting_min_temperature', sa.Float(), nullable=True),
-    sa.Column('planting_max_temperature', sa.Float(), nullable=True),
+    sa.Column('min_temperature', sa.Float(), nullable=True),
+    sa.Column('max_temperature', sa.Float(), nullable=True),
     sa.Column('min_size', sa.Float(), nullable=False),
     sa.Column('max_size', sa.Float(), nullable=False),
     sa.Column('humidity_percentage', sa.Float(), nullable=False),
