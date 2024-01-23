@@ -33,7 +33,7 @@ class PlantingProgram(db.Model, ModelMixin):
 
     # Relationships
     steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(back_populates="planting_program")
-    plant_variety: orm.Mapped["PlantVariety"] = orm.relationship("PlantVariety", back_populates="planting_program")
+    plant_variety: orm.Mapped["PlantVariety"] = orm.relationship(back_populates="programs")
 
     def __repr__(self):
         return f"<PlantingProgram: {self.id}>"

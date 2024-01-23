@@ -1,3 +1,4 @@
+import enum
 from typing import TYPE_CHECKING, List
 from datetime import datetime
 
@@ -18,6 +19,12 @@ if TYPE_CHECKING:
     from .pest import Pest
     from .plant_family import PlantFamily
     from .planting_program import PlantingProgram
+
+
+class CareType(enum.Enum):
+    easy = "easy"
+    normal = "normal"
+    hard = "hard"
 
 
 class PlantVariety(db.Model, ModelMixin):
@@ -46,6 +53,14 @@ class PlantVariety(db.Model, ModelMixin):
     watering_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
     planting_min_temperature: orm.Mapped[float | None] = orm.mapped_column()
     planting_max_temperature: orm.Mapped[float | None] = orm.mapped_column()
+
+    min_size: orm.Mapped[float] = orm.mapped_column()
+    max_size: orm.Mapped[float] = orm.mapped_column()
+    humidity_percentage: orm.Mapped[float] = orm.mapped_column(default=0)
+    water_volume: orm.Mapped[float] = orm.mapped_column(default=0)
+    # must be enum
+    care_type: orm.Mapped[str] = orm.mapped_column(sa.String(64), default=CareType.easy.value)
+
     is_moisture_loving: orm.Mapped[bool] = orm.mapped_column(default=True)
     is_sun_loving: orm.Mapped[bool] = orm.mapped_column(default=False)
     ground_ph: orm.Mapped[float | None] = orm.mapped_column()
@@ -59,9 +74,7 @@ class PlantVariety(db.Model, ModelMixin):
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_variety_pest, back_populates="plant_varieties")
     family: orm.Mapped["PlantFamily"] = orm.relationship(back_populates="plant_varieties")
     _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
-    planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(
-        "PlantingProgram", back_populates="plant_variety"
-    )
+    programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
     def photos(self) -> List["Photo"]:

@@ -66,6 +66,48 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="0">
             </div>
+
+            <div>
+                <label for="min_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Min size</label>
+                <input type="number" name="min_size" step="0.01"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0">
+            </div>
+            <div>
+                <label for="max_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Max size</label>
+                <input type="number" name="max_size" step="0.01"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0">
+            </div>
+            <div>
+                <label for="max_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Humidity percentage</label>
+                <input type="number" name="humidity_percentage" step="0.01"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0">
+            </div>
+            <div>
+                <label for="water_volume" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Water volume</label>
+                <input type="number" name="water_volume" step="0.01"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="0">
+            </div>
+            <div>
+                <label for="care_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Care type</label>
+                {{ form.care_type(class_="w-full rounded-lg") }}
+            </div>
+            <div class="flex items-start mb-6">
+                <div class="flex items-center h-5">
+                    <input name="is_sun_loving" type="checkbox"
+                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                </div>
+                <label for="is_sun_loving" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">is sun
+                    loving</label>
+            </div>
             <div class="flex items-start mb-6">
                 <div class="flex items-center h-5">
                     <input name="is_moisture_loving" type="checkbox"
@@ -76,11 +118,11 @@
             </div>
             <div class="flex items-start mb-6">
                 <div class="flex items-center h-5">
-                    <input name="is_sun_loving" type="checkbox"
+                    <input name="can_plant_indoors" type="checkbox"
                         class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
                 </div>
-                <label for="is_sun_loving" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">is sun
-                    loving</label>
+                <label for="can_plant_indoors" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Can
+                    plant indoors</label>
             </div>
             <div>
                 <label for="ground_ph" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -96,14 +138,7 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Enter ground type">
             </div>
-            <div class="flex items-start mb-6">
-                <div class="flex items-center h-5">
-                    <input name="can_plant_indoors" type="checkbox"
-                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
-                </div>
-                <label for="can_plant_indoors" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Can
-                    plant indoors</label>
-            </div>
+
             <div class="col-span-6 sm:col-span-2">
                 <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
                     photos</label>

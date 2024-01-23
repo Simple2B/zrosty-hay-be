@@ -73,6 +73,11 @@ def add():
             watering_info=form.watering_info.data,
             planting_min_temperature=form.planting_min_temperature.data,
             planting_max_temperature=form.planting_max_temperature.data,
+            min_size=form.min_size.data,
+            max_size=form.max_size.data,
+            humidity_percentage=form.humidity_percentage.data,
+            water_volume=form.water_volume.data,
+            care_type=form.care_type.data,
             is_moisture_loving=form.is_moisture_loving.data,
             is_sun_loving=form.is_sun_loving.data,
             ground_ph=form.ground_ph.data,
@@ -127,6 +132,11 @@ def edit(uuid: str):
         form.watering_info.data = plant_variety.watering_info
         form.planting_min_temperature.data = plant_variety.planting_min_temperature
         form.planting_max_temperature.data = plant_variety.planting_max_temperature
+        form.min_size.data = plant_variety.max_size
+        form.max_size.data = plant_variety.max_size
+        form.humidity_percentage = plant_variety.humidity_percentage
+        form.water_volume.data = plant_variety.water_volume
+        form.care_type.data = plant_variety.care_type
         form.is_moisture_loving.data = plant_variety.is_moisture_loving
         form.is_sun_loving.data = plant_variety.is_sun_loving
         form.ground_ph.data = plant_variety.ground_ph
@@ -152,6 +162,11 @@ def edit(uuid: str):
         plant_variety.watering_info = form.watering_info.data
         plant_variety.planting_min_temperature = form.planting_min_temperature.data
         plant_variety.planting_max_temperature = form.planting_max_temperature.data
+        plant_variety.min_size = form.min_size.data
+        plant_variety.max_size = form.max_size.data
+        plant_variety.humidity_percentage = form.humidity_percentage.data
+        plant_variety.water_volume = form.water_volume.data
+        plant_variety.care_type = form.care_type.data
         plant_variety.is_moisture_loving = form.is_moisture_loving.data
         plant_variety.is_sun_loving = form.is_sun_loving.data
         plant_variety.ground_ph = form.ground_ph.data
@@ -179,3 +194,54 @@ def edit(uuid: str):
         return redirect(url_for("plant_variety.get_all"))
 
     return render_template("plant_variety/edit_form.html", form=form, plant_variety=plant_variety)
+
+
+@bp.route("/<uuid>/programs", methods=["GET"])
+@login_required
+def programs(uuid: str):
+    plant_variety = db.session.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == uuid))
+    if not plant_variety:
+        log(log.INFO, "Error can't find plant_variety uuid:[%s]", uuid)
+        flash("Plant family not exist!", "danger")
+        return redirect(url_for("plant_variety.get_all"))
+
+    programs = plant_variety.programs
+
+    return render_template("plant_variety/plant_variety_programs.html", programs=programs, uuid=uuid)
+
+
+@bp.route("/<uuid>/programs/add", methods=["GET", "POST"])
+@login_required
+def add_program(uuid: str):
+    plant_variety = db.session.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == uuid))
+    if not plant_variety:
+        log(log.INFO, "Error can't find plant_variety uuid:[%s]", uuid)
+        flash("Plant family not exist!", "danger")
+        return redirect(url_for("plant_variety.get_all"))
+
+    form = f.PlantProgramForm()
+    if request.method == "POST" and form.validate_on_submit():
+        new_program = m.PlantingProgram(
+            planting_time=form.planting_time.data, harvest_time=form.harvest_time.data, plant_variety=plant_variety
+        )
+        steps_data = tuple(
+            zip(request.form.getlist("step_type_id"), request.form.getlist("day"), request.form.getlist("instruction"))
+        )
+        for step in steps_data:
+            step_type_id, day, instruction = step
+            step_type = db.session.get(m.PlantingStepType, step_type_id)
+            if not step_type:
+                log(log.ERROR, "can't find step type step_type_id:[%s]", step_type_id)
+                flash("Error can't find step type", "danger")
+                return redirect(url_for("plant_variety.programs", uuid=uuid))
+
+            new_step = m.PlantingStep(day=day, instruction=instruction, step_type=step_type)
+            new_program.steps.append(new_step)
+
+        new_program.save()
+
+        return redirect(url_for("plant_variety.programs", uuid=uuid))
+    if form.errors:
+        flash(f"Form error: {form.errors}", "danger")
+
+    return render_template("planting_program/add.html", form=form, uuid=uuid)

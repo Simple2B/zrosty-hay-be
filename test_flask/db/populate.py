@@ -107,6 +107,10 @@ def create_plant_varieties() -> list[m.PlantFamily]:
         plant_variety = m.PlantVariety(
             name=f"PlantVariety_{index}",
             plant_family_id=faker.random_choices(elements=plant_families, length=1)[0].id,
+            min_size=1,
+            max_size=10,
+            humidity_percentage=70,
+            water_volume=30,
         )
         db.session.add(plant_variety)
         plant_variety.pests.extend(faker.random_choices(elements=pests, length=3))
@@ -114,3 +118,14 @@ def create_plant_varieties() -> list[m.PlantFamily]:
         plant_varieties.append(plant_variety)
     db.session.commit()
     return plant_varieties
+
+
+def create_planting_step_type() -> list[m.PlantingStepType]:
+    step_types = []
+    for index in range(10):
+        step_type = m.PlantingStepType(name=f"Need sun {index}")
+        db.session.add(step_type)
+        step_types.append(step_type)
+    db.session.commit()
+
+    return step_types

@@ -8,7 +8,7 @@ from app import create_app, db
 from app import models as m
 from app import schema as s
 from test_flask.utils import login, register
-from .db import FakeData, create_plant_varieties, get_plant_families
+from .db import FakeData, create_plant_varieties, get_plant_families, create_planting_step_type
 from app import s3bucket
 
 load_dotenv("test_flask/test.env")
@@ -70,6 +70,7 @@ def add_fake_data() -> FakeData:
     return FakeData(
         plant_families=get_plant_families(),
         plant_varieties=create_plant_varieties(),
+        planting_step_types=create_planting_step_type(),
     )
 
 

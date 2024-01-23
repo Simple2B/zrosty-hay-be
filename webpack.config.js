@@ -46,6 +46,7 @@ const pestConfig = {
   },
 };
 
+
 const slideShowConfig = {
   entry: {
     main: './src/slideshow.ts',
@@ -56,7 +57,7 @@ const slideShowConfig = {
   },
 };
 
-const configs = [baseConfig, userConfig, pestConfig, slideShowConfig].map(conf =>
+const configs = [baseConfig, userConfig, pestConfig,  slideShowConfig].map(conf =>
   merge(defaultConfig, conf),
 );
 
