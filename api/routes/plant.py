@@ -27,7 +27,7 @@ def get_all(query_params: s.SearchPlantsQueryParams = Depends(), db: Session = D
     if query_params.type_of:
         query = query.join(m.PlantFamily).where(m.PlantFamily.type_of == query_params.type_of.value)
 
-    return paginate(db, query.order_by(m.PlantFamily.created_at.desc()))
+    return paginate(db, query)
 
 
 @plant_router.get(

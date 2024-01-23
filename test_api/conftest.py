@@ -29,6 +29,12 @@ def db(test_data: TestData) -> Generator[orm.Session, None, None]:
                 password=test_user.password,
             )
             session.add(user)
+
+        for plant_family in test_data.plant_families:
+            session.add(m.PlantFamily(**plant_family.model_dump()))
+        for plant_variety in test_data.plant_varieties:
+            session.add(m.PlantVariety(**plant_variety.model_dump()))
+
         session.commit()
 
         def override_get_db() -> Generator:
