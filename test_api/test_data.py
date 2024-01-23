@@ -10,6 +10,8 @@ class TestUser(BaseModel):
 
 
 class TestPlantFamily(BaseModel):
+    __test__ = False
+
     id: int
     name: str
     type_of: str
@@ -17,6 +19,8 @@ class TestPlantFamily(BaseModel):
 
 
 class TestPlantVariety(BaseModel):
+    __test__ = False
+
     plant_family_id: int
     name: str
     features: str
