@@ -16,11 +16,18 @@ plant_router = APIRouter(prefix="/plants", tags=["Plants"])
 
 
 @plant_router.get("/", status_code=status.HTTP_200_OK, response_model=Page[s.Plant])
-def get_all(db: Session = Depends(get_db)):
+def get_all(query_params: s.SearchPlantsQueryParams = Depends(), db: Session = Depends(get_db)):
     """Returns the plants"""
     log(log.INFO, "Get plants")
+    query = sa.select(m.PlantVariety)
+    if query_params.name:
+        query = query.where(m.PlantVariety.name.ilike(f"%{query_params.name}%"))
+    if query_params.can_plant_indoors is not None:
+        query = query.where(m.PlantVariety.can_plant_indoors.is_(query_params.can_plant_indoors))
+    if query_params.type_of:
+        query = query.join(m.PlantFamily).where(m.PlantFamily.type_of == query_params.type_of.value)
 
-    return paginate(db, sa.select(m.PlantVariety).order_by(m.PlantVariety.created_at))
+    return paginate(db, query.order_by(m.PlantFamily.created_at.desc()))
 
 
 @plant_router.get(
@@ -32,6 +39,7 @@ def get(uuid: str, db: Session = Depends(get_db)):
 
     plant = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == uuid))
     if not plant or plant.is_deleted:
+        log(log.ERROR, "Not found plant: [%s]", uuid)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Plant not found",

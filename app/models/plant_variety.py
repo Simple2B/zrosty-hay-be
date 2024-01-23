@@ -51,8 +51,8 @@ class PlantVariety(db.Model, ModelMixin):
     general_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
     temperature_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
     watering_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
-    planting_min_temperature: orm.Mapped[float | None] = orm.mapped_column()
-    planting_max_temperature: orm.Mapped[float | None] = orm.mapped_column()
+    min_temperature: orm.Mapped[float | None] = orm.mapped_column()
+    max_temperature: orm.Mapped[float | None] = orm.mapped_column()
 
     min_size: orm.Mapped[float] = orm.mapped_column()
     max_size: orm.Mapped[float] = orm.mapped_column()
@@ -77,6 +77,11 @@ class PlantVariety(db.Model, ModelMixin):
     programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
+    def photo(self) -> str | None:  # type:ignore
+        if self.photos:
+            return self.photos[0]
+
+    @property
     def watering(self) -> CareType:
         if self.water_volume < 500:
             return CareType.easy
@@ -84,14 +89,6 @@ class PlantVariety(db.Model, ModelMixin):
             return CareType.normal
         else:
             return CareType.hard
-
-    @property
-    def size(self) -> str:
-        return f"{self.max_size}-{self.max_size}"
-
-    @property
-    def temperature(self) -> str:
-        return f"{self.planting_min_temperature}-{self.planting_max_temperature}°C"
 
     @property
     def photos(self) -> List["Photo"]:
