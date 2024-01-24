@@ -6,3 +6,9 @@
 .text-danger {
     color: red;
 }
+
+label:has(+ *:required):after,
+label:has(~ div *:required):after {
+  content: ' *';
+  color: red;
+}

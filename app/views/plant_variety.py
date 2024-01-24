@@ -71,8 +71,8 @@ def add():
             general_info=form.general_info.data,
             temperature_info=form.temperature_info.data,
             watering_info=form.watering_info.data,
-            planting_min_temperature=form.planting_min_temperature.data,
-            planting_max_temperature=form.planting_max_temperature.data,
+            min_temperature=form.min_temperature.data,
+            max_temperature=form.max_temperature.data,
             min_size=form.min_size.data,
             max_size=form.max_size.data,
             humidity_percentage=form.humidity_percentage.data,
@@ -130,11 +130,11 @@ def edit(uuid: str):
         form.general_info.data = plant_variety.general_info
         form.temperature_info.data = plant_variety.temperature_info
         form.watering_info.data = plant_variety.watering_info
-        form.planting_min_temperature.data = plant_variety.planting_min_temperature
-        form.planting_max_temperature.data = plant_variety.planting_max_temperature
-        form.min_size.data = plant_variety.max_size
+        form.min_temperature.data = plant_variety.min_temperature
+        form.max_temperature.data = plant_variety.max_temperature
+        form.min_size.data = plant_variety.min_size
         form.max_size.data = plant_variety.max_size
-        form.humidity_percentage = plant_variety.humidity_percentage
+        form.humidity_percentage.data = plant_variety.humidity_percentage
         form.water_volume.data = plant_variety.water_volume
         form.care_type.data = plant_variety.care_type
         form.is_moisture_loving.data = plant_variety.is_moisture_loving
@@ -160,8 +160,8 @@ def edit(uuid: str):
         plant_variety.general_info = form.general_info.data
         plant_variety.temperature_info = form.temperature_info.data
         plant_variety.watering_info = form.watering_info.data
-        plant_variety.planting_min_temperature = form.planting_min_temperature.data
-        plant_variety.planting_max_temperature = form.planting_max_temperature.data
+        plant_variety.min_temperature = form.min_temperature.data
+        plant_variety.max_temperature = form.max_temperature.data
         plant_variety.min_size = form.min_size.data
         plant_variety.max_size = form.max_size.data
         plant_variety.humidity_percentage = form.humidity_percentage.data

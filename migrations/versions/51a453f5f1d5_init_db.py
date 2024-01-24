@@ -1,8 +1,8 @@
 """init db
 
-Revision ID: 2f34baab056c
+Revision ID: 51a453f5f1d5
 Revises: 
-Create Date: 2024-01-22 12:58:38.260419
+Create Date: 2024-01-24 12:13:12.650386
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2f34baab056c'
+revision = '51a453f5f1d5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -158,8 +158,8 @@ def upgrade():
     sa.Column('general_info', sa.String(length=2048), nullable=False),
     sa.Column('temperature_info', sa.String(length=2048), nullable=False),
     sa.Column('watering_info', sa.String(length=2048), nullable=False),
-    sa.Column('planting_min_temperature', sa.Float(), nullable=True),
-    sa.Column('planting_max_temperature', sa.Float(), nullable=True),
+    sa.Column('min_temperature', sa.Float(), nullable=True),
+    sa.Column('max_temperature', sa.Float(), nullable=True),
     sa.Column('min_size', sa.Float(), nullable=False),
     sa.Column('max_size', sa.Float(), nullable=False),
     sa.Column('humidity_percentage', sa.Float(), nullable=False),
@@ -246,11 +246,11 @@ def upgrade():
     sa.PrimaryKeyConstraint('plant_variety_id', 'pest_id', name=op.f('pk_plant_variety_pests'))
     )
     op.create_table('plant_variety_photos',
-    sa.Column('plant_variety_photo_id', sa.Integer(), nullable=False),
+    sa.Column('plant_variety_id', sa.Integer(), nullable=False),
     sa.Column('photo_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['photo_id'], ['photos.id'], name=op.f('fk_plant_variety_photos_photo_id_photos')),
-    sa.ForeignKeyConstraint(['plant_variety_photo_id'], ['plant_varieties.id'], name=op.f('fk_plant_variety_photos_plant_variety_photo_id_plant_varieties')),
-    sa.PrimaryKeyConstraint('plant_variety_photo_id', 'photo_id', name=op.f('pk_plant_variety_photos'))
+    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_plant_variety_photos_plant_variety_id_plant_varieties')),
+    sa.PrimaryKeyConstraint('plant_variety_id', 'photo_id', name=op.f('pk_plant_variety_photos'))
     )
     op.create_table('plant_variety_recipe',
     sa.Column('recipe_id', sa.Integer(), nullable=False),

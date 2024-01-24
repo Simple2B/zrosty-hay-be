@@ -12,11 +12,10 @@ from app import models as m
 from app import schema as s
 
 from api import app
-from .test_data import TestData
 
 
 @pytest.fixture
-def db(test_data: TestData) -> Generator[orm.Session, None, None]:
+def db(test_data: s.TestData) -> Generator[orm.Session, None, None]:
     from app.database import db, get_db
 
     with db.Session() as session:
@@ -29,6 +28,12 @@ def db(test_data: TestData) -> Generator[orm.Session, None, None]:
                 password=test_user.password,
             )
             session.add(user)
+
+        for plant_family in test_data.plant_families:
+            session.add(m.PlantFamily(**plant_family.model_dump()))
+        for plant_variety in test_data.plant_varieties:
+            session.add(m.PlantVariety(**plant_variety.model_dump()))
+
         session.commit()
 
         def override_get_db() -> Generator:
@@ -48,16 +53,16 @@ def client(db) -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture
-def test_data() -> Generator[TestData, None, None]:
+def test_data() -> Generator[s.TestData, None, None]:
     """Returns a TestData object"""
-    with open("test_api/test_data.json", "r") as f:
-        yield TestData.model_validate_json(f.read())
+    with open("test_data.json", "r") as f:
+        yield s.TestData.model_validate_json(f.read())
 
 
 @pytest.fixture
 def headers(
     client: TestClient,
-    test_data: TestData,
+    test_data: s.TestData,
 ) -> Generator[dict[str, str], None, None]:
     """Returns an authorized test client for the API"""
     user = test_data.test_users[0]

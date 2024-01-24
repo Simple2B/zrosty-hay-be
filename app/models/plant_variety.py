@@ -12,9 +12,9 @@ from .utils import ModelMixin, generate_uuid
 from .plant_variety_illness import plant_variety_illness
 from .plant_variety_pest import plant_variety_pest
 from .plant_variety_photo import plant_variety_photo
+from .photo import Photo
 
 if TYPE_CHECKING:
-    from .photo import Photo
     from .illness import Illness
     from .pest import Pest
     from .plant_family import PlantFamily
@@ -51,8 +51,8 @@ class PlantVariety(db.Model, ModelMixin):
     general_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
     temperature_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
     watering_info: orm.Mapped[str] = orm.mapped_column(sa.String(2048), default="")
-    planting_min_temperature: orm.Mapped[float | None] = orm.mapped_column()
-    planting_max_temperature: orm.Mapped[float | None] = orm.mapped_column()
+    min_temperature: orm.Mapped[float | None] = orm.mapped_column()
+    max_temperature: orm.Mapped[float | None] = orm.mapped_column()
 
     min_size: orm.Mapped[float] = orm.mapped_column()
     max_size: orm.Mapped[float] = orm.mapped_column()
@@ -73,12 +73,33 @@ class PlantVariety(db.Model, ModelMixin):
     )
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_variety_pest, back_populates="plant_varieties")
     family: orm.Mapped["PlantFamily"] = orm.relationship(back_populates="plant_varieties")
-    _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
+    photos: orm.Mapped[List["Photo"]] = orm.relationship(
+        secondary=plant_variety_photo,
+        viewonly=True,
+        secondaryjoin=sa.and_(
+            plant_variety_photo.c.plant_variety_id == id,
+            plant_variety_photo.c.photo_id == Photo.id,
+            Photo.is_deleted.is_(False),
+        ),
+    )
+    _photos: orm.Mapped[List["Photo"]] = orm.relationship(
+        secondary=plant_variety_photo,
+    )
     programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
-    def photos(self) -> List["Photo"]:
-        return [photo for photo in self._photos if not photo.is_deleted]
+    def photo(self) -> str | None:  # type:ignore
+        if self.photos:
+            return self.photos[0]
+
+    @property
+    def watering(self) -> CareType:
+        if self.water_volume < 500:
+            return CareType.easy
+        elif self.water_volume < 1000:
+            return CareType.normal
+        else:
+            return CareType.hard
 
     def __repr__(self):
         return f"<Id: {self.id}, PlantVariety: {self.name}>"

@@ -15,20 +15,21 @@ def init(app: Flask):
         """Objects exposed here will be automatically available from the shell."""
         return dict(app=app, db=db, m=m, f=forms, s=s, sa=sa, orm=orm)
 
-    if app.config["ENV"] != "production":
+    @app.cli.command()
+    @click.option("--count", default=100, type=int)
+    def db_populate(count: int):
+        """Fill DB by dummy data."""
 
-        @app.cli.command()
-        @click.option("--count", default=100, type=int)
-        def db_populate(count: int):
-            """Fill DB by dummy data."""
-            from test_flask.db import (
-                create_plant_varieties,
-            )
+        with open("test_data.json", "r") as f:
+            data = s.TestData.model_validate_json(f.read())
+        for plant_family in data.plant_families:
+            db.session.add(m.PlantFamily(**plant_family.model_dump()))
+        for plant_variety in data.plant_varieties:
+            db.session.add(m.PlantVariety(**plant_variety.model_dump()))
 
-            # populate(count)
-            create_plant_varieties()
+        db.session.commit()
 
-            print(f"DB populated by {count} instancies")
+        print("DB populated successful")
 
     @app.cli.command("create-admin")
     def create_admin():
