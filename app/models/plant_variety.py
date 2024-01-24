@@ -12,9 +12,9 @@ from .utils import ModelMixin, generate_uuid
 from .plant_variety_illness import plant_variety_illness
 from .plant_variety_pest import plant_variety_pest
 from .plant_variety_photo import plant_variety_photo
+from .photo import Photo
 
 if TYPE_CHECKING:
-    from .photo import Photo
     from .illness import Illness
     from .pest import Pest
     from .plant_family import PlantFamily
@@ -73,7 +73,18 @@ class PlantVariety(db.Model, ModelMixin):
     )
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_variety_pest, back_populates="plant_varieties")
     family: orm.Mapped["PlantFamily"] = orm.relationship(back_populates="plant_varieties")
-    _photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=plant_variety_photo)
+    photos: orm.Mapped[List["Photo"]] = orm.relationship(
+        secondary=plant_variety_photo,
+        viewonly=True,
+        secondaryjoin=sa.and_(
+            plant_variety_photo.c.plant_variety_id == id,
+            plant_variety_photo.c.photo_id == Photo.id,
+            Photo.is_deleted.is_(False),
+        ),
+    )
+    _photos: orm.Mapped[List["Photo"]] = orm.relationship(
+        secondary=plant_variety_photo,
+    )
     programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
 
     @property
@@ -89,10 +100,6 @@ class PlantVariety(db.Model, ModelMixin):
             return CareType.normal
         else:
             return CareType.hard
-
-    @property
-    def photos(self) -> List["Photo"]:
-        return [photo for photo in self._photos if not photo.is_deleted]
 
     def __repr__(self):
         return f"<Id: {self.id}, PlantVariety: {self.name}>"
