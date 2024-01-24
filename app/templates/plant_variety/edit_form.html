@@ -9,80 +9,58 @@
             <div>
                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Name</label>
-                <input type="text" id="name" name="name"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter name" value="{{ form.name.data }}" required>
+                {{ form.name(class_="w-full rounded-lg") }}
             </div>
             <span></span>
             <div>
                 <label for="features" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Features</label>
-                <textarea rows="4" name="features"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter features ...">{{ form.features.data }}</textarea>
+                {{ form.features(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="general_info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     General info</label>
-                <textarea rows="4" name="general_info"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter general info...">{{ form.general_info.data }}</textarea>
+                {{ form.general_info(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="temperature_info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Temperature info</label>
-                <textarea name="temperature_info" rows="4"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter temperature info...">{{ form.temperature_info.data }}</textarea>
+                {{ form.temperature_info(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="watering_info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Watering info</label>
-                <textarea name="watering_info" rows="4"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter watering info...">{{ form.watering_info.data }}</textarea>
+                {{ form.watering_info(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="min_temperature" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Planting min temperature</label>
-                <input type="number" name="min_temperature" step="0.01" value="{{ form.min_temperature.data }}"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0">
+                {{ form.min_temperature(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="max_temperature" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Planting max temperature</label>
-                <input type="number" name="max_temperature" step="0.01" value="{{ form.max_temperature.data }}"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0">
+                {{ form.max_temperature(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="min_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Min size</label>
-                <input type="number" name="min_size" step="0.01"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0" value="{{ form.min_size.data }}">
+                {{ form.min_size(class_="w-full rounded-lg")}}
             </div>
             <div>
                 <label for="max_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Max size</label>
-                <input type="number" name="max_size" step="0.01"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0" value="{{ form.max_size.data }}">
+                {{ form.max_size(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="humidity_percentage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Humidity percentage</label>
-                <input type="number" name="humidity_percentage" step="0.01"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0" value="{{ form.humidity_percentage.data }}">
+                {{ form.humidity_percentage(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="water_volume" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Water volume</label>
-                <input type="number" name="water_volume" step="0.01"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0" value="{{ form.water_volume.data }}">
+                {{ form.water_volume(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="care_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -91,26 +69,21 @@
             </div>
             <div class="flex items-start mb-6">
                 <div class="flex items-center h-5">
-                    <input name="is_moisture_loving"
-                        type="checkbox" "{% if form.is_moisture_loving.data %} checked {% endif %}"
-                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                    {{ form.is_moisture_loving }}
                 </div>
                 <label for="is_moisture_loving" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Is
                     moisture loving</label>
             </div>
             <div class="flex items-start mb-6">
                 <div class="flex items-center h-5">
-                    <input name="can_plant_indoors"
-                        type="checkbox" "{% if form.can_plant_indoors.data %} checked {% endif %}"
-                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                    {{ form.can_plant_indoors }}
                 </div>
                 <label for="can_plant_indoors" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Can
                     plant indoors</label>
             </div>
             <div class="flex items-start mb-6">
                 <div class="flex items-center h-5">
-                    <input name="is_sun_loving" type="checkbox" "{% if form.is_sun_loving.data %} checked {% endif %}"
-                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                    {{ form.is_sun_loving }}
                 </div>
                 <label for="is_sun_loving" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">is sun
                     loving</label>
@@ -118,16 +91,12 @@
             <div>
                 <label for="ground_ph" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Ground ph</label>
-                <input type="number" name="ground_ph" value="{{ form.ground_ph.data }}"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="0" required>
+                {{ form.ground_ph(class_="w-full rounded-lg") }}
             </div>
             <div>
                 <label for="ground_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Ground type</label>
-                <input type="text" name="ground_type" value="{{ form.ground_type.data }}"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter ground type">
+                {{ form.ground_type(class_="w-full rounded-lg") }}
             </div>
 
             <div class="col-span-6 sm:col-span-2">

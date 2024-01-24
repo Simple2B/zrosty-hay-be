@@ -12,7 +12,6 @@ class TestUser(BaseModel):
 class TestPlantFamily(BaseModel):
     __test__ = False
 
-    id: int
     name: str
     type_of: str
     features: str

@@ -14,31 +14,24 @@
                     <div class="col-span-6 sm:col-span-3">
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                        <input type="text" name="name"
-                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Name" required />
+                        {{ form.name(class_="rounded-lg") }}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="reason"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
-                        <textarea name="reason"
-                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024" placeholder="Enter reason"></textarea>
+                        {{ form.reason(class_="rounded-lg w-full") }}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="symptoms"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Symptoms</label>
-                        <textarea name="symptoms"
-                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024" placeholder="Enter symptoms"></textarea>
+                        {{ form.symptoms(class_="rounded-lg w-full") }}
+
 
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="treatment"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Treatment</label>
-                        <textarea name="treatment"
-                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            minlength="3" maxlength="1024" placeholder="Enter treatment"></textarea>
+                        {{ form.treatment(class_="rounded-lg w-full") }}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
