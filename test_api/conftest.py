@@ -28,7 +28,8 @@ def db(test_data: s.TestData) -> Generator[orm.Session, None, None]:
                 password=test_user.password,
             )
             session.add(user)
-
+        for category in test_data.categories:
+            session.add(m.PlantCategory(**category.model_dump()))
         for plant_family in test_data.plant_families:
             session.add(m.PlantFamily(**plant_family.model_dump()))
         for plant_variety in test_data.plant_varieties:

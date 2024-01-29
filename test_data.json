@@ -16,140 +16,123 @@
       "password": "1234"
     }
   ],
+  "categories": [
+    {
+      "name": "fruit",
+      "svg_icon": "fruit"
+    },
+    {
+      "name": "vegetable",
+      "svg_icon": "vegetable"
+    }
+  ],
   "plant_families": [
     {
       "name": "Томат",
-      "type_of": "vegetable",
       "features": "Червоний і соковитий"
     },
     {
       "name": "Банан",
-      "type_of": "fruit",
       "features": "Жовтий і багатий калієм"
     },
     {
       "name": "Полуниця",
-      "type_of": "berry",
       "features": "Маленька, солодка і у формі серця"
     },
     {
       "name": "Шпинат",
-      "type_of": "vegetable",
       "features": "Темно-зелений листовий овоч"
     },
     {
       "name": "Апельсин",
-      "type_of": "fruit",
       "features": "Цитрусовий фрукт з вітаміном C"
     },
     {
       "name": "Малина",
-      "type_of": "berry",
       "features": "Червона, соковита і трошки кисла"
     },
     {
       "name": "Огірок",
-      "type_of": "vegetable",
       "features": "Свіжий і освіжаючий"
     },
     {
       "name": "Манго",
-      "type_of": "fruit",
       "features": "Тропічний фрукт зі солодким смаком"
     },
     {
       "name": "Ожина",
-      "type_of": "berry",
       "features": "Темно-фіолетова, солодка і насінниста"
     },
     {
       "name": "Брокколі",
-      "type_of": "vegetable",
       "features": "Зелений овоч з формою схожою на дерево"
     },
     {
       "name": "Ананас",
-      "type_of": "fruit",
       "features": "Тропічний фрукт із колючою зовнішністю"
     },
     {
       "name": "Клюква",
-      "type_of": "berry",
       "features": "Маленька, кисла і яскраво-червона"
     },
     {
       "name": "Перець",
-      "type_of": "vegetable",
       "features": "Кольоровий і хрусткий"
     },
     {
       "name": "Виноград",
-      "type_of": "fruit",
       "features": "Суцільні грона солодких і соковитих ягід"
     },
     {
       "name": "Вишня",
-      "type_of": "berry",
       "features": "Маленька, солодка і зазвичай червона"
     },
     {
       "name": "Цукіні",
-      "type_of": "vegetable",
       "features": "Невиразний смак літньої кабачки"
     },
     {
       "name": "Груша",
-      "type_of": "fruit",
       "features": "Солодка і зерниста на дотик"
     },
     {
       "name": "Кисличка",
-      "type_of": "berry",
       "features": "Кисла і прозора ягода"
     },
     {
       "name": "Аспарагус",
-      "type_of": "vegetable",
       "features": "Ніжні зелені стрічки"
     },
     {
       "name": "Гранат",
-      "type_of": "fruit",
       "features": "Багатий антиоксидантами з унікальним смаком"
     },
     {
       "name": "Чорниця",
-      "type_of": "berry",
       "features": "Солодка і синя, особливість - великий розмір та смакові якості"
     },
     {
       "name": "Капуста",
-      "type_of": "vegetable",
       "features": "Соковита і хрустка, білокачанна або листова"
     },
     {
       "name": "Персик",
-      "type_of": "fruit",
       "features": "Солодкий і соковитий, має м'яку шкірку"
     },
     {
       "name": "Авокадо",
-      "type_of": "fruit",
       "features": "Кремове м'ясо та гладенька шкірка, багатий здоровими жирами"
     },
     {
       "name": "Кавун",
-      "type_of": "fruit",
       "features": "Солодкий і соковитий, має червоний або рожевий м'якуш"
     },
     {
       "name": "Лайм",
-      "type_of": "fruit",
       "features": "Кислуватий і освіжаючий, зеленого кольору"
     },
     {
       "name": "Артишок",
-      "type_of": "vegetable",
       "features": "Споживається цвітом, має м'яку серцевину та волокнисті зовнішні луски"
     }
   ],

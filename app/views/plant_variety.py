@@ -43,6 +43,8 @@ def add():
             sa.select(m.PlantFamily.id, m.PlantFamily.name).where(m.PlantFamily.is_deleted.is_(False))
         ).all()
 
+        form.categories.choices = db.session.scalars(sa.select(m.PlantCategory.name)).all()
+
         form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
         form.illnesses.choices = db.session.scalars(
             sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
@@ -62,6 +64,15 @@ def add():
             )
             flash("Plant family not exist!", "danger")
             return redirect(url_for("plant_variety.get_all"))
+
+        family_categories = plant_family.categories
+
+        categories = db.session.scalars(
+            sa.select(m.PlantCategory).where(
+                m.PlantCategory.name.in_(form.categories.data),
+                m.PlantCategory.id.not_in([category.id for category in family_categories]),
+            )
+        ).all()
         pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
         illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
         plant_variety = m.PlantVariety(
@@ -84,6 +95,7 @@ def add():
             ground_type=form.ground_type.data,
             can_plant_indoors=form.can_plant_indoors.data,
         )
+        plant_variety.categories.extend(categories)
         plant_variety.pests.extend(pests)
         plant_variety.illnesses.extend(illness)
 
@@ -122,6 +134,14 @@ def edit(uuid: str):
 
     if request.method == "GET":
         form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
+        form.categories.choices = db.session.scalars(
+            sa.select(
+                m.PlantCategory.name,
+            ).where(
+                m.PlantCategory.id.not_in([category.id for category in plant_variety.family.categories]),
+            )
+        ).all()
+
         form.illnesses.choices = db.session.scalars(
             sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))
         ).all()
@@ -144,6 +164,7 @@ def edit(uuid: str):
         form.can_plant_indoors.data = plant_variety.can_plant_indoors
         form.pests.data = [pest.name for pest in plant_variety.pests]
         form.illnesses.data = [illness.name for illness in plant_variety.illnesses]
+        form.categories.data = [category.name for category in plant_variety.categories]
 
     if request.method == "POST" and form.validate_on_submit():
         if form.name.data and db.session.scalar(
@@ -153,8 +174,17 @@ def edit(uuid: str):
             flash("Plan Variety name already exist!", "danger")
             return redirect(url_for("plant_variety.get_all"))
 
+        categories = db.session.scalars(
+            sa.select(m.PlantCategory).where(
+                m.PlantCategory.name.in_(form.categories.data),
+                m.PlantCategory.id.not_in([category.id for category in plant_variety.family.categories]),
+            )
+        ).all()
         pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
         illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data))).all()
+        plant_variety.pests = pests
+        plant_variety.illnesses = illness
+        plant_variety.categories = categories
         plant_variety.name = form.name.data
         plant_variety.features = form.features.data
         plant_variety.general_info = form.general_info.data
@@ -172,8 +202,6 @@ def edit(uuid: str):
         plant_variety.ground_ph = form.ground_ph.data
         plant_variety.ground_type = form.ground_type.data
         plant_variety.can_plant_indoors = form.can_plant_indoors.data
-        plant_variety.pests = pests
-        plant_variety.illnesses = illness
 
         for photo in form.photos.data:
             try:

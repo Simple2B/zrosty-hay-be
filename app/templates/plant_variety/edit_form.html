@@ -104,6 +104,11 @@
                     photos</label>
                 {{ form.photos }}
             </div>
+            <div class="col-span-6 sm:col-span-2">
+                <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.categories.label }}</label>
+                {{ form.categories }}
+            </div>
         </div>
         {% if plant_variety.photos %}
         {{ slidesShow(plant_variety.photos) }}

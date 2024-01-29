@@ -20,3 +20,12 @@ def test_plant_route(db, client: TestClient):
     assert res.status_code == 200
     plant_detail = s.PlantDetail.model_validate(res.json())
     assert plant_detail
+
+
+@pytest.mark.skipif(not CFG.IS_API, reason="API is not enabled")
+def test_get_categories(db, client: TestClient):
+    res = client.get("/api/plants/categories")
+
+    assert res.status_code == 200
+    plant = s.PlantCategory.model_validate(res.json()[0])
+    assert plant

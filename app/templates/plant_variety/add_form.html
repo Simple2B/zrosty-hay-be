@@ -113,8 +113,14 @@
                     photos</label>
                 {{ form.photos }}
             </div>
+            <div class="col-span-6 sm:col-span-2">
+                <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
+                    Categories</label>
+                {{ form.categories }}
+            </div>
         </div>
         <div class="w-full flex justify-around">
+
             <div class="h-60 overflow-y-auto">
                 <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pests</label>
                 <div>{{ form.pests }}</div>

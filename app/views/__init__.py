@@ -9,3 +9,4 @@ from .plant_variety import bp as plant_varieties_blueprint
 from .photo import bp as photos_blueprint
 from .planting_program import bp as planting_program_blueprint
 from .planting_step_type import bp as planting_step_type_blueprint
+from .plant_category import bp as plant_category_blueprint

@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict, Field
-from fastapi import Query
 
 import app.models as m
 from .photo import Photo
@@ -34,9 +33,9 @@ class PlantDetail(BasePlant):
     photos: list[Photo]
 
 
-class SearchPlantsQueryParams(BaseModel):
-    name: str = Query("", max_length=64)
-    can_plant_indoors: None | bool = Query(None)
-    type_of: None | m.PlantFamilyType = Query(None)
+class PlantCategory(BaseModel):
+    uuid: str
+    name: str
+    svg_icon: str = Field(alias="svgIcon")
 
-    model_config = ConfigDict(use_enum_values=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)

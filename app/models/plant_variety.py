@@ -11,12 +11,14 @@ from .utils import ModelMixin, generate_uuid
 
 from .plant_variety_illness import plant_variety_illness
 from .plant_variety_pest import plant_variety_pest
+from .plant_variety_category import plant_variety_category
 from .plant_variety_photo import plant_variety_photo
 from .photo import Photo
 
 if TYPE_CHECKING:
     from .illness import Illness
     from .pest import Pest
+    from .plant_category import PlantCategory
     from .plant_family import PlantFamily
     from .planting_program import PlantingProgram
 
@@ -86,6 +88,7 @@ class PlantVariety(db.Model, ModelMixin):
         secondary=plant_variety_photo,
     )
     programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
+    categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(secondary=plant_variety_category)
 
     @property
     def photo(self) -> str | None:  # type:ignore

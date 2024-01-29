@@ -47,6 +47,7 @@ class PlantVarietyForm(UploadPhotoForm, FlaskForm):
 
     care_type = SelectField("care_type", [DataRequired()], choices=[(care.name, care.value) for care in CareType])
 
+    categories = MultiCheckboxField("categories", choices=[], validate_choice=False)
     pests = MultiCheckboxField("pests", choices=[], validate_choice=False)
     illnesses = MultiCheckboxField("illnesses", choices=[], validate_choice=False)
 
