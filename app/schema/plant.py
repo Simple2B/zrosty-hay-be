@@ -1,7 +1,4 @@
-from typing import List
-
 from pydantic import BaseModel, ConfigDict, Field
-from fastapi import Query
 
 import app.models as m
 from .photo import Photo
