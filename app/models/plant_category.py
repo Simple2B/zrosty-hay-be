@@ -38,4 +38,4 @@ class PlantCategory(db.Model, ModelMixin):
     )
 
     def __repr__(self):
-        return f"<Id: {self.id}, PlantFamily: {self.name}>"
+        return f"<Id: {self.id}, Category: {self.name}>"

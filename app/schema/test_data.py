@@ -13,7 +13,6 @@ class TestPlantFamily(BaseModel):
     __test__ = False
 
     name: str
-    type_of: str
     features: str
 
 
@@ -40,10 +39,18 @@ class TestPlantVariety(BaseModel):
     can_plant_indoors: bool
 
 
+class TestPlantCategory(BaseModel):
+    __test__ = False
+
+    name: str
+    svg_icon: str
+
+
 class TestData(BaseModel):
     __test__ = False
 
     test_users: list[TestUser]
 
+    categories: list[TestPlantCategory]
     plant_families: list[TestPlantFamily]
     plant_varieties: list[TestPlantVariety]

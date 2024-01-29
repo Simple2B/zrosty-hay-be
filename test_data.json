@@ -16,6 +16,16 @@
       "password": "1234"
     }
   ],
+  "categories": [
+    {
+      "name": "fruit",
+      "svg_icon": "fruit"
+    },
+    {
+      "name": "vegetable",
+      "svg_icon": "vegetable"
+    }
+  ],
   "plant_families": [
     {
       "name": "Томат",
