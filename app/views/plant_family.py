@@ -46,6 +46,7 @@ def get_all():
 @login_required
 def create():
     form = f.PlantFamilyForm()
+    form.categories.choices = db.session.scalars(sa.select(m.PlantCategory.name)).all()
     form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
     form.illnesses.choices = db.session.scalars(sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
@@ -55,9 +56,13 @@ def create():
         return redirect(url_for("plant_family.get_all"))
 
     if request.method == "POST" and form.validate_on_submit():
+        categories = db.session.scalars(
+            sa.select(m.PlantCategory).where(m.PlantCategory.name.in_(form.categories.data))
+        )
         pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
         illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
-        plant_family = m.PlantFamily(name=form.name.data, features=form.name.data, type_of=form.type_of.data)
+        plant_family = m.PlantFamily(name=form.name.data, features=form.name.data)
+        plant_family.categories.extend(categories)
         plant_family.pests.extend(pests)
         plant_family.illnesses.extend(illness)
         flash("PlantFamily added!", "success")
@@ -76,6 +81,7 @@ def create():
 @login_required
 def detail(plant_family_id: int):
     form = f.PlantFamilyForm()
+    form.categories.choices = db.session.scalars(sa.select(m.PlantCategory.name)).all()
     form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
     form.illnesses.choices = db.session.scalars(sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
@@ -98,7 +104,10 @@ def detail(plant_family_id: int):
             return redirect(url_for("plant_family.get_all"))
         plant_family.name = form.name.data
         plant_family.features = form.features.data
-        plant_family.type_of = form.type_of.data
+
+        new_categories = db.session.scalars(
+            sa.select(m.PlantCategory).where(m.PlantCategory.name.in_(form.categories.data))
+        ).all()
 
         new_pests = db.session.scalars(
             sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data), m.Pest.is_deleted.is_(False))
@@ -110,6 +119,7 @@ def detail(plant_family_id: int):
 
         plant_family.pests = new_pests
         plant_family.illnesses = new_illnesses
+        plant_family.categories = new_categories
         log(log.INFO, "Plant_family updated! [%s]", plant_family)
         flash("Plant family updated!", "success")
         plant_family.save()
@@ -123,6 +133,6 @@ def detail(plant_family_id: int):
     form.features.data = plant_family.features
     form.pests.data = [pest.name for pest in plant_family.pests]
     form.illnesses.data = [illness.name for illness in plant_family.illnesses]
-    form.type_of.data = plant_family.type_of
+    form.categories.data = [category.name for category in plant_family.categories]
 
     return render_template("plant_family/modal_form.html", form=form, plant_family_id=plant_family.id)

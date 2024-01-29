@@ -25,9 +25,13 @@
           {{ form.features(class_="rounded-lg w-full") }}
         </div>
       </div>
-      <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
-        {{ form.type_of.label }}</label>
-      {{ form.type_of(class_="rounded-lg w-full")}}
+      <div class="p-2">
+        <div>Categories</div>
+        <div
+          class="max-h-24 p-2.5 overflow-y-auto shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          {{ form.categories }}
+        </div>
+      </div>
       <div class="p-2">
         <div>Pests</div>
         <div

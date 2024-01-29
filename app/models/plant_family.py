@@ -43,7 +43,7 @@ class PlantFamily(db.Model, ModelMixin):
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_family_pest, back_populates="plant_families")
     plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(back_populates="family")
     categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(
-        secondary=plant_family_category,
+        secondary=plant_family_category, back_populates="plant_families"
     )
 
     def __repr__(self):
