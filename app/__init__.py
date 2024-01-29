@@ -30,6 +30,7 @@ def create_app(environment="development"):
         photos_blueprint,
         planting_program_blueprint,
         planting_step_type_blueprint,
+        plant_category_blueprint,
     )
     from app import models as m
 
@@ -61,6 +62,7 @@ def create_app(environment="development"):
     app.register_blueprint(photos_blueprint)
     app.register_blueprint(planting_program_blueprint)
     app.register_blueprint(planting_step_type_blueprint)
+    app.register_blueprint(plant_category_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader

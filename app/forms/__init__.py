@@ -8,3 +8,4 @@ from .plant_variety import PlantVarietyForm, PlantFamilyAddForm
 from .photo import UploadPhotoForm
 from .planting_program import PlantProgramForm, StepForm
 from .planting_step_type import PlantingStepTypeForm
+from .plant_category import PlantCategoryForm

@@ -1,4 +1,3 @@
-import enum
 from typing import List, TYPE_CHECKING
 from datetime import datetime
 
@@ -10,17 +9,13 @@ from app.database import db
 from .utils import ModelMixin, generate_uuid
 from .plant_family_illness import plant_family_illness
 from .plant_family_pest import plant_family_pest
+from .plant_family_category import plant_family_category
 
 if TYPE_CHECKING:
     from .plant_variety import PlantVariety
+    from .plant_category import PlantCategory
     from .illness import Illness
     from .pest import Pest
-
-
-class PlantFamilyType(enum.Enum):
-    vegetable = "vegetable"
-    fruit = "fruit"
-    berry = "berry"
 
 
 class PlantFamily(db.Model, ModelMixin):
@@ -41,15 +36,15 @@ class PlantFamily(db.Model, ModelMixin):
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
     features: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
 
-    # enum value
-    type_of: orm.Mapped[str] = orm.mapped_column(sa.String(16))
-
     # Relationships
     illnesses: orm.Mapped[List["Illness"]] = orm.relationship(
         secondary=plant_family_illness, back_populates="plant_families"
     )
     pests: orm.Mapped[List["Pest"]] = orm.relationship(secondary=plant_family_pest, back_populates="plant_families")
     plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(back_populates="family")
+    categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(
+        secondary=plant_family_category,
+    )
 
     def __repr__(self):
         return f"<Id: {self.id}, PlantFamily: {self.name}>"

@@ -25,7 +25,6 @@ def test_plant_families_cru(login_client: FlaskClient, add_fake_data: FakeData):
     plant_family_data = dict(
         name="test plant family",
         features="test plant family features",
-        type_of=m.PlantFamilyType.vegetable.value,
         pests=pest_names,
         illnesses=illness_names,
     )

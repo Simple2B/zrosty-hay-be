@@ -37,6 +37,6 @@ class PlantDetail(BasePlant):
 class SearchPlantsQueryParams(BaseModel):
     name: str = Query("", max_length=64)
     can_plant_indoors: None | bool = Query(None)
-    type_of: None | m.PlantFamilyType = Query(None)
+    # type_of: None | m.PlantFamilyType = Query(None)
 
     model_config = ConfigDict(use_enum_values=True)
