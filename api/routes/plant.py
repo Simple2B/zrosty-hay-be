@@ -29,7 +29,12 @@ def get_all(
 
     if category_uuids:
         query = query.join(m.PlantFamily).where(
-            sa.or_(m.PlantVariety.categories.any(m.PlantCategory.uuid.in_(category_uuids)))
+            sa.or_(
+                m.PlantVariety.categories.any(
+                    m.PlantCategory.uuid.in_(category_uuids),
+                ),
+                m.PlantFamily.categories.any(m.PlantCategory.uuid.in_(category_uuids)),
+            )
         )
 
     return paginate(db, query)

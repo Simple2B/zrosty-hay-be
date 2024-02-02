@@ -1,6 +1,8 @@
 import pytest
+import sqlalchemy as sa
 from fastapi.testclient import TestClient
 from app import schema as s
+from app import models as m
 from config import config
 
 CFG = config("testing")
@@ -20,6 +22,15 @@ def test_plant_route(db, client: TestClient):
     assert res.status_code == 200
     plant_detail = s.PlantDetail.model_validate(res.json())
     assert plant_detail
+
+    curPlant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == plant.uuid))
+    categories = db.scalars(sa.select(m.PlantCategory)).all()
+    curPlant.family.categories = categories  # type:ignore
+    db.commit()
+    res = client.get(f"/api/plants/?category_uuids={categories[0].uuid}")
+    assert res.status_code == 200
+    plant = s.Plant.model_validate(items[0])
+    assert plant
 
 
 @pytest.mark.skipif(not CFG.IS_API, reason="API is not enabled")
