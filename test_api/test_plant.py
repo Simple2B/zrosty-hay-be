@@ -1,4 +1,5 @@
 import pytest
+
 import sqlalchemy as sa
 from fastapi.testclient import TestClient
 from app import schema as s
@@ -24,6 +25,13 @@ def test_plant_route(db, client: TestClient):
     assert plant_detail
 
     curPlant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == plant.uuid))
+    curPlant._photos = [m.Photo(url_path="http://example.com", original_name="test.jpg")]
+    db.commit()
+
+    res = client.get(f"/api/plants/{plant.uuid}/photos")
+    assert res.status_code == 200
+    assert res.json()
+
     categories = db.scalars(sa.select(m.PlantCategory)).all()
     curPlant.family.categories = categories  # type:ignore
     db.commit()
