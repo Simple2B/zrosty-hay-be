@@ -30,8 +30,6 @@ class PlantDetail(BasePlant):
     water_volume: float = Field(alias="waterVolume")
     humidity_percentage: float = Field(alias="humidityPercentage")
 
-    # photos: list[Photo]
-
 
 class PlantCategory(BaseModel):
     uuid: str
