@@ -8,7 +8,7 @@ import app.models as m
 from app.logger import log
 
 
-def get_plant(uuid: str, db: Session = Depends(get_db)) -> m.PlantVariety | None:
+def get_plant(uuid: str, db: Session = Depends(get_db)) -> m.PlantVariety:
     """Raises an exception if the plant user not found"""
 
     log(log.INFO, "Get plant: [%s]", uuid)
