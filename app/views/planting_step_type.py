@@ -44,6 +44,7 @@ def create():
     ):
         step_type = m.PlantingStepType(
             name=form.name.data,
+            svg_icon=form.svg_icon.data,
         )
 
         log(log.INFO, "Form submitted. Planting step type: [%s]", step_type)
@@ -73,6 +74,7 @@ def edit(uuid: str):
 
     if request.method == "GET":
         form.name.data = step_type.name
+        form.svg_icon.data = step_type.svg_icon
         return render_template("planting_step_type/edit.html", form=form, step_type=step_type)
 
     if form.validate_on_submit() and not db.session.scalar(
@@ -81,6 +83,7 @@ def edit(uuid: str):
         )
     ):
         step_type.name = form.name.data
+        step_type.svg_icon = form.svg_icon.data
         step_type.save()
         return redirect(url_for("planting_step_type.get_all"))
 
