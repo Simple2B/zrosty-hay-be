@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from datetime import datetime
 
 import sqlalchemy as sa
@@ -21,15 +20,12 @@ class PlantingStepType(db.Model, ModelMixin):
     # Fields
     name: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
     svg_icon: orm.Mapped[str] = orm.mapped_column(sa.Text)
+    color: orm.Mapped[str] = orm.mapped_column(sa.String(16))
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
     )
     updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
-
-    @property
-    def color(self):
-        return ET.fromstring(self.svg_icon).get("fill")
 
     def __repr__(self):
         return f"<StepType: {self.id}, name: {self.name}>"

@@ -25,6 +25,8 @@ pydantic-settings = "^2.0.3"
 filetype = "^1.2.0"
 boto3 = "^1.34.20"
 fastapi-pagination = "^0.12.14"
+beautifulsoup4 = "^4.12.3"
+lxml = "^5.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
