@@ -87,7 +87,10 @@ class PlantVariety(db.Model, ModelMixin):
     _photos: orm.Mapped[List["Photo"]] = orm.relationship(
         secondary=plant_variety_photo,
     )
-    programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship("PlantingProgram", back_populates="plant_variety")
+    programs: orm.Mapped[List["PlantingProgram"]] = orm.relationship(
+        "PlantingProgram",
+        back_populates="plant_variety",
+    )
     categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(secondary=plant_variety_category)
 
     @property

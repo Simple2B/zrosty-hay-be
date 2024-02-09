@@ -6,10 +6,10 @@ from sqlalchemy import orm
 
 from app.database import db
 from .utils import ModelMixin, generate_uuid
+from .planting_steps import PlantingStep
 
 
 if TYPE_CHECKING:
-    from .planting_steps import PlantingStep
     from .plant_variety import PlantVariety
 
 
@@ -32,7 +32,10 @@ class PlantingProgram(db.Model, ModelMixin):
     harvest_time: orm.Mapped[int] = orm.mapped_column(default=0)
 
     # Relationships
-    steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(back_populates="planting_program")
+    steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(
+        back_populates="planting_program",
+        primaryjoin=sa.and_(id == PlantingStep.planting_program_id, PlantingStep.is_deleted.is_(False)),
+    )
     plant_variety: orm.Mapped["PlantVariety"] = orm.relationship(back_populates="programs")
 
     def __repr__(self):

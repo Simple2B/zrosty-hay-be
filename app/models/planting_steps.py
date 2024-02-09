@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from app.database import db
-from .utils import ModelMixin
+from .utils import ModelMixin, generate_uuid
 
 if TYPE_CHECKING:
     from .planting_program import PlantingProgram
@@ -16,6 +16,11 @@ class PlantingStep(db.Model, ModelMixin):
     __tablename__ = "planting_steps"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    uuid: orm.Mapped[str] = orm.mapped_column(
+        sa.String(36),
+        index=True,
+        default=generate_uuid,
+    )
 
     # Foreign keys
     planting_program_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("planting_programs.id"))

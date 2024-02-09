@@ -21,7 +21,7 @@ class BaseConfig(BaseSettings):
     APP_NAME: str = "Зрости Гай"
     SECRET_KEY: str
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
-    WTF_CSRF_ENABLED: bool = False
+    WTF_CSRF_ENABLED: bool = True
     VERSION: str = get_version()
 
     # Mail config
