@@ -1,8 +1,8 @@
-"""update step type and step
+"""update PlantingStepType
 
-Revision ID: 0b89e97c0201
+Revision ID: ff6b9e6f7989
 Revises: f29fe8019ee7
-Create Date: 2024-02-09 10:03:56.101987
+Create Date: 2024-02-09 17:34:36.179892
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ from app.models import generate_uuid
 
 
 # revision identifiers, used by Alembic.
-revision = '0b89e97c0201'
+revision = 'ff6b9e6f7989'
 down_revision = 'f29fe8019ee7'
 branch_labels = None
 depends_on = None
@@ -23,8 +23,8 @@ def upgrade():
         batch_op.add_column(sa.Column('svg_icon', sa.Text(), nullable=True))
         batch_op.add_column(sa.Column('color', sa.String(length=16), nullable=True))
 
-    op.execute("UPDATE planting_step_types SET svg_icon = '' WHERE svg_icon = NULL")
-    op.execute("UPDATE planting_step_types SET color = '' WHERE color = NULL")
+    op.execute("UPDATE planting_step_types SET svg_icon = '' WHERE svg_icon IS NULL")
+    op.execute("UPDATE planting_step_types SET color = '' WHERE color IS NULL")
 
     with op.batch_alter_table('planting_step_types', schema=None) as batch_op:
         batch_op.alter_column('svg_icon', existing_type=sa.Text(), nullable=False)
@@ -34,7 +34,8 @@ def upgrade():
         batch_op.add_column(sa.Column('uuid', sa.String(length=36), nullable=True))
         batch_op.create_index(batch_op.f('ix_planting_steps_uuid'), ['uuid'], unique=False)
 
-    op.execute(f"UPDATE planting_steps SET uuid = '{generate_uuid()}' WHERE uuid = NULL")
+    op.execute(f"UPDATE planting_steps SET uuid = '{generate_uuid()}' WHERE uuid IS NULL")
+
 
     with op.batch_alter_table('planting_steps', schema=None) as batch_op:
         batch_op.alter_column('uuid', existing_type=sa.String(length=36), nullable=False)
