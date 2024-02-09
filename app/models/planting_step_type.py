@@ -19,6 +19,8 @@ class PlantingStepType(db.Model, ModelMixin):
 
     # Fields
     name: orm.Mapped[str] = orm.mapped_column(sa.String(64), unique=True, index=True)
+    svg_icon: orm.Mapped[str] = orm.mapped_column(sa.Text)
+    color: orm.Mapped[str] = orm.mapped_column(sa.String(16))
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
     )

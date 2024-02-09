@@ -6,6 +6,6 @@ from .illness import IllnessForm
 from .plant_family import PlantFamilyForm
 from .plant_variety import PlantVarietyForm, PlantFamilyAddForm
 from .photo import UploadPhotoForm
-from .planting_program import PlantProgramForm, StepForm
-from .planting_step_type import PlantingStepTypeForm
+from .planting_program import PlantProgramForm, StepForm, PlantingProgramEditForm, StepEditForm
+from .planting_step_type import PlantingStepTypeForm, PlantingStepTypeEditForm
 from .plant_category import PlantCategoryForm

@@ -21,7 +21,7 @@
         <div id="program-steps" class="w-full flex flex-col gap-4 pt-4">
         </div>
         <div class="w-full flex justify-end p-4">
-            <button type="button" hx-get="{{ url_for('planting_program.add_step') }}" hx-trigger="click"
+            <button type="button" hx-get="{{ url_for('program_step.add') }}" hx-trigger="click"
                 hx-target="#program-steps" hx-swap="beforeend"
                 class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Add step

@@ -1,5 +1,6 @@
-<div class="w-full flex flex-row gap-4">
+<div class="w-full flex flex-row justify-between gap-4">
     {{ form.hidden_tag() }}
+    <input type="text" name="uuid" class="hidden">
     <div class="w-1/4">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select step type</label>
         <select name="step_type_id"
@@ -18,4 +19,13 @@
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Instruction</label>
         {{ form.instruction(class_="rounded-lg w-full") }}
     </div>
+    <div class="w-1/4 flex flex-col justify-center items-center">
+        <button type="button" onclick="deleteMain(this)"
+            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900 delete-pest-btn">Delete</button>
+    </div>
+    <script>
+        function deleteMain(e) {
+            e.parentElement.parentElement.remove()
+        }
+    </script>
 </div>

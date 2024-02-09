@@ -6,6 +6,7 @@ from app.controllers import create_pagination
 from app import models as m, db
 from app import forms as f
 from app.logger import log
+from .utils import get_color_from_svg_icon
 
 bp = Blueprint("planting_step_type", __name__, url_prefix="/planting-step-types")
 
@@ -44,6 +45,8 @@ def create():
     ):
         step_type = m.PlantingStepType(
             name=form.name.data,
+            svg_icon=form.svg_icon.data,
+            color=get_color_from_svg_icon(form.svg_icon.data),
         )
 
         log(log.INFO, "Form submitted. Planting step type: [%s]", step_type)
@@ -65,7 +68,7 @@ def create():
 @bp.route("/<uuid>/edit", methods=["GET", "POST"])
 @login_required
 def edit(uuid: str):
-    form = f.PlantingStepTypeForm()
+    form = f.PlantingStepTypeEditForm()
     step_type = db.session.scalar(sa.select(m.PlantingStepType).where(m.PlantingStepType.uuid == uuid))
     if not step_type or step_type.is_deleted:
         log(log.ERROR, "Not found planting step type by uuid: [%s]", uuid)
@@ -73,6 +76,8 @@ def edit(uuid: str):
 
     if request.method == "GET":
         form.name.data = step_type.name
+        form.svg_icon.data = step_type.svg_icon
+        form.color.data = step_type.color
         return render_template("planting_step_type/edit.html", form=form, step_type=step_type)
 
     if form.validate_on_submit() and not db.session.scalar(
@@ -81,6 +86,8 @@ def edit(uuid: str):
         )
     ):
         step_type.name = form.name.data
+        step_type.svg_icon = form.svg_icon.data
+        step_type.color = form.color.data
         step_type.save()
         return redirect(url_for("planting_step_type.get_all"))
 
