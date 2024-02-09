@@ -1,11 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import IntegerField, TextAreaField, SelectField, FieldList, FormField, HiddenField
 from wtforms.validators import DataRequired
-from app.models import generate_uuid
 
 
 class StepForm(FlaskForm):
-    day = IntegerField("day", [DataRequired()], render_kw={"placeholder": "Enter day", "id": generate_uuid()})
+    day = IntegerField("day", [DataRequired()], render_kw={"placeholder": "Enter day"})
     instruction = TextAreaField("instruction", [DataRequired()], render_kw={"placeholder": "Enter instruction"})
     step_type_id = SelectField("step_type_id", [DataRequired()], choices=[])
 
