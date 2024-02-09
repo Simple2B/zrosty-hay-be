@@ -39,9 +39,9 @@ def test_plant_programs(login_client: FlaskClient, add_fake_data: FakeData):
     assert res
     assert res.status_code == 200
 
-    # delete program step
+    # plant program step test
     step = program.steps[0]
-    res = login_client.post(f"/planting-programs/{step.uuid}/delete-step", follow_redirects=True)
+    res = login_client.delete(f"/program-steps/{step.uuid}/delete", follow_redirects=True)
     assert res
     assert res.status_code == 200
     db.session.refresh(step)

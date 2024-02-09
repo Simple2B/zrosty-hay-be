@@ -26,13 +26,13 @@ def delete(uuid: str):
     log(log.INFO, "Delete program step uuid: [%s]", uuid)
     step = db.session.scalar(sa.select(m.PlantingStep).where(m.PlantingStep.uuid == uuid))
     if not step or step.is_deleted:
-        log(log.INFO, "Error can't find program step uuid:[%d]", uuid)
+        log(log.INFO, "Error can't find program step uuid:[%s]", uuid)
         return "No step", 404
 
     if request.method == "DELETE":
         step.is_deleted = True
         db.session.commit()
-        log(log.INFO, "Program step deleted. id: [%d]", uuid)
+        log(log.INFO, "Program step deleted. uuid: [%s]", uuid)
         return "success", 200
 
     return render_template("program_step/confirm_delete.html", uuid=uuid)
