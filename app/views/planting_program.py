@@ -11,15 +11,6 @@ from app.database import db
 bp = Blueprint("planting_program", __name__, url_prefix="/planting-programs")
 
 
-@bp.route("/", methods=["GET"])
-@login_required
-def add_step():
-    log(log.INFO, "Add step view")
-    form = f.StepForm()
-    form.step_type_id.choices = db.session.execute(sa.select(m.PlantingStepType.id, m.PlantingStepType.name)).all()
-    return render_template("planting_program/step_form.html", form=form)
-
-
 @bp.route("/<uuid>/edit", methods=["GET", "POST"])
 @login_required
 def edit(uuid: str):
@@ -75,20 +66,3 @@ def edit(uuid: str):
     form.steps = steps
 
     return render_template("planting_program/edit.html", form=form, uuid=program.uuid)
-
-
-@bp.route("/<uuid>/delete", methods=["GET", "DELETE"])
-@login_required
-def delete_step(uuid: str):
-    step = db.session.scalar(sa.select(m.PlantingStep).where(m.PlantingStep.uuid == uuid))
-    if not step or step.is_deleted:
-        log(log.INFO, "Error can't find program step uuid:[%d]", uuid)
-        return "No step", 404
-
-    if request.method == "DELETE":
-        step.is_deleted = True
-        db.session.commit()
-        log(log.INFO, "Program step deleted. id: [%d]", uuid)
-        return "success", 200
-
-    return render_template("planting_program/confirm_delete_step.html", uuid=uuid)
