@@ -74,3 +74,23 @@ def get_plant_photos(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
     log(log.INFO, "Get plant photos uuid[%s]", uuid)
 
     return plant.photos
+
+
+@plant_router.get(
+    "/{uuid}/steps",
+    status_code=status.HTTP_200_OK,
+    response_model=list[s.PlantingStep],
+    responses={404: {"model": s.ApiError404}},
+)
+def get_planting_steps(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
+    """Returns the plant photos"""
+    log(log.INFO, "Get plant steps uuid[%s]", uuid)
+
+    if not plant.programs:
+        log(log.INFO, "No program found for plant uuid[%s]", uuid)
+        return []
+
+    # currently we only have one program
+    steps = plant.programs[0].steps
+
+    return plant.programs[0].steps

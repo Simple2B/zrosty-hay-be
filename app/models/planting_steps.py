@@ -40,5 +40,9 @@ class PlantingStep(db.Model, ModelMixin):
     planting_program: orm.Mapped["PlantingProgram"] = orm.relationship(back_populates="steps")
     step_type: orm.Mapped["PlantingStepType"] = orm.relationship()
 
+    @property
+    def color(self):
+        return self.step_type.color
+
     def __repr__(self):
         return f"<PlantingStep: {self.id}>"
