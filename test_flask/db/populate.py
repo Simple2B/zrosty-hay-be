@@ -122,7 +122,7 @@ def create_plant_varieties() -> list[m.PlantFamily]:
 def create_planting_step_type() -> list[m.PlantingStepType]:
     step_types = []
     for index in range(10):
-        step_type = m.PlantingStepType(name=f"Need sun {index}")
+        step_type = m.PlantingStepType(name=f"Need sun {index}", svg_icon="sun", color="yellow")
         db.session.add(step_type)
         step_types.append(step_type)
     db.session.commit()

@@ -8,7 +8,7 @@ faker = Faker()
 
 
 def test_CRU(login_client: FlaskClient):
-    form_data = dict(name="Need sun", svg_icon="some svg icon")
+    form_data = dict(name="Need sun", svg_icon="<path fill='red'>")
 
     res = login_client.post("/plant-category/create", data=form_data, follow_redirects=True)
     assert res.status_code == 200
@@ -18,6 +18,7 @@ def test_CRU(login_client: FlaskClient):
     assert step_type.name == form_data["name"]
 
     form_data["name"] = "new name"
+    form_data["color"] = "blue"
     res = login_client.post(f"/plant-category/{step_type.uuid}/edit", data=form_data, follow_redirects=True)
     assert res.status_code == 200
     assert form_data["name"].encode("utf-8") in res.data
