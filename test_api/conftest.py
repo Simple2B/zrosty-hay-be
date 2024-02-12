@@ -8,8 +8,8 @@ load_dotenv("test_api/test.env")
 from fastapi.testclient import TestClient
 from sqlalchemy import orm
 
-from app import models as m
 from app import schema as s
+from .fake_data import init_fake_data
 
 from api import app
 
@@ -21,21 +21,7 @@ def db(test_data: s.TestData) -> Generator[orm.Session, None, None]:
     with db.Session() as session:
         db.Model.metadata.drop_all(bind=session.bind)
         db.Model.metadata.create_all(bind=session.bind)
-        for test_user in test_data.test_users:
-            user = m.User(
-                username=test_user.username,
-                email=test_user.email,
-                password=test_user.password,
-            )
-            session.add(user)
-        for category in test_data.categories:
-            session.add(m.PlantCategory(**category.model_dump()))
-        for plant_family in test_data.plant_families:
-            session.add(m.PlantFamily(**plant_family.model_dump()))
-        for plant_variety in test_data.plant_varieties:
-            session.add(m.PlantVariety(**plant_variety.model_dump()))
-
-        session.commit()
+        init_fake_data(session=session, fake_data=test_data)
 
         def override_get_db() -> Generator:
             yield session

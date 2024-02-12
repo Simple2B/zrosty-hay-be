@@ -35,6 +35,7 @@ class PlantingProgram(db.Model, ModelMixin):
     steps: orm.Mapped[List["PlantingStep"]] = orm.relationship(
         back_populates="planting_program",
         primaryjoin=sa.and_(id == PlantingStep.planting_program_id, PlantingStep.is_deleted.is_(False)),
+        order_by=PlantingStep.day.asc(),
     )
     plant_variety: orm.Mapped["PlantVariety"] = orm.relationship(back_populates="programs")
 

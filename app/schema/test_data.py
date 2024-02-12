@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from .planting_step_type import PlantingStepType
 
 
 class TestUser(BaseModel):
@@ -46,6 +47,10 @@ class TestPlantCategory(BaseModel):
     svg_icon: str
 
 
+class TestStepType(PlantingStepType):
+    __test__ = False
+
+
 class TestData(BaseModel):
     __test__ = False
 
@@ -54,3 +59,4 @@ class TestData(BaseModel):
     categories: list[TestPlantCategory]
     plant_families: list[TestPlantFamily]
     plant_varieties: list[TestPlantVariety]
+    planting_step_types: list[TestStepType]

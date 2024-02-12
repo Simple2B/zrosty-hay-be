@@ -37,7 +37,7 @@ def get_all(
             )
         )
 
-    return paginate(db, query)
+    return paginate(db, query.order_by(m.PlantVariety.id.desc()))
 
 
 @plant_router.get(
@@ -83,14 +83,21 @@ def get_plant_photos(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
     responses={404: {"model": s.ApiError404}},
 )
 def get_planting_steps(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
-    """Returns the plant photos"""
-    log(log.INFO, "Get plant steps uuid[%s]", uuid)
+    """Returns the plant program steps"""
+    log(log.INFO, "Get plant program steps uuid[%s]", uuid)
 
     if not plant.programs:
         log(log.INFO, "No program found for plant uuid[%s]", uuid)
         return []
 
-    # currently we only have one program
-    steps = plant.programs[0].steps
+    steps = {}  # type:ignore
+    # currently, we only need to have one program
+    for step in plant.programs[0].steps:
+        day = step.day
+        step_type = step.step_type
+        if day in steps:
+            steps[day]["step_type"].append(step_type)
+        else:
+            steps[day] = {"day": day, "step_type": [step_type]}
 
-    return plant.programs[0].steps
+    return list(steps.values())
