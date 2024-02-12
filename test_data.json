@@ -477,5 +477,31 @@
       "ground_type": "Добре дренований ґрунт",
       "can_plant_indoors": false
     }
+  ],
+  "planting_step_types": [
+    {
+      "uuid": "1a2b3c4d-5e6f-7g8h-9i10j11k12l",
+      "color": "#2345db",
+      "svg_icon": "<svg height=\"24px\" width=\"24px\">",
+      "name": "Watering"
+    },
+    {
+      "uuid": "2a2b3c41-5e6f-7g8h-9i10j11k12l",
+      "color": "#3123db",
+      "svg_icon": "<svg height=\"24px\" width=\"24px\">",
+      "name": "Cutting"
+    },
+    {
+      "uuid": "3a2b3c4d-5e6f-7g8h-9i10j11k12l",
+      "color": "#5498db",
+      "svg_icon": "<svg height=\"24px\" width=\"24px\">",
+      "name": "Nourish"
+    },
+    {
+      "uuid": "4a2b3c4d-5e6f-7g8h-9i10j11k12l",
+      "color": "#1498db",
+      "svg_icon": "<svg height=\"24px\" width=\"24px\">",
+      "name": "Strengthen"
+    }
   ]
 }
