@@ -96,8 +96,8 @@ def get_planting_steps(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
         day = step.day
         step_type = step.step_type
         if day in steps:
-            steps[day]["step_type"].append(step_type)
+            steps[day]["step_types"].append(step_type)
         else:
-            steps[day] = {"day": day, "step_type": [step_type]}
+            steps[day] = {"day": day, "step_types": [step_type]}
 
     return list(steps.values())
