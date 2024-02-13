@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class PlantingStepType(BaseModel):
     uuid: str
-    color: str
     svg_icon: str = Field(..., alias="svgIcon")
     name: str
 

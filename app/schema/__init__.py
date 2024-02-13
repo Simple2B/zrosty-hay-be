@@ -8,5 +8,5 @@ from .plant import Plant, PlantDetail, PlantCategory
 from .error import ApiError404
 from .photo import Photo
 from .test_data import TestData
-from .planting_steps import PlantingStep
+from .planting_steps import PlantingStep, PlantingStepDay
 from .planting_step_type import PlantingStepType
