@@ -101,3 +101,23 @@ def get_planting_steps(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
             steps[day] = {"day": day, "step_types": [step_type]}
 
     return list(steps.values())
+
+
+@plant_router.get(
+    "/{uuid}/steps/{day}",
+    status_code=status.HTTP_200_OK,
+    response_model=list[s.PlantingStepDay],
+    responses={404: {"model": s.ApiError404}},
+)
+def get_planting_step_by_day(uuid: str, day: int, plant: m.PlantVariety = Depends(get_plant)):
+    """Returns the plant program step day details"""
+    log(log.INFO, "Get plant program step day uuid[%s], day[%d]", uuid, day)
+
+    if not plant.programs:
+        log(log.INFO, "No program found for plant uuid[%s]", uuid)
+        return []
+
+    # we will not have more than 20 steps in a day so can use Python instead of SQL
+    steps = (step for step in plant.programs[0].steps if step.day == day)
+
+    return steps

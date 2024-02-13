@@ -19,5 +19,5 @@ def init_fake_data(session: Session, fake_data: s.TestData):
     for plant_variety in fake_data.plant_varieties:
         session.add(m.PlantVariety(**plant_variety.model_dump()))
     for step_type in fake_data.planting_step_types:
-        session.add(m.PlantingStepType(**step_type.model_dump()))
+        session.add(m.PlantingStepType(**step_type.model_dump(), color="red"))
     session.commit()

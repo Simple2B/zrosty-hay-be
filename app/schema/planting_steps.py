@@ -6,6 +6,15 @@ class StepType(BaseModel):
     color: str
 
 
+class PlantingStepDay(BaseModel):
+    uuid: str
+    name: str
+    svg_icon: str = Field(..., alias="svgIcon")
+    instruction: str
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
 class PlantingStep(BaseModel):
     day: int
     step_types: list[StepType] = Field(..., alias="stepTypes")
