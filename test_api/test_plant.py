@@ -24,16 +24,29 @@ def test_plant_route(db, client: TestClient):
     plant_detail = s.PlantDetail.model_validate(res.json())
     assert plant_detail
 
-    curPlant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == plant.uuid))
-    curPlant._photos = [m.Photo(url_path="http://example.com", original_name="test.jpg")]
+    cur_plant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == plant.uuid))
+    cur_plant._photos = [m.Photo(url_path="http://example.com", original_name="test.jpg")]
     db.commit()
 
     res = client.get(f"/api/plants/{plant.uuid}/photos")
     assert res.status_code == 200
     assert res.json()
 
+    day = 1
+    program = m.PlantingProgram(planting_time=1, harvest_time=1)
+    program.steps.append(m.PlantingStep(day=day, instruction="test", step_type_id=1))
+    cur_plant.programs.append(program)
+    db.commit()
+    res = client.get(f"/api/plants/{plant.uuid}/steps")
+    assert res.status_code == 200
+    assert res.json()[0]["day"] == day
+
+    res = client.get(f"/api/plants/{plant.uuid}/steps/{day}")
+    assert res.status_code == 200
+    assert res.json()
+
     categories = db.scalars(sa.select(m.PlantCategory)).all()
-    curPlant.family.categories = categories  # type:ignore
+    cur_plant.family.categories = categories  # type:ignore
     db.commit()
     res = client.get(f"/api/plants/?category_uuids={categories[0].uuid}")
     assert res.status_code == 200

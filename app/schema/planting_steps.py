@@ -17,6 +17,6 @@ class PlantingStepDay(BaseModel):
 
 class PlantingStep(BaseModel):
     day: int
-    step_type: list[StepType] = Field(..., alias="stepType")
+    step_types: list[StepType] = Field(..., alias="stepTypes")
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
