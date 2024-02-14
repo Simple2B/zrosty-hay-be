@@ -39,10 +39,6 @@ def upgrade():
     )
     with op.batch_alter_table('recipes', schema=None) as batch_op:
         batch_op.add_column(sa.Column('description', sa.Text(), nullable=True))
-        batch_op.alter_column('cooking_time',
-               existing_type=sa.INTEGER(),
-               type_=sa.Float(),
-               existing_nullable=False)
 
     op.execute("UPDATE recipes SET description = '' WHERE description IS NULL")
 
