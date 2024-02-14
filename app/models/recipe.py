@@ -33,7 +33,7 @@ class Recipe(db.Model, ModelMixin):
     updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
-    cooking_time: orm.Mapped[int] = orm.mapped_column(default=0)
+    cooking_time: orm.Mapped[float] = orm.mapped_column(default=0)
     additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
     description: orm.Mapped[str] = orm.mapped_column(sa.Text)
 

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="h-full mt-4 relative overflow-x-auto shadow-md sm:rounded-lg p-4">
+    {% set form_action = url_for('recipe.add') %}
+    {% if recipe_uuid %}
+    {% set form_action = url_for('recipe.edit', uuid=recipe_uuid) %}
+    {% endif %}
+    <form action="{{ from_action }}" method="POST" enctype="multipart/form-data">
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+            {{ form.hidden_tag() }}
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.name.label }}</label>
+                {{ form.name(class_="w-full rounded-lg") }}
+            </div>
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.cooking_time.label }}</label>
+                {{ form.cooking_time(class_="w-full rounded-lg") }}
+            </div>
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.additional_ingredients.label }}</label>
+                {{ form.additional_ingredients(class_="w-full rounded-lg") }}
+            </div>
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.description.label }}</label>
+                {{ form.description(class_="w-full rounded-lg") }}
+            </div>
+            <div class="col-span-6 sm:col-span-2">
+                <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
+                    photos</label>
+                {{ form.photos }}
+            </div>
+
+        </div>
+        <button type="submit"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

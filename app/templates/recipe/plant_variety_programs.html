@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4">
+    <div class="flex items-center justify-center py-4 bg-white dark:bg-gray-800">
+        <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
+            <a href="{{ url_for('plant_variety.add_program', uuid=uuid) }}"
+                class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                Add program
+            </a>
+        </div>
+    </div>
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Id</th>
+                <th scope="col" class="px-6 py-3">Step count</th>
+                <th scope="col" class="px-6 py-3">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for programs in programs %}
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="w-4 p-4">
+                    <div class="pl-3">
+                        <div class="text-base font-semibold">{{ programs.id }}</div>
+                    </div>
+                </td>
+                <td class="w-4 p-4">
+                    <div class="pl-3">
+                        <div class="text-base font-semibold">{{ programs.steps|length }}</div>
+                    </div>
+                </td>
+                <td class="w-4 p-4">
+                    <a href="{{ url_for('planting_program.edit', uuid=programs.uuid) }}"
+                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Edit program
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+<!-- prettier-ignore -->
+{% endblock %}
+<!-- prettier-ignore -->
+{% block scripts %}
+
+{% endblock %}
