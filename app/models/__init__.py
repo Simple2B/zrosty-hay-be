@@ -14,3 +14,4 @@ from .planting_program import PlantingProgram
 from .planting_steps import PlantingStep
 from .recipe import Recipe
 from .recipe_step import RecipeStep
+from .category import Category

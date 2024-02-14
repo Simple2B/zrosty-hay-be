@@ -10,12 +10,14 @@ from .recipe_photo import recipe_photo
 from .plant_family_recipe import plant_family_recipe
 from .plant_variety_recipe import plant_variety_recipe
 from .recipe_step import RecipeStep
+from .recipe_category import recipe_categories
 
 
 if TYPE_CHECKING:
     from .plant_family import PlantFamily
     from .plant_variety import PlantVariety
     from .photo import Photo
+    from .category import Category
 
 
 class Recipe(db.Model, ModelMixin):
@@ -33,10 +35,13 @@ class Recipe(db.Model, ModelMixin):
 
     cooking_time: orm.Mapped[int] = orm.mapped_column(default=0)
     additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
+    description: orm.Mapped[str] = orm.mapped_column(sa.Text)
 
     # Relationships
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
     plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(secondary=plant_variety_recipe)
+    categories: orm.Mapped[List["Category"]] = orm.relationship(secondary=recipe_categories)
+
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
     steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(order_by="RecipeStep.step_number", back_populates="recipe")
 
