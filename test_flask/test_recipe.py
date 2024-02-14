@@ -25,7 +25,7 @@ def test_CRU(login_client: FlaskClient, add_fake_data: FakeData):
     assert recipe.name == form_data["name"]
 
     form_data["name"] = "new name"
-    plant_variety: m.PlantVariety = add_fake_data.plant_varieties[1]
+    plant_variety: m.PlantVariety = add_fake_data.plant_varieties[1]  # type: ignore
     form_data["plant_varieties"] = [plant_variety.name]
     res = login_client.post(f"/recipes/{recipe.uuid}/edit", data=form_data, follow_redirects=True)
     assert res.status_code == 200
