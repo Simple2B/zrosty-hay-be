@@ -94,10 +94,8 @@ def edit(uuid: str):
     form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
 
     if request.method == "POST" and form.validate_on_submit():
-        if not db.session.scalar(
-            sa.Select(m.Recipe.name).where(m.Recipe.name == form.name.data, m.Recipe.uuid != uuid)
-        ):
-            flash("Name already exist!", "success")
+        if db.session.scalar(sa.Select(m.Recipe.name).where(m.Recipe.name == form.name.data, m.Recipe.uuid != uuid)):
+            flash("Name already exist!", "danger")
             return redirect(url_for("recipe.get_all"))
         recipe.name = form.name.data
         recipe.cooking_time = form.cooking_time.data
