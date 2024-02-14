@@ -121,3 +121,16 @@ def get_planting_step_by_day(uuid: str, day: int, plant: m.PlantVariety = Depend
     steps = (step for step in plant.programs[0].steps if step.day == day)
 
     return steps
+
+
+@plant_router.get(
+    "/{uuid}/recipes",
+    status_code=status.HTTP_200_OK,
+    response_model=Page[s.Recipe],
+    responses={404: {"model": s.ApiError404}},
+)
+def get_plant_recipes(uuid: str, plant: m.PlantVariety = Depends(get_plant), db: Session = Depends(get_db)):
+    """Returns the plants"""
+    log(log.INFO, "Get plant recipes")
+
+    return paginate(db, plant.recipes.select())

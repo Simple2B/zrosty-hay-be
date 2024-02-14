@@ -45,5 +45,9 @@ class Recipe(db.Model, ModelMixin):
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
     steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(order_by="RecipeStep.step_number", back_populates="recipe")
 
+    @property
+    def photo(self):
+        return self.photos[0] if self.photos else None
+
     def __repr__(self):
         return f"<Id: {self.id}, Recipe: {self.name}>"

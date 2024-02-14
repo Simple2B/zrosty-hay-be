@@ -13,6 +13,7 @@ from .plant_variety_illness import plant_variety_illness
 from .plant_variety_pest import plant_variety_pest
 from .plant_variety_category import plant_variety_category
 from .plant_variety_photo import plant_variety_photo
+from .plant_variety_recipe import plant_variety_recipe
 from .photo import Photo
 
 if TYPE_CHECKING:
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from .plant_category import PlantCategory
     from .plant_family import PlantFamily
     from .planting_program import PlantingProgram
+    from .recipe import Recipe
 
 
 class CareType(enum.Enum):
@@ -92,6 +94,7 @@ class PlantVariety(db.Model, ModelMixin):
         back_populates="plant_variety",
     )
     categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(secondary=plant_variety_category)
+    recipes: orm.WriteOnlyMapped["Recipe"] = orm.relationship(secondary=plant_variety_recipe)
 
     @property
     def photo(self) -> str | None:  # type:ignore
