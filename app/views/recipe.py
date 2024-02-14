@@ -38,25 +38,26 @@ def get_all():
 @login_required
 def add():
     form = f.RecipeForm()
+    form.plant_varieties.choices = db.session.scalars(sa.select(m.PlantVariety.name)).all()
+    form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
     if (
         request.method == "POST"
         and form.validate_on_submit()
         and not db.session.scalar(sa.select(m.Recipe.name).where(m.Recipe.name == form.name.data))
     ):
-        # categories = db.session.scalars(
-        #     sa.select(m.PlantCategory).where(
-        #         m.PlantCategory.name.in_(form.categories.data),
-        #         m.PlantCategory.id.not_in([category.id for category in family_categories]),
-        #     )
-        # ).all()
-        # pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
-        # illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
         recipe = m.Recipe(
             name=form.name.data,
             description=form.description.data,
             cooking_time=form.cooking_time.data,
             additional_ingredients=form.additional_ingredients.data,
         )
+
+        plant_varieties = db.session.scalars(
+            sa.select(m.PlantVariety).where(m.PlantVariety.name.in_(form.plant_varieties.data))
+        ).all()
+        recipe.plant_varieties = plant_varieties
+        categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
+        recipe.categories = categories
 
         for photo in form.photos.data:
             try:
@@ -89,11 +90,15 @@ def edit(uuid: str):
         flash("Recipe not exist!", "danger")
         return redirect(url_for("recipe.get_all"))
 
+    form.plant_varieties.choices = db.session.scalars(sa.select(m.PlantVariety.name)).all()
+    form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
     if request.method == "GET":
         form.name.data = recipe.name
         form.cooking_time.data = recipe.cooking_time
         form.additional_ingredients.data = recipe.additional_ingredients
         form.description.data = recipe.description
+        form.plant_varieties.data = [pv.name for pv in recipe.plant_varieties]
+        form.categories.data = [c.name for c in recipe.categories]
 
     if (
         request.method == "POST"
@@ -106,6 +111,12 @@ def edit(uuid: str):
         recipe.cooking_time = form.cooking_time.data
         recipe.additional_ingredients = form.additional_ingredients.data
         recipe.description = form.description.data
+        plant_varieties = db.session.scalars(
+            sa.select(m.PlantVariety).where(m.PlantVariety.name.in_(form.plant_varieties.data))
+        ).all()
+        recipe.plant_varieties = plant_varieties
+        categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
+        recipe.categories = categories
 
         for photo in form.photos.data:
             try:

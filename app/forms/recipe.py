@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, TextAreaField
+from wtforms import StringField, DecimalField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Length
 from .photo import UploadPhotoForm
 
@@ -13,3 +13,5 @@ class RecipeForm(UploadPhotoForm, FlaskForm):
         render_kw={"placeholder": "Enter additional ingredients"},
     )
     description = TextAreaField("Description", [DataRequired()], render_kw={"placeholder": "Enter description"})
+    plant_varieties = SelectMultipleField("Plant variety", choices=[])
+    categories = SelectMultipleField("Categories", choices=[])
