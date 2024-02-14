@@ -92,21 +92,13 @@ def edit(uuid: str):
 
     form.plant_varieties.choices = db.session.scalars(sa.select(m.PlantVariety.name)).all()
     form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
-    if request.method == "GET":
-        form.name.data = recipe.name
-        form.cooking_time.data = recipe.cooking_time
-        form.additional_ingredients.data = recipe.additional_ingredients
-        form.description.data = recipe.description
-        form.plant_varieties.data = [pv.name for pv in recipe.plant_varieties]
-        form.categories.data = [c.name for c in recipe.categories]
 
-    if (
-        request.method == "POST"
-        and form.validate_on_submit()
-        and not db.session.scalar(
+    if request.method == "POST" and form.validate_on_submit():
+        if not db.session.scalar(
             sa.Select(m.Recipe.name).where(m.Recipe.name == form.name.data, m.Recipe.uuid != uuid)
-        )
-    ):
+        ):
+            flash("Name already exist!", "success")
+            return redirect(url_for("recipe.get_all"))
         recipe.name = form.name.data
         recipe.cooking_time = form.cooking_time.data
         recipe.additional_ingredients = form.additional_ingredients.data
@@ -135,5 +127,12 @@ def edit(uuid: str):
         log(log.INFO, "Form error [%s]", form.errors)
         flash(f"{form.errors}", "danger")
         return redirect(url_for("recipe.get_all"))
+
+    form.name.data = recipe.name
+    form.cooking_time.data = recipe.cooking_time
+    form.additional_ingredients.data = recipe.additional_ingredients
+    form.description.data = recipe.description
+    form.plant_varieties.data = [pv.name for pv in recipe.plant_varieties]
+    form.categories.data = [c.name for c in recipe.categories]
 
     return render_template("recipe/form.html", form=form, recipe_uuid=uuid)
