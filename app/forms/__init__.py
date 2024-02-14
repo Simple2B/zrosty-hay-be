@@ -9,3 +9,4 @@ from .photo import UploadPhotoForm
 from .planting_program import PlantProgramForm, StepForm, PlantingProgramEditForm, StepEditForm
 from .planting_step_type import PlantingStepTypeForm, PlantingStepTypeEditForm
 from .plant_category import PlantCategoryForm
+from .category import CategoryForm
