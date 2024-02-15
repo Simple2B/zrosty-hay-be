@@ -10,3 +10,4 @@ from .photo import Photo
 from .test_data import TestData
 from .planting_steps import PlantingStep, PlantingStepDay
 from .planting_step_type import PlantingStepType
+from .recipe import Recipe

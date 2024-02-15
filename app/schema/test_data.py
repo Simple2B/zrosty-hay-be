@@ -51,6 +51,21 @@ class TestStepType(PlantingStepType):
     __test__ = False
 
 
+class TestRecipe(BaseModel):
+    __test__ = False
+
+    name: str
+    description: str
+    cooking_time: int
+    additional_ingredients: str
+
+
+class TestRecipeCategory(BaseModel):
+    __test__ = False
+
+    name: str
+
+
 class TestData(BaseModel):
     __test__ = False
 
@@ -60,3 +75,5 @@ class TestData(BaseModel):
     plant_families: list[TestPlantFamily]
     plant_varieties: list[TestPlantVariety]
     planting_step_types: list[TestStepType]
+    recipes: list[TestRecipe]
+    recipe_categories: list[TestRecipeCategory]

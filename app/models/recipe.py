@@ -39,11 +39,17 @@ class Recipe(db.Model, ModelMixin):
 
     # Relationships
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
-    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(secondary=plant_variety_recipe)
+    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
+        secondary=plant_variety_recipe, back_populates="recipes"
+    )
     categories: orm.Mapped[List["Category"]] = orm.relationship(secondary=recipe_categories)
 
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
     steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(order_by="RecipeStep.step_number", back_populates="recipe")
+
+    @property
+    def photo(self):
+        return self.photos[0] if self.photos else None
 
     def __repr__(self):
         return f"<Id: {self.id}, Recipe: {self.name}>"

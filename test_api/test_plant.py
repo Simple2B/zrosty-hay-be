@@ -54,6 +54,16 @@ def test_plant_route(db, client: TestClient):
     assert plant
 
 
+@pytest.mark.skipif(not CFG.IS_API, reason="API is not enable")
+def test_get_plant_recipes(db, client: TestClient):
+    plant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety))
+    res = client.get(f"/api/plants/{plant.uuid}/recipes")
+    assert res.status_code == 200
+    assert res.json()
+    recipe = s.Recipe.model_validate(res.json()["items"][0])
+    assert recipe
+
+
 @pytest.mark.skipif(not CFG.IS_API, reason="API is not enabled")
 def test_get_categories(db, client: TestClient):
     res = client.get("/api/plants/categories")
