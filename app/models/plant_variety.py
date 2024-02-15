@@ -99,6 +99,10 @@ class PlantVariety(db.Model, ModelMixin):
     )
 
     @property
+    def has_plant_photos(self) -> bool:
+        return bool(self._photos)
+
+    @property
     def photo(self) -> str | None:  # type:ignore
         if self.photos:
             return self.photos[0]

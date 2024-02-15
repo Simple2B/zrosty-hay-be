@@ -29,6 +29,7 @@ class PlantDetail(BasePlant):
     watering_info: str = Field(alias="wateringInfo")
     water_volume: float = Field(alias="waterVolume")
     humidity_percentage: float = Field(alias="humidityPercentage")
+    has_plant_photos: bool = Field(alias="hasPlanPhoto")
 
 
 class PlantCategory(BaseModel):
