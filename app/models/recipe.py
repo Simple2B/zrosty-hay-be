@@ -39,7 +39,9 @@ class Recipe(db.Model, ModelMixin):
 
     # Relationships
     plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
-    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(secondary=plant_variety_recipe)
+    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
+        secondary=plant_variety_recipe, back_populates="recipes"
+    )
     categories: orm.Mapped[List["Category"]] = orm.relationship(secondary=recipe_categories)
 
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)

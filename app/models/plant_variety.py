@@ -94,7 +94,9 @@ class PlantVariety(db.Model, ModelMixin):
         back_populates="plant_variety",
     )
     categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(secondary=plant_variety_category)
-    recipes: orm.WriteOnlyMapped["Recipe"] = orm.relationship(secondary=plant_variety_recipe)
+    recipes: orm.WriteOnlyMapped["Recipe"] = orm.relationship(
+        secondary=plant_variety_recipe, back_populates="plant_varieties"
+    )
 
     @property
     def photo(self) -> str | None:  # type:ignore
