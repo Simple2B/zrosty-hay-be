@@ -133,4 +133,4 @@ def edit(uuid: str):
     form.plant_varieties.data = [pv.name for pv in recipe.plant_varieties]
     form.categories.data = [c.name for c in recipe.categories]
 
-    return render_template("recipe/form.html", form=form, recipe_uuid=uuid)
+    return render_template("recipe/form.html", form=form, recipe_uuid=uuid, photos=recipe.photos)
