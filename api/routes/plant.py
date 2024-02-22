@@ -54,10 +54,26 @@ def get_categories(db: Session = Depends(get_db)):
 
 
 @plant_router.get(
-    "/{uuid}", status_code=status.HTTP_200_OK, response_model=s.PlantDetail, responses={404: {"model": s.ApiError404}}
+    "/{uuid}/detail",
+    status_code=status.HTTP_200_OK,
+    response_model=s.PlantDetail,
+    responses={404: {"model": s.ApiError404}},
 )
-def get(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
-    """Returns the plants"""
+def get_plant_detail(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
+    """Returns the plant detail"""
+    log(log.INFO, "Get plant uuid[%s]", uuid)
+
+    return plant
+
+
+@plant_router.get(
+    "/{uuid}/care-tips",
+    status_code=status.HTTP_200_OK,
+    response_model=s.PlantCareTips,
+    responses={404: {"model": s.ApiError404}},
+)
+def get_plant_care_tips(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
+    """Returns the plant care trips"""
     log(log.INFO, "Get plant uuid[%s]", uuid)
 
     return plant
