@@ -29,7 +29,6 @@ def app():
 @pytest.fixture()
 def client(app: Flask, mocker):
     mocker.patch.object(s3bucket, "create_photo", return_value=s.S3Photo(uuid="123", url_path="test_path"))
-    mocker.patch.object(s3bucket, "create_photo_by_url", return_value=s.S3Photo(uuid="1232", url_path="test_path_file"))
     mocker.patch.object(filetype, "guess", return_value=True)
     mocker.patch.object(filetype, "is_image", return_value=True)
     with app.test_client() as client:
