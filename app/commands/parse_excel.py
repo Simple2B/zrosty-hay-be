@@ -4,14 +4,14 @@ import sqlalchemy as sa
 import pandas as pd
 import app.models as m
 
+care_type = {
+    "легкий": m.CareType.easy.value,
+    "середній": m.CareType.normal.value,
+    "складний": m.CareType.hard.value,
+}
+
 
 def parse_excel(fail_path: str, db):
-    care_type = {
-        "легкий": m.CareType.easy.value,
-        "середній": m.CareType.normal.value,
-        "складний": m.CareType.hard.value,
-    }
-
     if not os.path.isfile(fail_path):
         print(f"File not exist in {fail_path}")
         return
