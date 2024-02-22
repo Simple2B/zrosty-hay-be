@@ -99,13 +99,17 @@ class PlantVariety(db.Model, ModelMixin):
     )
 
     @property
-    def has_plant_photos(self) -> bool:
-        return bool(self._photos)
-
-    @property
     def photo(self) -> str | None:  # type:ignore
         if self.photos:
             return self.photos[0]
+
+    @property
+    def harvest_time(self) -> int:
+        return self.programs[0].harvest_time if self.programs else 0
+
+    @property
+    def planting_time(self) -> int:
+        return self.programs[0].planting_time if self.programs else 0
 
     @property
     def watering(self) -> CareType:

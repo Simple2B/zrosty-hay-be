@@ -19,10 +19,15 @@ def test_plant_route(db, client: TestClient):
     plant = s.Plant.model_validate(items[0])
     assert plant
 
-    res = client.get(f"/api/plants/{plant.uuid}")
+    res = client.get(f"/api/plants/{plant.uuid}/detail")
     assert res.status_code == 200
     plant_detail = s.PlantDetail.model_validate(res.json())
     assert plant_detail
+
+    res = client.get(f"/api/plants/{plant.uuid}/care-tips")
+    assert res.status_code == 200
+    plant_care = s.PlantCareTips.model_validate(res.json())
+    assert plant_care
 
     cur_plant: m.PlantVariety = db.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == plant.uuid))
     cur_plant._photos = [m.Photo(url_path="http://example.com", original_name="test.jpg")]
