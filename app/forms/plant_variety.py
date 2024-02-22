@@ -33,9 +33,7 @@ class PlantVarietyForm(UploadPhotoForm, FlaskForm):
     is_moisture_loving = BooleanField("is_moisture_loving")
     is_sun_loving = BooleanField("is_sun_loving")
     ground_ph = DecimalField("ground_ph", render_kw={"placeholder": "Enter ground ph"}, default=0)
-    ground_type = StringField(
-        "ground_type", [Length(0, 256)], default="", render_kw={"placeholder": "Enter ground type"}
-    )
+    ground_type = StringField("ground_type", default="", render_kw={"placeholder": "Enter ground type"})
     can_plant_indoors = BooleanField("can_plant_indoors")
 
     min_size = DecimalField("min_size", [DataRequired()], render_kw={"placeholder": "Enter min size"})
