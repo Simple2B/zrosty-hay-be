@@ -1,5 +1,5 @@
 {% macro slidesShow(photos = []) -%}
-<div class="slideshow-container h-60 flex flex-row" id="slideshow-container">
+<div class="slideshow-container h-60 flex flex-row py-4" id="slideshow-container">
     {% for photo in photos %}
     <div class="my-slides fade hidden relative w-52 h-52" id="photo-{{photo.uuid}}">
         <button class="absolute cursor-pointer top-2 right-14" hx-get="{{ url_for('photo.delete', uuid=photo.uuid) }}"

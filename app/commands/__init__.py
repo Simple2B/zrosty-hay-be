@@ -6,6 +6,7 @@ from app import models as m
 from app.database import db
 from app import forms
 from app import schema as s
+from .parse_excel import parse_excel
 
 
 def init(app: Flask):
@@ -45,3 +46,14 @@ def init(app: Flask):
             activated=True,
         ).save()
         print("admin created")
+
+    @app.cli.command("add-plants")
+    def add_plants():
+        """Add plants from excel file to DB."""
+        print("Start")
+        try:
+            parse_excel("plants_data.xlsx", db)
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+        print("Finish")
