@@ -73,7 +73,7 @@ def get_plant_detail(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
     responses={404: {"model": s.ApiError404}},
 )
 def get_plant_care_tips(uuid: str, plant: m.PlantVariety = Depends(get_plant)):
-    """Returns the plant detail"""
+    """Returns the plant care trips"""
     log(log.INFO, "Get plant uuid[%s]", uuid)
 
     return plant
