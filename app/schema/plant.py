@@ -44,7 +44,7 @@ class PlantCareTips(BaseModel):
     max_temperature: float | None = Field(alias="maxTemperature")
     temperature_info: str
     ground_ph: float = Field(alias="groundPh")
-    general_info: str = Field(alias="generalInfo")
+    ground_type: str = Field(alias="groundType")
     pests: list[InstanceName]
     illnesses: list[InstanceName]
 
