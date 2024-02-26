@@ -1,4 +1,3 @@
-import enum
 from typing import Self
 from datetime import datetime
 from uuid import uuid4
@@ -11,16 +10,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.database import db
 from .utils import ModelMixin
 from app.logger import log
+from app.constants import UserRole
 from app import schema as s
 
 
 def gen_password_reset_id() -> str:
     return str(uuid4())
-
-
-class UserRole(enum.Enum):
-    user = "user"
-    admin = "admin"
 
 
 class User(db.Model, UserMixin, ModelMixin):
@@ -49,6 +44,7 @@ class User(db.Model, UserMixin, ModelMixin):
     )
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
     role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
+    alias: orm.Mapped[str] = orm.mapped_column(sa.String(64), default="")
 
     @property
     def password(self):
@@ -86,6 +82,10 @@ class User(db.Model, UserMixin, ModelMixin):
 
     def __repr__(self):
         return f"<{self.id}: {self.username},{self.email}>"
+
+    @property
+    def display_name(self):
+        return self.alias or self.username
 
     @property
     def json(self):

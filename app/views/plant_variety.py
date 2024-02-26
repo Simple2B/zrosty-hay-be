@@ -74,7 +74,7 @@ def add():
             )
         ).all()
         pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data)))
-        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data)))
+        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.illnesses.data)))
         plant_variety = m.PlantVariety(
             family=plant_family,
             name=form.name.data,
@@ -181,7 +181,7 @@ def edit(uuid: str):
             )
         ).all()
         pests = db.session.scalars(sa.select(m.Pest).where(m.Pest.name.in_(form.pests.data))).all()
-        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.pests.data))).all()
+        illness = db.session.scalars(sa.select(m.Illness).where(m.Illness.name.in_(form.illnesses.data))).all()
         plant_variety.pests = pests
         plant_variety.illnesses = illness
         plant_variety.categories = categories
