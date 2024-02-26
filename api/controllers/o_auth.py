@@ -10,9 +10,6 @@ from app import models as m
 
 CFG = config()
 
-
-CFG = config()
-
 JWKS_CLIENT = PyJWKClient(CFG.APPLE_PUBLIC_KEY_URL)
 
 
