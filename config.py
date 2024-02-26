@@ -52,6 +52,15 @@ class BaseConfig(BaseSettings):
     AWS_ACCESS_KEY: str
     AWS_SECRET_ACCESS_KEY: str
 
+    # Google Auth
+    GOOGLE_CLIENT_ID: str
+
+    MOBILE_APP_ID: str = "com.simple2b.zrostyhayapp.dev"
+
+    APPLE_PUBLIC_KEY_URL: str = "https://appleid.apple.com/auth/keys"
+    APPLE_ISSUER: str = "https://appleid.apple.com"
+    APPLE_DECODE_ALGORITHMS: list[str] = ["RS256"]
+
     @staticmethod
     def configure(app):
         # Implement this method to do further configuration on your app.
