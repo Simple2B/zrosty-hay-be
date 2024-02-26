@@ -84,6 +84,10 @@ class User(db.Model, UserMixin, ModelMixin):
         return f"<{self.id}: {self.username},{self.email}>"
 
     @property
+    def display_name(self):
+        return self.alias or self.username
+
+    @property
     def json(self):
         u = s.User.model_validate(self)
         return u.model_dump_json()
