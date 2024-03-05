@@ -25,7 +25,9 @@ def parse_excel(fail_path: str, db):
         if pd.isna(plant_family_name):
             print("Can't find family")
             continue
-        family = db.session.scalar(sa.select(m.PlantFamily).where(m.PlantFamily.name == plant_family_name))
+        family = db.session.scalar(
+            sa.select(m.PlantFamily).where(sa.func.lower(m.PlantFamily.name) == sa.func.lower(plant_family_name))
+        )
         if not family:
             family = m.PlantFamily(name=plant_family_name)
             db.session.add(family)
@@ -33,7 +35,9 @@ def parse_excel(fail_path: str, db):
         if pd.isna(plant_category_name):
             print("Can't find category")
             continue
-        category = db.session.scalar(sa.select(m.PlantCategory).where(m.PlantCategory.name == plant_category_name))
+        category = db.session.scalar(
+            sa.select(m.PlantCategory).where(sa.func.lower(m.PlantCategory.name) == sa.func.lower(plant_category_name))
+        )
         if not category:
             category = m.PlantCategory(name=plant_category_name, svg_icon="")
             db.session.add(category)
@@ -48,7 +52,9 @@ def parse_excel(fail_path: str, db):
         if pd.isna(plant_category_name):
             continue
         plant_family_name = plant_data[1]
-        family = db.session.scalar(sa.select(m.PlantFamily).where(m.PlantFamily.name == plant_family_name))
+        family = db.session.scalar(
+            sa.select(m.PlantFamily).where(sa.func.lower(m.PlantFamily.name) == sa.func.lower(plant_family_name))
+        )
         if not family:
             print("Can't find family")
             return
@@ -66,7 +72,9 @@ def parse_excel(fail_path: str, db):
         except IndexError:
             max_temperature = 25
 
-        plant = db.session.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.name == plant_data[2]))
+        plant = db.session.scalar(
+            sa.select(m.PlantVariety).where(sa.func.lower(m.PlantVariety.name) == sa.func.lower(plant_data[2]))
+        )
         if plant:
             print(f"Plant {plant_data[2]} already exist")
             continue

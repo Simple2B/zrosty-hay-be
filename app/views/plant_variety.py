@@ -53,7 +53,9 @@ def add():
     if (
         request.method == "POST"
         and form.validate_on_submit()
-        and not db.session.scalar(sa.select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data))
+        and not db.session.scalar(
+            sa.select(m.PlantVariety.name).where(sa.func.lower(m.PlantVariety.name) == sa.func.lower(form.name.data))
+        )
     ):
         plant_family = db.session.get(m.PlantFamily, form.plant_family_id.data)
         if not plant_family:
@@ -168,7 +170,9 @@ def edit(uuid: str):
 
     if request.method == "POST" and form.validate_on_submit():
         if form.name.data and db.session.scalar(
-            sa.Select(m.PlantVariety.name).where(m.PlantVariety.name == form.name.data, m.PlantVariety.uuid != uuid)
+            sa.Select(m.PlantVariety.name).where(
+                sa.func.lower(m.PlantVariety.name) == sa.func.lower(form.name.data), m.PlantVariety.uuid != uuid
+            )
         ):
             log(log.INFO, "PlantVariety name already exist! [%s]", form.name.data)
             flash("Plan Variety name already exist!", "danger")

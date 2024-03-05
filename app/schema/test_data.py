@@ -30,14 +30,20 @@ class TestPlantVariety(BaseModel):
     max_temperature: float
     min_size: float
     max_size: float
-    humidity_percentage: float
-    water_volume: float
+    humidity_percentage: float = 0
+    water_volume: float = 0
     care_type: str
-    is_moisture_loving: bool
-    is_sun_loving: bool
-    ground_ph: float
-    ground_type: str
-    can_plant_indoors: bool
+    is_moisture_loving: bool = False
+    is_sun_loving: bool = True
+    ground_ph: float = 0
+    ground_type: str = ""
+    can_plant_indoors: bool = False
+
+
+class TestPlantVarietyAndProgram(TestPlantVariety):
+    __test__ = False
+    harvest_time: int = 0
+    planting_time: int = 0
 
 
 class TestPlantCategory(BaseModel):

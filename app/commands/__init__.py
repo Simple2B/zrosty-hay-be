@@ -1,4 +1,3 @@
-import click
 from flask import Flask
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -7,6 +6,7 @@ from app.database import db
 from app import forms
 from app import schema as s
 from .parse_excel import parse_excel
+from .parse_json import parse_json
 
 
 def init(app: Flask):
@@ -17,8 +17,7 @@ def init(app: Flask):
         return dict(app=app, db=db, m=m, f=forms, s=s, sa=sa, orm=orm)
 
     @app.cli.command()
-    @click.option("--count", default=100, type=int)
-    def db_populate(count: int):
+    def db_populate():
         """Fill DB by dummy data."""
 
         with open("test_data.json", "r") as f:
@@ -47,8 +46,8 @@ def init(app: Flask):
         ).save()
         print("admin created")
 
-    @app.cli.command("add-plants")
-    def add_plants():
+    @app.cli.command("add-plants-xlsx")
+    def add_plants_from_xlsx():
         """Add plants from excel file to DB."""
         print("Start")
         try:
@@ -57,3 +56,14 @@ def init(app: Flask):
             db.session.rollback()
             print(f"Error: {e}")
         print("Finish")
+
+    @app.cli.command("add-plants-json")
+    def add_plants_from_json():
+        """Add new plants to DB from plants.json. Use it only for staging db and before"""
+        try:
+            parse_json("plants.json", db)
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+
+        print("Added successful")
