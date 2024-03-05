@@ -50,7 +50,9 @@ def create():
     form.pests.choices = db.session.scalars(sa.select(m.Pest.name).where(m.Pest.is_deleted.is_(False))).all()
     form.illnesses.choices = db.session.scalars(sa.select(m.Illness.name).where(m.Illness.is_deleted.is_(False))).all()
 
-    if form.name.data and db.session.scalar(sa.select(m.PlantFamily.name).where(m.PlantFamily.name == form.name.data)):
+    if form.name.data and db.session.scalar(
+        sa.select(m.PlantFamily.name).where(sa.func.lower(m.PlantFamily.name) == sa.func.lower(form.name.data))
+    ):
         log(log.INFO, "PlantFamily name already exist! [%s]", form.name.data)
         flash("Plan Family name already exist!", "danger")
         return redirect(url_for("plant_family.get_all"))
@@ -94,7 +96,7 @@ def detail(plant_family_id: int):
     if request.method == "POST" and form.validate_on_submit():
         is_name_exist = db.session.scalar(
             sa.Select(m.PlantFamily.name).where(
-                m.PlantFamily.name == form.name.data,
+                sa.func.lower(m.PlantFamily.name) == sa.func.lower(form.name.data),
                 m.PlantFamily.id != plant_family_id,
             )
         )

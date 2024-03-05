@@ -1,4 +1,3 @@
-import click
 from flask import Flask
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -17,8 +16,7 @@ def init(app: Flask):
         return dict(app=app, db=db, m=m, f=forms, s=s, sa=sa, orm=orm)
 
     @app.cli.command()
-    @click.option("--count", default=100, type=int)
-    def db_populate(count: int):
+    def db_populate():
         """Fill DB by dummy data."""
 
         with open("test_data.json", "r") as f:
