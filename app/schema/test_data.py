@@ -17,8 +17,10 @@ class TestPlantFamily(BaseModel):
     features: str
 
 
-class TestPlant(BaseModel):
+class TestPlantVariety(BaseModel):
     __test__ = False
+
+    plant_family_id: int
     name: str
     features: str
     general_info: str
@@ -38,10 +40,10 @@ class TestPlant(BaseModel):
     can_plant_indoors: bool = False
 
 
-class TestPlantVariety(TestPlant):
+class TestPlantVarietyAndProgram(TestPlantVariety):
     __test__ = False
-
-    plant_family_id: int
+    harvest_time: int = 0
+    planting_time: int = 0
 
 
 class TestPlantCategory(BaseModel):

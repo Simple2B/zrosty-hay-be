@@ -15,9 +15,11 @@ def test_parse_excel(client: FlaskClient):
     new_count = db.session.execute(sa.select(sa.func.count(m.PlantVariety.id))).scalar()
     assert new_count > count_of_plants
 
-
-def test_add_plants(client: FlaskClient):
-    count_of_plants = db.session.execute(sa.select(sa.func.count(m.PlantVariety.id))).scalar()
+    # test_add_plants
     parse_json(json_file_path, db)
+    count_of_plants = new_count
     new_count = db.session.execute(sa.select(sa.func.count(m.PlantVariety.id))).scalar()
     assert new_count > count_of_plants
+
+    program_counts = db.session.execute(sa.select(sa.func.count(m.PlantingProgram.id))).scalar()
+    assert program_counts > 0

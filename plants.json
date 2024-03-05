@@ -105,7 +105,7 @@
 		"ground_ph": 6,
 		"ground_type": "Легкий, пухкий, повітропроникний ґрунт для кімнатних фіалок",
 		"can_plant_indoors": true,
-		"planting_time": "spring/summer"
+		"planting_time": 60
 	},
 	{
 		"plant_family_id": 29,
