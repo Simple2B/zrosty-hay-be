@@ -15,7 +15,7 @@ services:
       PGUSER: ${POSTGRES_USER:-postgres}
 
   app:
-    image: simple2b/zrosty-hay:0.1.33
+    image: simple2b/zrosty-hay:0.1.34
     restart: always
     command: sh ./start_web.sh
     environment:
@@ -32,7 +32,7 @@ services:
       - "traefik.http.routers.zrosty_portal.tls.certresolver=myresolver"
 
   api:
-    image: simple2b/zrosty-hay:0.1.33
+    image: simple2b/zrosty-hay:0.1.34
     restart: always
     command: sh ./start_api.sh
     environment:
