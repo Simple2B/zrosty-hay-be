@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4">
+    <div class="flex items-center justify-center py-4 bg-white dark:bg-gray-800">
+        <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
+            <a href="{{ url_for('recipe.edit', uuid=recipe.uuid) }}"
+                class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Recipe edit
+            </a>
+        </div>
+    </div>
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Name</th>
+                <th scope="col" class="px-6 py-3">Step number</th>
+                <th scope="col" class="px-6 py-3">Edit</th>
+                <th scope="col" class="px-6 py-3">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recipe_step in recipe.steps %}
+            <tr id="recipe_step-{{recipe_step.id}}"
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                    <div class="pl-3">
+                        <div class="text-base font-semibold">{{ recipe_step.name }}</div>
+                    </div>
+                </td>
+                <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                    <div class="pl-3">
+                        <div class="text-base font-semibold">{{ recipe_step.step_number }}</div>
+                    </div>
+                </td>
+                <td class="p-4 space-x-2 whitespace-nowrap">
+                    <a href=""
+                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z">
+                            </path>
+                            <path fill-rule="evenodd"
+                                d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Edit
+                    </a>
+                </td>
+                <td>
+                    <button type="button"
+                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="mt-4 w-full flex justify-end items-center">
+        <button type="button"
+            hx-get="{{ url_for('recipe.get_recipe_step_form', recipe_uuid=recipe.uuid) }}"
+            hx-trigger="click" hx-target="table" hx-swap="afterend"
+            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:focus:ring-yellow-900">Add
+            step</button>
+    </div>
+</div>
+
+
+
+<!-- prettier-ignore -->
+{% endblock %}
+<!-- prettier-ignore -->
+{% block scripts %}
+
+{% endblock %}
