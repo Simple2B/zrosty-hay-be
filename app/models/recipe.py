@@ -45,7 +45,11 @@ class Recipe(db.Model, ModelMixin):
     categories: orm.Mapped[List["Category"]] = orm.relationship(secondary=recipe_categories)
 
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
-    steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(order_by="RecipeStep.step_number", back_populates="recipe")
+    steps: orm.Mapped[List["RecipeStep"]] = orm.relationship(
+        order_by=RecipeStep.step_number,
+        back_populates="recipe",
+        primaryjoin=sa.and_(id == RecipeStep.recipe_id, RecipeStep.is_deleted.is_(False)),
+    )
 
     @property
     def photo(self):

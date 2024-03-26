@@ -11,6 +11,7 @@ from .utils import ModelMixin, generate_uuid
 
 if TYPE_CHECKING:
     from .recipe import Recipe
+    from .photo import Photo
 
 
 class RecipeStep(db.Model, ModelMixin):
@@ -20,6 +21,7 @@ class RecipeStep(db.Model, ModelMixin):
 
     # Foreign keys
     recipe_id: orm.Mapped[int] = orm.mapped_column(sa.Integer, sa.ForeignKey("recipes.id"), nullable=False)
+    photo_id: orm.Mapped[int | None] = orm.mapped_column(sa.Integer, sa.ForeignKey("photos.id"))
 
     # Fields
     uuid: orm.Mapped[str] = orm.mapped_column(
@@ -40,6 +42,7 @@ class RecipeStep(db.Model, ModelMixin):
 
     # Relationships
     recipe: orm.Mapped["Recipe"] = orm.relationship(back_populates="steps")
+    photo: orm.Mapped["Photo"] = orm.relationship()
 
     def __repr__(self):
         return f"<RecipeStep: {self.id}>"

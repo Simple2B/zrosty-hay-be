@@ -10,7 +10,12 @@
                     d="M1 5h16M7 8v8m4-8v8M7 1h4a1 1 0 0 1 1 1v3H6V2a1 1 0 0 1 1-1ZM3 5h12v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5Z" />
             </svg>
         </button>
+        {% if photo.url_path and photo.url_path.startswith('http') %}
         <img class="h-40 w-40 rounded-lg" src="{{ photo.url_path }}" alt="{{ photo.origin_name }}" class="w-full">
+        {% elif photo.url_path %}
+        <img class="h-40 w-40 rounded-lg" src="{{url_for('static', filename=photo.url_path)}}"
+            alt="{{ photo.origin_name }}" class="w-full">
+        {% endif %}
         <div class="text-lg font-bold">{{ photo.original_name }}</div>
     </div>
     {% endfor %}

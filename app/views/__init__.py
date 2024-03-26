@@ -13,3 +13,4 @@ from .plant_category import bp as plant_category_blueprint
 from .program_step import bp as program_step_blueprint
 from .category import bp as category_blueprint
 from .recipe import bp as recipe_blueprint
+from .recipe_step import bp as recipe_step_blueprint
