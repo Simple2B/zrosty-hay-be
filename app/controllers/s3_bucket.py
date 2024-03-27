@@ -10,7 +10,9 @@ from pathlib import Path
 from app import schema as s
 
 from app.logger import log
-from config import BaseConfig
+from config import BaseConfig, APP_ENV
+
+BASE_IMAGE_PATH = Path("app/static/img/")
 
 
 class S3Bucket:
@@ -39,6 +41,12 @@ class S3Bucket:
 
         uuid = self._generate_img_uid()
         re_file_name = f"{uuid}.{file_type.extension}"
+        if APP_ENV == "development":
+            url_path = str(BASE_IMAGE_PATH / re_file_name)
+            with open(url_path, "wb") as f:
+                read = file.read()
+                f.write(read)
+            return s.S3Photo(uuid=uuid, url_path="img/" + re_file_name)
 
         img_path = self.aws_s3_base_dir / Path(folder_name) / re_file_name
 

@@ -145,15 +145,3 @@ def steps(recipe_uuid: str):
         flash("Recipe not exist!", "danger")
         return redirect(url_for("recipe.get_all"))
     return render_template("recipe/steps.html", recipe=reciepe)
-
-
-@bp.route("/<recipe_uuid>/step-form", methods=["GET"])
-@login_required
-def get_recipe_step_form(recipe_uuid: str):
-    """htmx request"""
-    log(log.INFO, "Get recipe step form")
-    reciepe = db.session.scalar(sa.select(m.Recipe).where(m.Recipe.uuid == recipe_uuid))
-    if not reciepe or reciepe.is_deleted:
-        log(log.INFO, "Error can't find recipe uuid:[%s]", recipe_uuid)
-        return render_template("toast.html", category="danger", message="Recipe not exist!")
-    return "hi"
