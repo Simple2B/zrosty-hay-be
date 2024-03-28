@@ -12,6 +12,7 @@ class User(BaseModel):
     username: str
     email: str
     activated: bool = True
+    picture_url: str | None = None
 
     model_config = ConfigDict(
         from_attributes=True,
