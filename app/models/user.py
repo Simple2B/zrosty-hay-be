@@ -30,6 +30,7 @@ class User(db.Model, UserMixin, ModelMixin):
     activated: orm.Mapped[bool] = orm.mapped_column(default=False)
     google_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
     apple_id: orm.Mapped[str] = orm.mapped_column(sa.String(256), default="")
+    picture_url: orm.Mapped[str | None] = orm.mapped_column(sa.String(512), default=None)
     created_at: orm.Mapped[datetime] = orm.mapped_column(
         default=datetime.utcnow,
     )

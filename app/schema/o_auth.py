@@ -16,7 +16,7 @@ class GoogleTokenVerification(BaseModel):
     picture: str
     given_name: str
     family_name: str
-    locale: str
+    locale: str = ""
     iat: int
     exp: int
 

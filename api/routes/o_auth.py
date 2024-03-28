@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from fastapi import Depends, APIRouter, HTTPException, status
 from google.oauth2 import id_token
@@ -47,11 +48,15 @@ def validate_google_token(auth_data: s.GoogleAuthTokenIn, db: Session = Depends(
 
         if not user:
             log(log.INFO, "[Google Auth] User [%s] not found. Creating a guest user", id_info.email)
-            user = api_c.create_guest_user(db, id_info.email, id_info.name)
+            user = api_c.create_guest_user(db, id_info.email, id_info.name, id_info.picture)
         return s.Token(access_token=create_access_token(user.id))
 
     except HTTPException as e:
         raise e
+
+    except ValidationError as e:
+        log(log.ERROR, "Invalid GoogleTokenVerification value: %s", e)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
 
     except ValueError as e:
         log(log.ERROR, "Invalid token: %s", e)

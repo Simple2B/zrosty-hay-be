@@ -36,12 +36,14 @@ def create_guest_user(
     db: Session,
     email: str,
     alias: str,
+    picture_url: str | None = None,
 ) -> m.User:
     """Creates a guest user in the database"""
     guest_user = m.User(
         email=email,
         alias=alias,
         activated=True,
+        picture_url=picture_url,
         # We create a random username and password, so guest won't ba able to login with manual credentials, only with Oauth
         username=m.gen_password_reset_id(),
         password=m.gen_password_reset_id(),
