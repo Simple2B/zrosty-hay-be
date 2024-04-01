@@ -49,6 +49,29 @@ def add():
             description=form.description.data,
             cooking_time=form.cooking_time.data,
         )
+        db.session.add(recipe)
+        additional_ingredients = tuple(
+            zip(
+                request.form.getlist("additional_ingredient"),
+                request.form.getlist("text_quantity"),
+            )
+        )
+        for name, text_quantity in additional_ingredients:
+            additional_ingredient = db.session.scalar(
+                sa.select(m.AdditionalIngredient).where(m.AdditionalIngredient.name == name)
+            )
+            if not additional_ingredient:
+                continue
+                # TODO finish
+                # additional_ingredient = m.AdditionalIngredient(name=name)
+                # db.session.add(additional_ingredient)
+                # db.session.flush()
+
+            recipe.additional_ingredients.append(
+                m.RecipeAdditionalIngredient(
+                    recipe=recipe, additional_ingredient_id=additional_ingredient.id, text_quantity=text_quantity
+                )
+            )
 
         categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
         recipe.categories = categories
@@ -63,7 +86,7 @@ def add():
             recipe.photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
         flash("Recipe added!", "success")
-        recipe.save()
+        db.session.commit()
         log(log.INFO, "Form submitted. Recipe: [%s]", recipe)
         return redirect(url_for("recipe.get_all"))
     if form.errors:
@@ -133,13 +156,27 @@ def steps(recipe_uuid: str):
     return render_template("recipe/steps.html", recipe=reciepe)
 
 
-@bp.route("/<recipe_uuid>/add-additional-ingredient", methods=["GET"])
+@bp.route("/add-additional-ingredient", methods=["GET", "POST"])
 @login_required
-def add_additional_ingredient(recipe_uuid: str):
-    """htmx request to add additional ingredient to recipe"""
-    reciepe = db.session.scalar(sa.select(m.Recipe).where(m.Recipe.uuid == recipe_uuid))
-    if not reciepe or reciepe.is_deleted:
-        log(log.INFO, "Error can't find recipe uuid:[%s]", recipe_uuid)
-        flash("Recipe not exist!", "danger")
-        return render_template("toast.html", category="danger", message="Recipe not exist!")
-    return render_template("recipe/steps.html", recipe=reciepe)
+def add_additional_ingredient():
+    """htmx request to get additional ingredient to form"""
+    form = f.RecipeAdditionalIngredientForm()
+
+    if form.validate_on_submit() and request.method == "POST":
+        return render_template("recipe/additional_ingredient.html", form=form)
+
+    ingredients = db.session.scalars(sa.select(m.AdditionalIngredient).order_by(m.AdditionalIngredient.name)).all()
+    return render_template("recipe/add_additional_ingredient.html", ingredients=ingredients, form=form)
+
+
+# @bp.route("/add-additional-ingredient", methods=["GET", "POST"])
+# @login_required
+# def add_ingredient():
+#     """htmx request to get additional ingredient to form"""
+#     form = f.RecipeAdditionalIngredientForm()
+
+#     if form.validate_on_submit() and request.method == "POST":
+#         return render_template("recipe/additional_ingredient.html", form=form)
+
+#     ingredients = db.session.scalars(sa.select(m.AdditionalIngredient).order_by(m.AdditionalIngredient.name)).all()
+#     return render_template("recipe/add_additional_ingredient.html", ingredients=ingredients, form=form)

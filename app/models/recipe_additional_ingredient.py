@@ -9,6 +9,7 @@ from .utils import ModelMixin
 
 if TYPE_CHECKING:
     from .additional_ingredient import AdditionalIngredient
+    from .recipe import Recipe
 
 
 class RecipeAdditionalIngredient(db.Model, ModelMixin):
@@ -16,10 +17,13 @@ class RecipeAdditionalIngredient(db.Model, ModelMixin):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     recipe_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("recipes.id"), primary_key=True)
-    additional_ingredient_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey('additional_ingredients.id'), primary_key=True)
+    additional_ingredient_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("additional_ingredients.id"), primary_key=True
+    )
     text_quantity: orm.Mapped[str] = orm.mapped_column(sa.String(64))
 
     additional_ingredient: orm.Mapped["AdditionalIngredient"] = orm.relationship()
+    recipe: orm.Mapped["Recipe"] = orm.relationship()
 
     @property
     def name(self):
