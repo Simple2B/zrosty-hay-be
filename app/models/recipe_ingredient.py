@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -23,8 +23,8 @@ class RecipeIngredient(db.Model, ModelMixin):
     quantity: orm.Mapped[float] = orm.mapped_column()
     quantity_type: orm.Mapped[str] = orm.mapped_column(sa.String(64))
 
-    plant_varietie: orm.Mapped["PlantVariety" | None] = orm.relationship()
-    plant_familie: orm.Mapped["PlantFamily" | None] = orm.relationship()
+    plant_varietie: orm.Mapped[Union["PlantVariety", None]] = orm.relationship()
+    plant_familie: orm.Mapped[Union["PlantFamily", None]] = orm.relationship()
 
     def __repr__(self):
         return f"<Id: {self.id}, RecipeIngredient: {self.name}>"

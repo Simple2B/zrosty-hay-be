@@ -7,16 +7,12 @@ from sqlalchemy import orm
 from app.database import db
 from .utils import ModelMixin, generate_uuid
 from .recipe_photo import recipe_photo
-from .plant_family_recipe import plant_family_recipe
-from .plant_variety_recipe import plant_variety_recipe
 from .recipe_step import RecipeStep
 from .recipe_category import recipe_categories
 from .recipe_additional_ingredient import RecipeAdditionalIngredient
 
 
 if TYPE_CHECKING:
-    from .plant_family import PlantFamily
-    from .plant_variety import PlantVariety
     from .photo import Photo
     from .category import Category
     from .recipe_ingredient import RecipeIngredient

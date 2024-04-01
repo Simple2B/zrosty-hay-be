@@ -1,11 +1,19 @@
 {% extends 'base.html' %}
 {% from "macros/slideshow.html" import slidesShow with context %}
 {% block content %}
-<div class="h-full mt-4 relative overflow-x-auto shadow-md sm:rounded-lg p-4">
+<div class="h-full w-full mt-4 relative overflow-x-auto shadow-md sm:rounded-lg p-4">
     {% set form_action = url_for('recipe.add') %}
     {% if recipe_uuid %}
     {% set form_action = url_for('recipe.edit', uuid=recipe_uuid) %}
     {% endif %}
+    <div class="w-full flex justify-end gap-5">
+        <button type="button"
+            class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add
+            Ingredient +</button>
+        <button type="button"
+            class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Add
+            Additional Ingredient + </button>
+    </div>
     <form action="{{ from_action }}" method="POST" enctype="multipart/form-data">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
             {{ form.hidden_tag() }}
@@ -24,17 +32,16 @@
                     {{ form.description.label }}</label>
                 {{ form.description(class_="w-full rounded-lg") }}
             </div>
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ form.categories.label }}</label>
+                {{ form.categories(class_="w-full rounded-lg") }}
+            </div>
 
 
 
         </div>
         <div class="w-full flex flex-col gap-5">
-
-            <div class="w-full">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    {{ form.categories.label }}</label>
-                {{ form.categories(class_="w-full rounded-lg") }}
-            </div>
             <div class="w-full">
                 <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
                     Photos</label>

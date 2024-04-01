@@ -12,3 +12,4 @@ from .plant_category import PlantCategoryForm
 from .category import CategoryForm
 from .recipe import RecipeForm
 from .recipe_step import RecipeStepForm
+from .additional_ingredient import AdditionalIngredientForm

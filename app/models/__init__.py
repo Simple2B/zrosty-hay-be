@@ -17,3 +17,4 @@ from .recipe_step import RecipeStep
 from .category import Category
 from .additional_ingredient import AdditionalIngredient
 from .recipe_additional_ingredient import RecipeAdditionalIngredient
+from .recipe_ingredient import RecipeIngredient

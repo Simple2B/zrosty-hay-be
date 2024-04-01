@@ -1,13 +1,10 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, List
 
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from app.database import db
 from .utils import ModelMixin, generate_uuid
-
-
 
 
 class AdditionalIngredient(db.Model, ModelMixin):
@@ -23,13 +20,5 @@ class AdditionalIngredient(db.Model, ModelMixin):
     updated_at: orm.Mapped[datetime] = orm.mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
-
-
-
-
-    @property
-    def photo(self):
-        return self.photos[0] if self.photos else None
-
     def __repr__(self):
-        return f"<Id: {self.id}, Recipe: {self.name}>"
+        return f"<Id: {self.id}, Additional Ingredient: {self.name}>"

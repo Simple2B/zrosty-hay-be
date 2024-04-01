@@ -38,7 +38,6 @@ def get_all():
 @login_required
 def add():
     form = f.RecipeForm()
-    form.plant_varieties.choices = db.session.scalars(sa.select(m.PlantVariety.name)).all()
     form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
     if (
         request.method == "POST"
@@ -85,7 +84,6 @@ def edit(uuid: str):
         flash("Recipe not exist!", "danger")
         return redirect(url_for("recipe.get_all"))
 
-    form.plant_varieties.choices = db.session.scalars(sa.select(m.PlantVariety.name)).all()
     form.categories.choices = db.session.scalars(sa.select(m.Category.name)).all()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -132,4 +130,16 @@ def steps(recipe_uuid: str):
         log(log.INFO, "Error can't find recipe uuid:[%s]", recipe_uuid)
         flash("Recipe not exist!", "danger")
         return redirect(url_for("recipe.get_all"))
+    return render_template("recipe/steps.html", recipe=reciepe)
+
+
+@bp.route("/<recipe_uuid>/add-additional-ingredient", methods=["GET"])
+@login_required
+def add_additional_ingredient(recipe_uuid: str):
+    """htmx request to add additional ingredient to recipe"""
+    reciepe = db.session.scalar(sa.select(m.Recipe).where(m.Recipe.uuid == recipe_uuid))
+    if not reciepe or reciepe.is_deleted:
+        log(log.INFO, "Error can't find recipe uuid:[%s]", recipe_uuid)
+        flash("Recipe not exist!", "danger")
+        return render_template("toast.html", category="danger", message="Recipe not exist!")
     return render_template("recipe/steps.html", recipe=reciepe)
