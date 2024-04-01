@@ -11,6 +11,7 @@ from .plant_family_recipe import plant_family_recipe
 from .plant_variety_recipe import plant_variety_recipe
 from .recipe_step import RecipeStep
 from .recipe_category import recipe_categories
+from .recipe_additional_ingredient import RecipeAdditionalIngredient
 
 
 if TYPE_CHECKING:
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
     from .plant_variety import PlantVariety
     from .photo import Photo
     from .category import Category
+    from .recipe_ingredient import RecipeIngredient
 
 
 class Recipe(db.Model, ModelMixin):
@@ -34,14 +36,9 @@ class Recipe(db.Model, ModelMixin):
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
 
     cooking_time: orm.Mapped[int] = orm.mapped_column(default=0)
-    additional_ingredients: orm.Mapped[str] = orm.mapped_column(sa.String(1024), default="")
     description: orm.Mapped[str] = orm.mapped_column(sa.Text)
 
     # Relationships
-    plant_families: orm.Mapped[List["PlantFamily"]] = orm.relationship(secondary=plant_family_recipe)
-    plant_varieties: orm.Mapped[List["PlantVariety"]] = orm.relationship(
-        secondary=plant_variety_recipe, back_populates="recipes"
-    )
     categories: orm.Mapped[List["Category"]] = orm.relationship(secondary=recipe_categories)
 
     photos: orm.Mapped[List["Photo"]] = orm.relationship(secondary=recipe_photo)
@@ -50,6 +47,9 @@ class Recipe(db.Model, ModelMixin):
         back_populates="recipe",
         primaryjoin=sa.and_(id == RecipeStep.recipe_id, RecipeStep.is_deleted.is_(False)),
     )
+
+    additional_ingredients: orm.Mapped[List["RecipeAdditionalIngredient"]] = orm.relationship()
+    ingredients: orm.Mapped[list["RecipeIngredient"]] = orm.relationship()
 
     @property
     def photo(self):

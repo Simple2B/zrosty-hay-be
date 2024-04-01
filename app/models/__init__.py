@@ -15,3 +15,5 @@ from .planting_steps import PlantingStep
 from .recipe import Recipe
 from .recipe_step import RecipeStep
 from .category import Category
+from .additional_ingredient import AdditionalIngredient
+from .recipe_additional_ingredient import RecipeAdditionalIngredient

@@ -49,13 +49,8 @@ def add():
             name=form.name.data,
             description=form.description.data,
             cooking_time=form.cooking_time.data,
-            additional_ingredients=form.additional_ingredients.data,
         )
 
-        plant_varieties = db.session.scalars(
-            sa.select(m.PlantVariety).where(m.PlantVariety.name.in_(form.plant_varieties.data))
-        ).all()
-        recipe.plant_varieties = plant_varieties
         categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
         recipe.categories = categories
 
@@ -99,12 +94,7 @@ def edit(uuid: str):
             return redirect(url_for("recipe.get_all"))
         recipe.name = form.name.data
         recipe.cooking_time = form.cooking_time.data
-        recipe.additional_ingredients = form.additional_ingredients.data
         recipe.description = form.description.data
-        plant_varieties = db.session.scalars(
-            sa.select(m.PlantVariety).where(m.PlantVariety.name.in_(form.plant_varieties.data))
-        ).all()
-        recipe.plant_varieties = plant_varieties
         categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
         recipe.categories = categories
 
@@ -128,9 +118,7 @@ def edit(uuid: str):
 
     form.name.data = recipe.name
     form.cooking_time.data = recipe.cooking_time
-    form.additional_ingredients.data = recipe.additional_ingredients
     form.description.data = recipe.description
-    form.plant_varieties.data = [pv.name for pv in recipe.plant_varieties]
     form.categories.data = [c.name for c in recipe.categories]
 
     return render_template("recipe/form.html", form=form, recipe_uuid=uuid, photos=recipe.photos)
