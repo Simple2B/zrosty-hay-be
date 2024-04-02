@@ -1,8 +1,8 @@
-"""add new models Ingredient
+"""add ingredients models
 
-Revision ID: 0e38698d0731
+Revision ID: 6decc9409f26
 Revises: f9f39bac0c53
-Create Date: 2024-04-01 11:55:52.000636
+Create Date: 2024-04-02 10:57:52.481307
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0e38698d0731'
+revision = '6decc9409f26'
 down_revision = 'f9f39bac0c53'
 branch_labels = None
 depends_on = None
@@ -32,14 +32,17 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_additional_ingredients_uuid'), ['uuid'], unique=False)
 
     op.create_table('recipe_additional_ingredients',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('additional_ingredient_id', sa.Integer(), nullable=False),
     sa.Column('text_quantity', sa.String(length=64), nullable=False),
     sa.ForeignKeyConstraint(['additional_ingredient_id'], ['additional_ingredients.id'], name=op.f('fk_recipe_additional_ingredients_additional_ingredient_id_additional_ingredients')),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_recipe_additional_ingredients_recipe_id_recipes')),
-    sa.PrimaryKeyConstraint('id', 'recipe_id', 'additional_ingredient_id', name=op.f('pk_recipe_additional_ingredients'))
+    sa.PrimaryKeyConstraint('recipe_id', 'additional_ingredient_id', name=op.f('pk_recipe_additional_ingredients'))
     )
+    with op.batch_alter_table('recipe_additional_ingredients', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_recipe_additional_ingredients_uuid'), ['uuid'], unique=False)
+
     op.create_table('recipe_ingredients',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=False),
@@ -80,6 +83,9 @@ def downgrade():
     sa.PrimaryKeyConstraint('recipe_id', 'plant_variety_id', name='pk_plant_variety_recipe')
     )
     op.drop_table('recipe_ingredients')
+    with op.batch_alter_table('recipe_additional_ingredients', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_recipe_additional_ingredients_uuid'))
+
     op.drop_table('recipe_additional_ingredients')
     with op.batch_alter_table('additional_ingredients', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_additional_ingredients_uuid'))

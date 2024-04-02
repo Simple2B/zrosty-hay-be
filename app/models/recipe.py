@@ -44,7 +44,7 @@ class Recipe(db.Model, ModelMixin):
         primaryjoin=sa.and_(id == RecipeStep.recipe_id, RecipeStep.is_deleted.is_(False)),
     )
 
-    additional_ingredients: orm.Mapped[List["RecipeAdditionalIngredient"]] = orm.relationship()
+    additional_ingredients: orm.Mapped[List["RecipeAdditionalIngredient"]] = orm.relationship(back_populates="recipe")
     ingredients: orm.Mapped[list["RecipeIngredient"]] = orm.relationship()
 
     @property

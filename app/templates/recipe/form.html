@@ -43,19 +43,21 @@
             <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional
                 Ingredients</label>
             <div id="additional-ingredients" class="flex flex-wrap gap-4">
-                {% for additional_ingredient in additional_ingredients %}
-                <div id="additional-ingredient-{{ additional_ingredient.id }}"
+                {% for ai_form in form.additional_ingredients %}
+                <div id="additional-ingredient-{{ ai_form.uuid.data }}"
                     class="p-2 flex justify-center items-center gap-4 w-[16rem] bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    {{ form.additional_ingredient(class_="w-1/2 text-center p-1 border-0 text-base text-gray-900
+                    {{ ai_form.uuid }}
+                    {{ ai_form.additional_ingredient(class_="w-1/2 text-center p-1 border-0 text-base text-gray-900
                     dark:text-white",
                     ) }}
-                    {{ form.text_quantity(class_="w-1/2 p-1 text-center border-0 text-base text-gray-900
+                    {{ ai_form.text_quantity(class_="w-1/2 p-1 text-center border-0 text-base text-gray-900
                     dark:text-white",
                     ) }}
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="red" viewBox="0 0 24 24"
-                        hx-swap="delete" hx-get="{{ url_for('main.no_content') }}"
-                        hx-target="#additional-ingredient-{{ additional_ingredient.id }}">
+                        hx-swap="outerHTML"
+                        hx-delete="{{ url_for('recipe.delete_additional_ingredient', recipe_additional_ingredient_uuid=ai_form.uuid.data) }}"
+                        hx-target="#additional-ingredient-{{ ai_form.uuid.data }}">
                         <path fill-rule=" evenodd"
                             d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
                             clip-rule="evenodd" />

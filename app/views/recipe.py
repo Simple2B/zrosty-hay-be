@@ -50,28 +50,6 @@ def add():
             cooking_time=form.cooking_time.data,
         )
         db.session.add(recipe)
-        additional_ingredients = tuple(
-            zip(
-                request.form.getlist("additional_ingredient"),
-                request.form.getlist("text_quantity"),
-            )
-        )
-        for name, text_quantity in additional_ingredients:
-            additional_ingredient = db.session.scalar(
-                sa.select(m.AdditionalIngredient).where(m.AdditionalIngredient.name == name)
-            )
-            if not additional_ingredient:
-                continue
-                # TODO finish
-                # additional_ingredient = m.AdditionalIngredient(name=name)
-                # db.session.add(additional_ingredient)
-                # db.session.flush()
-
-            recipe.additional_ingredients.append(
-                m.RecipeAdditionalIngredient(
-                    recipe=recipe, additional_ingredient_id=additional_ingredient.id, text_quantity=text_quantity
-                )
-            )
 
         categories = db.session.scalars(sa.select(m.Category).where(m.Category.name.in_(form.categories.data))).all()
         recipe.categories = categories
@@ -84,6 +62,24 @@ def add():
                 flash("Error with add photo to new recipe", "danger")
                 return redirect(url_for("recipe.get_all"))
             recipe.photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
+
+        additional_ingredients_data = {
+            key: value
+            for key, value in zip(request.form.getlist("additional_ingredient"), request.form.getlist("text_quantity"))
+        }
+        for name, text_quantity in additional_ingredients_data.items():
+            with db.session.no_autoflush:
+                additional_ingredient = db.session.scalar(
+                    sa.select(m.AdditionalIngredient).where(m.AdditionalIngredient.name == name)
+                )
+            if not additional_ingredient:
+                additional_ingredient = m.AdditionalIngredient(name=name)
+                db.session.add(additional_ingredient)
+            recipe_additional_ingredient = m.RecipeAdditionalIngredient(
+                recipe=recipe, additional_ingredient=additional_ingredient, text_quantity=text_quantity
+            )
+
+            recipe_additional_ingredient.save(False)
 
         flash("Recipe added!", "success")
         db.session.commit()
@@ -128,6 +124,38 @@ def edit(uuid: str):
                 return redirect(url_for("plant_variety.get_all"))
             recipe.photos.append(m.Photo(original_name=photo.filename, **s3_photo.model_dump()))
 
+        additional_ingredients_data = tuple(
+            zip(
+                request.form.getlist("additional_ingredient"),
+                request.form.getlist("uuid"),
+                request.form.getlist("text_quantity"),
+            )
+        )
+        for additional_ingredient_data in additional_ingredients_data:
+            name, uuid, text_quantity = additional_ingredient_data
+            if uuid:
+                continue
+            with db.session.no_autoflush:
+                additional_ingredient = db.session.scalar(
+                    sa.select(m.AdditionalIngredient).where(m.AdditionalIngredient.name == name)
+                )
+                if additional_ingredient and db.session.scalar(
+                    sa.select(m.RecipeAdditionalIngredient).where(
+                        m.RecipeAdditionalIngredient.additional_ingredient_id == additional_ingredient.id,
+                        m.RecipeAdditionalIngredient.recipe_id == recipe.id,
+                    )
+                ):
+                    continue
+
+            if not additional_ingredient:
+                additional_ingredient = m.AdditionalIngredient(name=name)
+                db.session.add(additional_ingredient)
+
+            recipe_additional_ingredient = m.RecipeAdditionalIngredient(
+                recipe=recipe, additional_ingredient=additional_ingredient, text_quantity=text_quantity
+            )
+            recipe_additional_ingredient.save(False)
+
         recipe.save()
         flash("Recipe updated!", "success")
         log(log.INFO, "Form submitted. Recipe: [%s]", recipe.name)
@@ -141,8 +169,19 @@ def edit(uuid: str):
     form.cooking_time.data = recipe.cooking_time
     form.description.data = recipe.description
     form.categories.data = [c.name for c in recipe.categories]
+    form.additional_ingredients = [
+        f.RecipeAdditionalIngredientForm(
+            uuid=ai.uuid, additional_ingredient=ai.additional_ingredient.name, text_quantity=ai.text_quantity
+        )
+        for ai in recipe.additional_ingredients
+    ]
 
-    return render_template("recipe/form.html", form=form, recipe_uuid=uuid, photos=recipe.photos)
+    return render_template(
+        "recipe/form.html",
+        form=form,
+        recipe_uuid=uuid,
+        photos=recipe.photos,
+    )
 
 
 @bp.route("/<recipe_uuid>/steps", methods=["GET"])
@@ -169,14 +208,22 @@ def add_additional_ingredient():
     return render_template("recipe/add_additional_ingredient.html", ingredients=ingredients, form=form)
 
 
-# @bp.route("/add-additional-ingredient", methods=["GET", "POST"])
-# @login_required
-# def add_ingredient():
-#     """htmx request to get additional ingredient to form"""
-#     form = f.RecipeAdditionalIngredientForm()
+@bp.route("/<recipe_additional_ingredient_uuid>/delete-additional-ingredient", methods=["DELETE"])
+@login_required
+def delete_additional_ingredient(recipe_additional_ingredient_uuid: str):
+    """htmx request to delete additional ingredient"""
 
-#     if form.validate_on_submit() and request.method == "POST":
-#         return render_template("recipe/additional_ingredient.html", form=form)
+    recipe_additional_ingredient = db.session.scalar(
+        sa.select(m.RecipeAdditionalIngredient).where(
+            m.RecipeAdditionalIngredient.uuid == recipe_additional_ingredient_uuid
+        )
+    )
+    if not recipe_additional_ingredient:
+        log(log.INFO, "Error can't find recipe additional ingredient uuid:[%s]", recipe_additional_ingredient_uuid)
+        return render_template("toast.html", message="Recipe additional ingredient not exist!", category="danger")
 
-#     ingredients = db.session.scalars(sa.select(m.AdditionalIngredient).order_by(m.AdditionalIngredient.name)).all()
-#     return render_template("recipe/add_additional_ingredient.html", ingredients=ingredients, form=form)
+    name = recipe_additional_ingredient.additional_ingredient.name
+    db.session.delete(recipe_additional_ingredient)
+    db.session.commit()
+
+    return render_template("toast.html", message=f"Additional ingredient {name} deleted!", category="success")

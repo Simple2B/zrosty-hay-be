@@ -5,6 +5,7 @@ from .photo import UploadPhotoForm
 
 
 class RecipeAdditionalIngredientForm(FlaskForm):
+    uuid = HiddenField()
     additional_ingredient = StringField(
         "Additional Ingredients",
         [DataRequired()],
