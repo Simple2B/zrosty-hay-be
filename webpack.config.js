@@ -26,6 +26,16 @@ const baseConfig = {
   },
 };
 
+const dashboardConfig = {
+  entry: {
+    main: './src/dashboard.ts',
+  },
+  output: {
+    path: path.resolve(__dirname, './app/static'),
+    filename: 'js/dashboard.js', // <--- Will be compiled to this single file
+  },
+};
+
 const userConfig = {
   entry: {
     main: './src/user.ts',
@@ -46,7 +56,6 @@ const pestConfig = {
   },
 };
 
-
 const slideShowConfig = {
   entry: {
     main: './src/slideshow.ts',
@@ -57,8 +66,12 @@ const slideShowConfig = {
   },
 };
 
-const configs = [baseConfig, userConfig, pestConfig,  slideShowConfig].map(conf =>
-  merge(defaultConfig, conf),
-);
+const configs = [
+  baseConfig,
+  userConfig,
+  pestConfig,
+  slideShowConfig,
+  dashboardConfig,
+].map(conf => merge(defaultConfig, conf));
 
 module.exports = configs;
