@@ -35,6 +35,7 @@ def create_app(environment="development"):
         category_blueprint,
         recipe_blueprint,
         recipe_step_blueprint,
+        dashboard_blueprint,
     )
     from app import models as m
 
@@ -71,6 +72,7 @@ def create_app(environment="development"):
     app.register_blueprint(category_blueprint)
     app.register_blueprint(recipe_blueprint)
     app.register_blueprint(recipe_step_blueprint)
+    app.register_blueprint(dashboard_blueprint)
 
     # Set up flask login.
     @login_manager.user_loader
