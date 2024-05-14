@@ -2,21 +2,13 @@ import json
 from flask import (
     Blueprint,
     render_template,
-    request,
-    flash,
-    redirect,
-    url_for,
+
 )
 from flask_login import login_required
-import sqlalchemy as sa
-from app.controllers import create_pagination
 from sqlalchemy import func, extract
 import calendar
 
 from app import models as m, db
-from app import forms as f
-from app.forms import pest, plant_family, plant_variety, user
-from app.logger import log
 
 
 bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
