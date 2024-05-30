@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     from .plant_category import PlantCategory
     from .plant_family import PlantFamily
     from .planting_program import PlantingProgram
-    from .recipe import Recipe
 
 
 class CareType(enum.Enum):
