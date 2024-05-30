@@ -1,8 +1,8 @@
-"""add ingredients models
+"""add_ingredients
 
-Revision ID: 6decc9409f26
+Revision ID: ccb683d7069e
 Revises: f9f39bac0c53
-Create Date: 2024-04-02 10:57:52.481307
+Create Date: 2024-05-30 15:52:13.613144
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6decc9409f26'
+revision = 'ccb683d7069e'
 down_revision = 'f9f39bac0c53'
 branch_labels = None
 depends_on = None
@@ -32,31 +32,36 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_additional_ingredients_uuid'), ['uuid'], unique=False)
 
     op.create_table('recipe_additional_ingredients',
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('additional_ingredient_id', sa.Integer(), nullable=False),
     sa.Column('text_quantity', sa.String(length=64), nullable=False),
     sa.ForeignKeyConstraint(['additional_ingredient_id'], ['additional_ingredients.id'], name=op.f('fk_recipe_additional_ingredients_additional_ingredient_id_additional_ingredients')),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_recipe_additional_ingredients_recipe_id_recipes')),
-    sa.PrimaryKeyConstraint('recipe_id', 'additional_ingredient_id', name=op.f('pk_recipe_additional_ingredients'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipe_additional_ingredients'))
     )
     with op.batch_alter_table('recipe_additional_ingredients', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_recipe_additional_ingredients_uuid'), ['uuid'], unique=False)
 
     op.create_table('recipe_ingredients',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=36), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=False),
-    sa.Column('plant_familie_id', sa.Integer(), nullable=True),
-    sa.Column('plant_varietie_id', sa.Integer(), nullable=True),
+    sa.Column('plant_family_id', sa.Integer(), nullable=True),
+    sa.Column('plant_variety_id', sa.Integer(), nullable=True),
     sa.Column('quantity', sa.Float(), nullable=False),
     sa.Column('quantity_type', sa.String(length=64), nullable=False),
-    sa.ForeignKeyConstraint(['plant_familie_id'], ['plant_families.id'], name=op.f('fk_recipe_ingredients_plant_familie_id_plant_families')),
-    sa.ForeignKeyConstraint(['plant_varietie_id'], ['plant_varieties.id'], name=op.f('fk_recipe_ingredients_plant_varietie_id_plant_varieties')),
+    sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name=op.f('fk_recipe_ingredients_plant_family_id_plant_families')),
+    sa.ForeignKeyConstraint(['plant_variety_id'], ['plant_varieties.id'], name=op.f('fk_recipe_ingredients_plant_variety_id_plant_varieties')),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_recipe_ingredients_recipe_id_recipes')),
-    sa.PrimaryKeyConstraint('id', 'recipe_id', name=op.f('pk_recipe_ingredients'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_recipe_ingredients'))
     )
-    op.drop_table('plant_variety_recipe')
+    with op.batch_alter_table('recipe_ingredients', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_recipe_ingredients_uuid'), ['uuid'], unique=False)
+
     op.drop_table('plant_family_recipes')
+    op.drop_table('plant_variety_recipe')
     with op.batch_alter_table('recipes', schema=None) as batch_op:
         batch_op.drop_column('additional_ingredients')
 
@@ -68,13 +73,6 @@ def downgrade():
     with op.batch_alter_table('recipes', schema=None) as batch_op:
         batch_op.add_column(sa.Column('additional_ingredients', sa.VARCHAR(length=1024), nullable=False))
 
-    op.create_table('plant_family_recipes',
-    sa.Column('recipe_id', sa.INTEGER(), nullable=False),
-    sa.Column('plant_family_id', sa.INTEGER(), nullable=False),
-    sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name='fk_plant_family_recipes_plant_family_id_plant_families'),
-    sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name='fk_plant_family_recipes_recipe_id_recipes'),
-    sa.PrimaryKeyConstraint('recipe_id', 'plant_family_id', name='pk_plant_family_recipes')
-    )
     op.create_table('plant_variety_recipe',
     sa.Column('recipe_id', sa.INTEGER(), nullable=False),
     sa.Column('plant_variety_id', sa.INTEGER(), nullable=False),
@@ -82,6 +80,16 @@ def downgrade():
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name='fk_plant_variety_recipe_recipe_id_recipes'),
     sa.PrimaryKeyConstraint('recipe_id', 'plant_variety_id', name='pk_plant_variety_recipe')
     )
+    op.create_table('plant_family_recipes',
+    sa.Column('recipe_id', sa.INTEGER(), nullable=False),
+    sa.Column('plant_family_id', sa.INTEGER(), nullable=False),
+    sa.ForeignKeyConstraint(['plant_family_id'], ['plant_families.id'], name='fk_plant_family_recipes_plant_family_id_plant_families'),
+    sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name='fk_plant_family_recipes_recipe_id_recipes'),
+    sa.PrimaryKeyConstraint('recipe_id', 'plant_family_id', name='pk_plant_family_recipes')
+    )
+    with op.batch_alter_table('recipe_ingredients', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_recipe_ingredients_uuid'))
+
     op.drop_table('recipe_ingredients')
     with op.batch_alter_table('recipe_additional_ingredients', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_recipe_additional_ingredients_uuid'))

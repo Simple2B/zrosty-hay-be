@@ -84,7 +84,7 @@ def add():
         flash("Recipe added!", "success")
         db.session.commit()
         log(log.INFO, "Form submitted. Recipe: [%s]", recipe)
-        return redirect(url_for("recipe.get_all"))
+        return redirect(url_for("recipe.edit", uuid=recipe.uuid))
     if form.errors:
         log(log.INFO, "Form error [%s]", form.errors)
         flash(f"{form.errors}", "danger")
@@ -181,6 +181,7 @@ def edit(uuid: str):
         form=form,
         recipe_uuid=uuid,
         photos=recipe.photos,
+        ingredients=recipe.ingredients,
     )
 
 
@@ -227,3 +228,58 @@ def delete_additional_ingredient(recipe_additional_ingredient_uuid: str):
     db.session.commit()
 
     return render_template("toast.html", message=f"Additional ingredient {name} deleted!", category="success")
+
+
+@bp.route("/<recipe_uuid>/add-ingredient", methods=["GET"])
+@login_required
+def get_modal_add_ingredient(recipe_uuid: str):
+    """htmx request to get form ingredient form"""
+    form = f.RecipeIngredientForm(recipe_uuid=recipe_uuid)
+    plant_varieties: list = db.session.execute(
+        sa.select(m.PlantVariety.uuid, m.PlantVariety.name).order_by(m.PlantVariety.name)
+    ).all()
+    plant_families: list = db.session.execute(
+        sa.select(m.PlantFamily.uuid, m.PlantFamily.name).order_by(m.PlantFamily.name)
+    ).all()
+
+    plants = (plant for plant in plant_varieties + plant_families)
+
+    return render_template("recipe/modal_add_ingredient.html", form=form, plants=plants)
+
+
+@bp.route("/add-ingredient", methods=["POST"])
+@login_required
+def add_ingredient():
+    """htmx request to add ingredient"""
+    form = f.RecipeIngredientForm()
+    if not form.validate_on_submit():
+        flash(f"Form not valid Errors: [{form.errors}]", "danger")
+        return redirect(url_for("recipe.get_all"))
+
+    recipe = db.session.scalar(sa.select(m.Recipe).where(m.Recipe.uuid == form.recipe_uuid.data))
+    if not recipe:
+        log(log.INFO, "Error can't find recipe uuid:[%s]", form.recipe_uuid.data)
+        flash("Recipe not exist!", "danger")
+        return redirect(url_for("recipe.get_all"))
+
+    plant_variety = db.session.scalar(sa.select(m.PlantVariety).where(m.PlantVariety.uuid == form.plant_uuid.data))
+    plant_family = db.session.scalar(sa.select(m.PlantFamily).where(m.PlantFamily.uuid == form.plant_uuid.data))
+
+    if not plant_variety and not plant_family:
+        log(log.INFO, "Error can't find plant uuid:[%s]", form.plant_uuid.data)
+        flash("Plant not exist!", "danger")
+        return redirect(url_for("recipe.edit", uuid=form.recipe_uuid.data))
+
+    ingredient = m.RecipeIngredient(
+        recipe_id=recipe.id,
+        quantity=form.quantity.data,
+        quantity_type=form.quantity_type.data,
+    )
+    if plant_variety:
+        ingredient.plant_variety_id = plant_variety.id
+    if plant_family:
+        ingredient.plant_family_id = plant_family.id
+
+    db.session.add(ingredient)
+    db.session.commit()
+    return redirect(url_for("recipe.edit", uuid=form.recipe_uuid.data))

@@ -1,7 +1,27 @@
 from flask_wtf import FlaskForm
-from wtforms import FieldList, FormField, StringField, TextAreaField, SelectMultipleField, IntegerField, HiddenField
+from wtforms import (
+    FieldList,
+    FormField,
+    StringField,
+    FloatField,
+    TextAreaField,
+    SelectMultipleField,
+    IntegerField,
+    HiddenField,
+)
 from wtforms.validators import DataRequired, Length
 from .photo import UploadPhotoForm
+
+
+class RecipeIngredientForm(FlaskForm):
+    recipe_uuid = HiddenField("Recipe UUID", [DataRequired()])
+    plant_uuid = StringField(
+        "Plant UUID",
+        [DataRequired()],
+        render_kw={"placeholder": "Select ingredient", "autocomplete": "off"},
+    )
+    quantity = FloatField("Quantity", [DataRequired()], render_kw={"placeholder": "200"})
+    quantity_type = StringField("Quantity Type", [DataRequired()], render_kw={"placeholder": "Grams"})
 
 
 class RecipeAdditionalIngredientForm(FlaskForm):
@@ -20,14 +40,3 @@ class RecipeForm(UploadPhotoForm, FlaskForm):
     description = TextAreaField("Description", [DataRequired()], render_kw={"placeholder": "Enter description"})
     categories = SelectMultipleField("Categories", choices=[])
     additional_ingredients = FieldList(FormField(RecipeAdditionalIngredientForm))
-
-
-class RecipeIngredientForm(FlaskForm):
-    ingredient = StringField(
-        "Ingredients",
-        [DataRequired()],
-        render_kw={"placeholder": "Select ingredient", "autocomplete": "off"},
-    )
-    text_quantity = StringField("Text quantity", [DataRequired()], render_kw={"placeholder": "Pinch"})
-    unit = StringField("Unit", [DataRequired()], render_kw={"placeholder": "g"})
-    quantity = IntegerField("Quantity", [DataRequired()], render_kw={"placeholder": "10"})

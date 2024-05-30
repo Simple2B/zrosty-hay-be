@@ -15,11 +15,10 @@ if TYPE_CHECKING:
 class RecipeAdditionalIngredient(db.Model, ModelMixin):
     __tablename__ = "recipe_additional_ingredients"
 
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     uuid: orm.Mapped[str] = orm.mapped_column(sa.String(36), default=generate_uuid, index=True)
-    recipe_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("recipes.id"), primary_key=True)
-    additional_ingredient_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("additional_ingredients.id"), primary_key=True
-    )
+    recipe_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("recipes.id"))
+    additional_ingredient_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("additional_ingredients.id"))
     text_quantity: orm.Mapped[str] = orm.mapped_column(sa.String(64))
 
     additional_ingredient: orm.Mapped["AdditionalIngredient"] = orm.relationship()

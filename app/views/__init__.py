@@ -15,3 +15,4 @@ from .category import bp as category_blueprint
 from .recipe import bp as recipe_blueprint
 from .recipe_step import bp as recipe_step_blueprint
 from .additional_ingredient import bp as additional_ingredient_blueprint
+from .recipe_ingredient import bp as recipe_ingredient_blueprint

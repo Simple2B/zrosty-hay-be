@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% from "recipe/_step.html" import Step with context %}
 {% block content %}
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg pt-4 ">
-    <div class="flex items-center justify-center bg-white dark:bg-gray-800 px-4">
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg pt-4">
+    <div class="flex items-center justify-center bg-white dark:bg-gray-800 p-4">
         <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
             <a href="{{ url_for('recipe.edit', uuid=recipe.uuid) }}"
                 class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -32,7 +32,7 @@
             {{ Step(recipe_step) }}
             {% endfor %}
         </div>
-        <div class="mt-4 w-full flex justify-end items-center">
+        <div class="mt-4 w-full flex justify-end items-center p-4">
             <button type="button" hx-get="{{ url_for('recipe_step.get_step_form', recipe_uuid=recipe.uuid) }}"
                 hx-trigger="click" hx-target="#recipe-steps-form" hx-swap="afterend"
                 class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:focus:ring-yellow-900">Add

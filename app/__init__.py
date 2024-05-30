@@ -36,6 +36,7 @@ def create_app(environment="development"):
         recipe_blueprint,
         recipe_step_blueprint,
         additional_ingredient_blueprint,
+        recipe_ingredient_blueprint,
     )
     from app import models as m
 
@@ -58,22 +59,26 @@ def create_app(environment="development"):
     s3bucket.init_app(configuration)
     # Register blueprints.
 
-    app.register_blueprint(auth_blueprint)
-    app.register_blueprint(main_blueprint)
-    app.register_blueprint(user_blueprint)
-    app.register_blueprint(pest_blueprint)
-    app.register_blueprint(illness_blueprint)
-    app.register_blueprint(plant_family_blueprint)
-    app.register_blueprint(plant_varieties_blueprint)
-    app.register_blueprint(photos_blueprint)
-    app.register_blueprint(planting_program_blueprint)
-    app.register_blueprint(planting_step_type_blueprint)
-    app.register_blueprint(plant_category_blueprint)
-    app.register_blueprint(program_step_blueprint)
-    app.register_blueprint(category_blueprint)
-    app.register_blueprint(recipe_blueprint)
-    app.register_blueprint(recipe_step_blueprint)
-    app.register_blueprint(additional_ingredient_blueprint)
+    for blueprint in (
+        auth_blueprint,
+        main_blueprint,
+        user_blueprint,
+        pest_blueprint,
+        illness_blueprint,
+        plant_family_blueprint,
+        plant_varieties_blueprint,
+        photos_blueprint,
+        planting_program_blueprint,
+        planting_step_type_blueprint,
+        plant_category_blueprint,
+        program_step_blueprint,
+        category_blueprint,
+        recipe_blueprint,
+        recipe_step_blueprint,
+        additional_ingredient_blueprint,
+        recipe_ingredient_blueprint,
+    ):
+        app.register_blueprint(blueprint)
 
     # Set up flask login.
     @login_manager.user_loader
