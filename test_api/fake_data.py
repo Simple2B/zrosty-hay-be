@@ -26,11 +26,24 @@ def init_fake_data(session: Session, fake_data: s.TestData):
         recipe.categories = categories
         session.add(recipe)
         recipes.append(recipe)
+
+    plant_varieties = []
     for plant_family in fake_data.plant_families:
         session.add(m.PlantFamily(**plant_family.model_dump()))
     for plant_variety in fake_data.plant_varieties:
-        session.add(m.PlantVariety(**plant_variety.model_dump(), recipes=recipes))
+        plant_variety = m.PlantVariety(**plant_variety.model_dump())
+        session.add(plant_variety)
+        plant_varieties.append(plant_variety)
     for step_type in fake_data.planting_step_types:
         session.add(m.PlantingStepType(**step_type.model_dump(), color="red"))
 
+    session.commit()
+    for plant_variety in plant_varieties:
+        ingredients = m.RecipeIngredient(
+            recipe_id=recipes[0].id,
+            quantity=1,
+            quantity_type="kg",
+            plant_variety_id=plant_variety.id,
+        )
+        session.add(ingredients)
     session.commit()

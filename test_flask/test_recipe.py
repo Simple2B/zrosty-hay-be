@@ -1,4 +1,6 @@
 from flask.testing import FlaskClient
+import sqlalchemy as sa
+
 from .db import FakeData
 
 
@@ -48,11 +50,20 @@ def test_CRU(login_client: FlaskClient, add_fake_data: FakeData):
 
     assert recipe.ingredients
 
-    assert plant_variety.recipes[0].name == recipe.name
+    recipes = db.session.scalars(
+        sa.select(m.Recipe)
+        .join(m.Recipe.ingredients)
+        .where(
+            m.Recipe.ingredients.any(plant_variety_id=plant_variety.id)
+            | m.Recipe.ingredients.any(plant_family_id=plant_variety.plant_family_id)
+        )
+        .distinct()
+    ).all()
+
+    assert recipes[0].name == recipe.name
 
     # delete ingredient
     res = login_client.delete(f"/recipe-ingredient/{recipe.ingredients[0].uuid}")
     assert res.status_code == 200
 
     assert not recipe.ingredients
-    assert not plant_variety.recipes

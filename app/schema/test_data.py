@@ -63,7 +63,6 @@ class TestRecipe(BaseModel):
     name: str
     description: str
     cooking_time: int
-    additional_ingredients: str
 
 
 class TestRecipeCategory(BaseModel):

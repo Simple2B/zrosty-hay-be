@@ -95,20 +95,6 @@ class PlantVariety(db.Model, ModelMixin):
     categories: orm.Mapped[List["PlantCategory"]] = orm.relationship(secondary=plant_variety_category)
 
     @property
-    def recipes(self) -> List["Recipe"]:
-        from .recipe import Recipe
-
-        return db.session.scalars(
-            sa.select(Recipe)
-            .join(Recipe.ingredients)
-            .where(
-                Recipe.ingredients.any(plant_variety_id=self.id)
-                | Recipe.ingredients.any(plant_family_id=self.plant_family_id)
-            )
-            .distinct()
-        ).all()
-
-    @property
     def photo(self) -> str | None:  # type:ignore
         if self.photos:
             return self.photos[0]
