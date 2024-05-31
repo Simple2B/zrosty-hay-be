@@ -10,7 +10,6 @@ def test_CRU(login_client: FlaskClient, add_fake_data: FakeData):
     recipe = m.Recipe(
         name="Need sun",
         cooking_time=3600,
-        additional_ingredients="water",
         description="test",
     )
     recipe.save()

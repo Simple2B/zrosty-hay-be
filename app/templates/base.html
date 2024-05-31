@@ -15,7 +15,8 @@
   <!-- prettier-ignore -->
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
   <!-- prettier-ignore -->
-  <script src="{{ url_for('static', filename='js/htmx.min.js') }}" type="text/javascript" defer></script>
+  <script src="{{ url_for('static', filename='js/lib/htmx.min.js') }}" type="text/javascript" defer></script>
+  <script src="{{ url_for('static', filename='js/lib/response-targets.js') }}" type="text/javascript" defer></script>
   <script>
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (
@@ -33,7 +34,7 @@
   {% endblock %}
 </head>
 
-<body class="bg-white dark:bg-gray-800" id="search-results">
+<body hx-ext="response-targets" class="bg-white dark:bg-gray-800" id="search-results">
   <!-- Header -->
   <!-- prettier-ignore -->
   {% include 'header.html' %}
@@ -99,14 +100,17 @@
   <!-- prettier-ignore -->
   {% include 'sidebar.html' %}
 
+
   <div class="sm:ml-64 mt-14 h-full overflow-x-scroll">
     <!-- Main Content -->
     {% block content %}{% endblock %}
   </div>
   {% endblock %}
+  <div id="not-found"></div>
   <!-- scripts -->
 
   <!-- prettier-ignore -->
+  {% include 'spinner.html' %}
   <script src="{{ url_for('static', filename='js/base.js') }}" type="text/javascript" defer></script>
 
   {% block scripts %} {% endblock %}

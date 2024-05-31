@@ -10,5 +10,6 @@ from .planting_program import PlantProgramForm, StepForm, PlantingProgramEditFor
 from .planting_step_type import PlantingStepTypeForm, PlantingStepTypeEditForm
 from .plant_category import PlantCategoryForm
 from .category import CategoryForm
-from .recipe import RecipeForm
+from .recipe import RecipeForm, RecipeAdditionalIngredientForm, RecipeIngredientForm
 from .recipe_step import RecipeStepForm
+from .additional_ingredient import AdditionalIngredientForm

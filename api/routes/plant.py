@@ -149,4 +149,14 @@ def get_plant_recipes(uuid: str, plant: m.PlantVariety = Depends(get_plant), db:
     """Returns the plants"""
     log(log.INFO, "Get plant recipes")
 
-    return paginate(db, plant.recipes.select())
+    query = (
+        sa.select(m.Recipe)
+        .join(m.Recipe.ingredients)
+        .where(
+            m.Recipe.ingredients.any(plant_variety_id=plant.id)
+            | m.Recipe.ingredients.any(plant_family_id=plant.plant_family_id)
+        )
+        .distinct()
+    )
+
+    return paginate(db, query)

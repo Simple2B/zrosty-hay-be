@@ -1,4 +1,6 @@
 from flask.testing import FlaskClient
+import sqlalchemy as sa
+
 from .db import FakeData
 
 
@@ -14,7 +16,6 @@ def test_CRU(login_client: FlaskClient, add_fake_data: FakeData):
         additional_ingredients="water",
         description="test",
         categories=[category.name],
-        plant_varieties=[plant_variety.name],
     )
 
     res = login_client.post("/recipes/add", data=form_data, follow_redirects=True)
@@ -31,4 +32,38 @@ def test_CRU(login_client: FlaskClient, add_fake_data: FakeData):
     assert res.status_code == 200
     db.session.refresh(recipe)
     assert recipe.name == form_data["name"]
-    assert recipe.plant_varieties[0].name == plant_variety.name
+
+    # test get_modal_add_ingredient
+    res = login_client.get(f"/recipes/{recipe.uuid}/add-ingredient")
+    assert res.status_code == 200
+
+    # test add_ingredient
+    assert not recipe.ingredients
+    form_data = dict(
+        recipe_uuid=recipe.uuid,
+        plant_uuid=plant_variety.uuid,
+        quantity=1,
+        quantity_type="kg",
+    )
+    res = login_client.post("/recipes/add-ingredient", data=form_data, follow_redirects=True)
+    assert res.status_code == 200
+
+    assert recipe.ingredients
+
+    recipes = db.session.scalars(
+        sa.select(m.Recipe)
+        .join(m.Recipe.ingredients)
+        .where(
+            m.Recipe.ingredients.any(plant_variety_id=plant_variety.id)
+            | m.Recipe.ingredients.any(plant_family_id=plant_variety.plant_family_id)
+        )
+        .distinct()
+    ).all()
+
+    assert recipes[0].name == recipe.name
+
+    # delete ingredient
+    res = login_client.delete(f"/recipe-ingredient/{recipe.ingredients[0].uuid}")
+    assert res.status_code == 200
+
+    assert not recipe.ingredients

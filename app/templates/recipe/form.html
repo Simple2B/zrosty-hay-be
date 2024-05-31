@@ -1,11 +1,26 @@
 {% extends 'base.html' %}
 {% from "macros/slideshow.html" import slidesShow with context %}
 {% block content %}
-<div class="h-full mt-4 relative overflow-x-auto shadow-md sm:rounded-lg p-4">
+<div class="h-full w-full mt-4 relative overflow-x-auto shadow-md sm:rounded-lg p-4">
     {% set form_action = url_for('recipe.add') %}
     {% if recipe_uuid %}
     {% set form_action = url_for('recipe.edit', uuid=recipe_uuid) %}
     {% endif %}
+    <div class="w-full flex justify-end gap-5 mb-2">
+        {% if recipe_uuid %}
+        <a href="{{ url_for('recipe.steps', recipe_uuid=recipe_uuid) }}"
+            class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">Steps+</a>
+        <button type="button" hx-get="{{ url_for('recipe.get_modal_add_ingredient', recipe_uuid=recipe_uuid) }}"
+            hx-target="body" hx-swap="beforeend" hx-trigger="click" hx-indicator="#htmx-spinner"
+            class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">Add
+            ingredient + </button>
+        {% endif %}
+        <button type="button" hx-get="{{ url_for('recipe.add_additional_ingredient') }}" hx-target="body"
+            hx-swap="beforeend"
+            class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Add
+
+            additional Ingredient +</button>
+    </div>
     <form action="{{ from_action }}" method="POST" enctype="multipart/form-data">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
             {{ form.hidden_tag() }}
@@ -21,30 +36,66 @@
             </div>
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    {{ form.additional_ingredients.label }}</label>
-                {{ form.additional_ingredients(class_="w-full rounded-lg") }}
-            </div>
-            <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     {{ form.description.label }}</label>
                 {{ form.description(class_="w-full rounded-lg") }}
             </div>
-
-
-
-        </div>
-        <div class="w-full flex flex-col gap-5">
-
-            <div class="w-full">
+            <div>
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     {{ form.categories.label }}</label>
                 {{ form.categories(class_="w-full rounded-lg") }}
             </div>
-            <div class="w-full">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    {{ form.plant_varieties.label }}</label>
-                {{ form.plant_varieties(class_="w-full rounded-lg") }}
+        </div>
+        <div class="flex flex-col gap-2">
+            {% if recipe_uuid %}
+            <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Ingredients</label>
+            <div class="flex flex-wrap gap-4">
+                {% for ingredient in ingredients %}
+                <div id="ingredient-{{ ingredient.uuid }}"
+                    class="p-3 flex justify-center items-center gap-4 w-[16rem] bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <div>{{ ingredient.name }}</div>
+                    <div>{{ ingredient.quantity }}</div>
+                    <div>{{ ingredient.quantity_type }}</div>
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                        hx-delete="{{ url_for('recipe_ingredient.delete', uuid=ingredient.uuid) }}"
+                        hx-target="#ingredient-{{ ingredient.uuid }}" hx-indicator="#htmx-spinner" hx-swap="outerHTML"
+                        hx-confirm="Are you sure you wish to delete your account?" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" fill="red" viewBox="0 0 24 24">
+                        <path fill-rule=" evenodd"
+                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                {% endfor %}
             </div>
+            {% endif %}
+            <label for="ingredients" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional
+                Ingredients</label>
+            <div id="additional-ingredients" class="flex flex-wrap gap-4">
+                {% for ai_form in form.additional_ingredients %}
+                <div id="additional-ingredient-{{ ai_form.uuid.data }}"
+                    class="p-2 flex justify-center items-center gap-4 w-[16rem] bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    {{ ai_form.uuid }}
+                    {{ ai_form.additional_ingredient(class_=" w-1/2 text-center p-1 border-0 text-base text-gray-900
+                    dark:text-black",
+                    ) }}
+                    {{ ai_form.text_quantity(class_="w-1/2 p-1 text-center border-0 text-base text-gray-900
+                    dark:text-black",
+                    ) }}
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="red" viewBox="0 0 24 24"
+                        hx-swap="outerHTML"
+                        hx-delete="{{ url_for('recipe.delete_additional_ingredient', recipe_additional_ingredient_uuid=ai_form.uuid.data) }}"
+                        hx-target="#additional-ingredient-{{ ai_form.uuid.data }}">
+                        <path fill-rule=" evenodd"
+                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-5">
             <div class="w-full">
                 <label for="activated" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add
                     Photos</label>
@@ -58,10 +109,6 @@
         <div class="mt-4 flex justify-between items-center">
             <button type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-            {% if recipe_uuid %}
-            <a href="{{ url_for('recipe.steps', recipe_uuid=recipe_uuid) }}"
-                class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Steps</a>
-            {% endif %}
         </div>
     </form>
     <script src="{{ url_for('static', filename='js/multiselect-dropdown.js') }}" type="text/javascript" defer></script>
