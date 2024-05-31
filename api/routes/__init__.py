@@ -6,15 +6,17 @@ from .plant import plant_router
 from .auth import router as auth_router
 from .planting_step_type import router as planting_step_type_router
 from .o_auth import router as o_auth_router
-
+from .recipe import router as recipe_router
 
 router = APIRouter(prefix="/api", tags=["API"])
+
 
 router.include_router(user_router)
 router.include_router(auth_router)
 router.include_router(plant_router)
 router.include_router(planting_step_type_router)
 router.include_router(o_auth_router)
+router.include_router(recipe_router)
 
 
 @router.get("/list-endpoints/")

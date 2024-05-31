@@ -38,12 +38,44 @@ def init_fake_data(session: Session, fake_data: s.TestData):
         session.add(m.PlantingStepType(**step_type.model_dump(), color="red"))
 
     session.commit()
+
+    first_recipe: m.Recipe = recipes[0]
+
     for plant_variety in plant_varieties:
         ingredients = m.RecipeIngredient(
-            recipe_id=recipes[0].id,
+            recipe_id=first_recipe.id,
             quantity=1,
             quantity_type="kg",
             plant_variety_id=plant_variety.id,
+            plant_family_id=plant_variety.plant_family_id,
         )
         session.add(ingredients)
+
+    photo = m.Photo(
+        original_name="test.jpg",
+        url_path="https://www.google.com",
+    )
+
+    first_recipe.photos.append(photo)
+
+    step = m.RecipeStep(
+        recipe_id=first_recipe.id,
+        name="Step 1",
+        step_number=1,
+        instruction="Do some thing",
+    )
+    session.add(step)
+
+    additonal_ingredient = m.AdditionalIngredient(
+        name="Salt",
+    )
+    session.add(additonal_ingredient)
+
+    recipe_additional_ingredient = m.RecipeAdditionalIngredient(
+        recipe_id=first_recipe.id,
+        additional_ingredient=additonal_ingredient,
+        text_quantity="kg",
+    )
+    session.add(recipe_additional_ingredient)
+
     session.commit()
