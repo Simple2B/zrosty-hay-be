@@ -26,8 +26,8 @@ def get_recipe_detail(uuid: str, recipe: m.Recipe = Depends(get_recipe)):
     response_model=list[s.Photo],
     responses={404: {"model": s.ApiError404}},
 )
-def get_plant_photos(uuid: str, recipe: m.Recipe = Depends(get_recipe)):
-    """Returns the plant photos"""
-    log(log.INFO, "Get plant photos uuid[%s]", uuid)
+def get_recipe_photos(uuid: str, recipe: m.Recipe = Depends(get_recipe)):
+    """Returns the recipe photos"""
+    log(log.INFO, "Get recipe photos uuid[%s]", uuid)
 
     return recipe.photos
