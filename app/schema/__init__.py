@@ -10,5 +10,5 @@ from .photo import Photo
 from .test_data import TestData, TestPlantVariety, TestPlantVarietyAndProgram
 from .planting_steps import PlantingStep, PlantingStepDay
 from .planting_step_type import PlantingStepType
-from .recipe import Recipe
+from .recipe import Recipe, RecipeDetail
 from .o_auth import AppleAuthTokenIn, AppleTokenVerification, GoogleAuthTokenIn, GoogleTokenVerification

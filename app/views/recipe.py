@@ -277,6 +277,8 @@ def add_ingredient():
     )
     if plant_variety:
         ingredient.plant_variety_id = plant_variety.id
+        ingredient.plant_family_id = plant_variety.plant_family_id
+
     if plant_family:
         ingredient.plant_family_id = plant_family.id
 
