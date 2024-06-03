@@ -21,6 +21,7 @@ class Recipe(BaseModel):
 
 
 class RecipeIngredient(BaseModel):
+    uuid: str
     name: str
     quantity: float
     quantity_type: str = Field(alias="quantityType")
@@ -30,6 +31,7 @@ class RecipeIngredient(BaseModel):
 
 
 class RecipeAdditionalIngredient(BaseModel):
+    uuid: str
     name: str
     text_quantity: str = Field(alias="textQuantity")
 
@@ -37,6 +39,7 @@ class RecipeAdditionalIngredient(BaseModel):
 
 
 class RecipeStep(BaseModel):
+    uuid: str
     step_number: int = Field(alias="stepNumber")
     instruction: str = Field(alias="instruction")
 
