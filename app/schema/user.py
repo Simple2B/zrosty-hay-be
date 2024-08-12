@@ -13,7 +13,16 @@ class User(BaseModel):
     email: str
     activated: bool = True
     avatar_url: str
+    language: str = "ua"
 
     model_config = ConfigDict(
         from_attributes=True,
     )
+
+
+class LanguageUpdate(BaseModel):
+    language: str
+
+
+class UsernameUpdate(BaseModel):
+    username: str
