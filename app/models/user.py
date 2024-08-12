@@ -2,6 +2,7 @@ from typing import Self
 from datetime import datetime
 from uuid import uuid4
 
+
 from flask_login import UserMixin, AnonymousUserMixin
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -11,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.database import db
 from .utils import ModelMixin
 from app.logger import log
-from app.constants import UserRole
+from app.constants import UserPreferredLanguage, UserRole
 from app import schema as s
 
 DEFUALT_PICTURE_URL = "https://s3.eu-north-1.amazonaws.com/zrosty-hay.static/logos/Avatar.png"
@@ -48,6 +49,7 @@ class User(db.Model, UserMixin, ModelMixin):
     )
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
     role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
+    language: orm.Mapped[str] = orm.mapped_column(sa.String(5), default=UserPreferredLanguage.ua.value)
     alias: orm.Mapped[str] = orm.mapped_column(sa.String(64), default="")
 
     @property
