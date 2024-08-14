@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import Depends, APIRouter, status
 
 from sqlalchemy.orm import Session
@@ -23,39 +24,24 @@ def get_current_user_profile(
     return current_user
 
 
-@user_router.patch("/me/language", status_code=status.HTTP_200_OK, response_model=s.User)
-def update_user_language(
-    language_update: s.LanguageUpdate,
-    current_user: m.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Updates the current user's language"""
-    if current_user.language != language_update.language:
-        current_user.language = language_update.language
-
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-
-    log(log.INFO, f"User {current_user.username} updated his language to {current_user.language}")
-    return current_user
-
-
-@user_router.patch("/me/username", status_code=status.HTTP_200_OK, response_model=s.User)
+@user_router.patch("/me", status_code=status.HTTP_200_OK, response_model=s.User)
 def update_user_username(
-    username_update: s.UsernameUpdate,
+    user_update: s.UserUpdate,
     current_user: m.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Updates the current user's username"""
-    if current_user.username != username_update.username:
-        current_user.username = username_update.username
+    """Updates the current user's info"""
+    if user_update.alias is not None and current_user.alias != user_update.alias:
+        current_user.alias = user_update.alias
+
+    if user_update.language is not None and current_user.language != user_update.language:
+        current_user.language = user_update.language
 
     db.add(current_user)
     db.commit()
     db.refresh(current_user)
 
-    log(log.INFO, f"User {current_user.username} updated his username to {current_user.username}")
+    log(log.INFO, f"User {current_user.username} was updated with language {current_user.language}")
     return current_user
 
 
@@ -66,14 +52,12 @@ def delete_user(
 ):
     """Deletes the current user"""
 
-    if current_user.is_deleted:
-        return None
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
     current_user.is_deleted = True
 
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-
+    current_user.email = f"{current_user.email}_{timestamp}"
+    current_user.username = f"{current_user.username}_{timestamp}"
     log(log.INFO, f"User {current_user.username} deleted his account")
+    db.commit()
     return None
