@@ -24,6 +24,4 @@ class User(BaseModel):
 
 class UserUpdate(BaseModel):
     alias: Optional[str] = None
-    language: Optional[Literal['ua', 'en']] = None
-
-
+    language: Optional[Literal["ua", "en"]] = None
