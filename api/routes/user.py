@@ -31,11 +31,9 @@ def update_user_username(
     db: Session = Depends(get_db),
 ):
     """Updates the current user's info"""
-    if user_update.alias is not None and current_user.alias != user_update.alias:
-        current_user.alias = user_update.alias
-
-    if user_update.language is not None and current_user.language != user_update.language:
-        current_user.language = user_update.language
+    update_data = user_update.dict(exclude_none=True)
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
 
     db.add(current_user)
     db.commit()
@@ -56,8 +54,8 @@ def delete_user(
 
     current_user.is_deleted = True
 
-    current_user.email = f"{current_user.email}_{timestamp}"
-    current_user.username = f"{current_user.username}_{timestamp}"
+    current_user.email = f"{current_user.email}_{timestamp}_deleted"
+    current_user.username = f"{current_user.username}_{timestamp}_deleted"
     log(log.INFO, f"User {current_user.username} deleted his account")
     db.commit()
     return None
