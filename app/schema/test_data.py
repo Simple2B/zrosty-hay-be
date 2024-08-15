@@ -8,6 +8,7 @@ class TestUser(BaseModel):
     username: str
     email: str
     password: str
+    alias: str = ""
 
 
 class TestPlantFamily(BaseModel):

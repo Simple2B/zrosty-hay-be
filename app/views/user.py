@@ -22,8 +22,9 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 @login_required
 def get_all():
     q = request.args.get("q", type=str, default=None)
-    query = m.User.select().order_by(m.User.id)
-    count_query = sa.select(sa.func.count()).select_from(m.User)
+
+    query = m.User.select().where(m.User.is_deleted.is_(False)).order_by(m.User.id)
+    count_query = sa.select(sa.func.count()).where(m.User.is_deleted.is_(False)).select_from(m.User)
     if q:
         query = (
             m.User.select().where(m.User.username.ilike(f"%{q}%") | m.User.email.ilike(f"%{q}%")).order_by(m.User.id)
@@ -87,7 +88,12 @@ def create():
         log(log.INFO, "Form submitted. User: [%s]", user)
         flash("User added!", "success")
         user.save()
-        return redirect(url_for("user.get_all"))
+
+    if form.errors:
+        log(log.ERROR, "User creation form validation failed: %s", form.errors)
+        flash(f"User creation failed: {form.errors}", "danger")
+
+    return redirect(url_for("user.get_all"))
 
 
 @bp.route("/delete/<int:id>", methods=["DELETE"])
