@@ -49,7 +49,7 @@ class User(db.Model, UserMixin, ModelMixin):
     )
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
     role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
-    language: orm.Mapped[str] = orm.mapped_column(sa.String(5), default=UserPreferredLanguage.ua.value)
+    language: orm.Mapped[str] = orm.mapped_column(sa.String(5), default=UserPreferredLanguage.ua.value, server_default=UserPreferredLanguage.ua.value)
     alias: orm.Mapped[str] = orm.mapped_column(sa.String(64), default="")
 
     @property
