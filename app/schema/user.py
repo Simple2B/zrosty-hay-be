@@ -1,4 +1,5 @@
-from typing import Literal, Optional
+from typing import Optional
+from app.constants import UserPreferredLanguage
 from pydantic import BaseModel, ConfigDict
 
 
@@ -15,7 +16,7 @@ class User(BaseModel):
     email: str
     activated: bool = True
     avatar_url: str
-    language: str = "ua"
+    language: UserPreferredLanguage
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -24,4 +25,4 @@ class User(BaseModel):
 
 class UserUpdate(BaseModel):
     alias: Optional[str] = None
-    language: Optional[Literal["ua", "en"]] = None
+    language: Optional[UserPreferredLanguage] = None
