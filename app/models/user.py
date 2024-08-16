@@ -49,7 +49,7 @@ class User(db.Model, UserMixin, ModelMixin):
     )
     is_deleted: orm.Mapped[bool] = orm.mapped_column(default=False)
     role: orm.Mapped[str] = orm.mapped_column(sa.String(32), default=UserRole.user.value)
-    language: orm.Mapped[str] = orm.mapped_column(
+    _language: orm.Mapped[str] = orm.mapped_column(
         sa.String(5), default=UserPreferredLanguage.ua.value, server_default=UserPreferredLanguage.ua.value
     )
     alias: orm.Mapped[str] = orm.mapped_column(sa.String(64), default="")
@@ -103,6 +103,17 @@ class User(db.Model, UserMixin, ModelMixin):
     def json(self):
         u = s.User.model_validate(self)
         return u.model_dump_json()
+
+    @property
+    def language(self) -> str:
+        return self._language
+
+    @language.setter
+    def language(self, value: str | UserPreferredLanguage):
+        if isinstance(value, UserPreferredLanguage):
+            self._language = value.value
+        else:
+            self._language = value
 
 
 class AnonymousUser(AnonymousUserMixin):

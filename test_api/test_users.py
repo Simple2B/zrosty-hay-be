@@ -35,7 +35,7 @@ def test_update_user_info(client: TestClient, headers: dict[str, str]):
     response = client.patch("/api/users/me", headers=headers, json={"language": new_language})
     assert response.status_code == 200
     user = s.User.model_validate(response.json())
-    assert user.language == new_language
+    assert user.language.value == new_language
 
     response = client.patch("/api/users/me", headers=headers, json={"language": new_wrong_language})
     assert response.status_code == 422

@@ -25,13 +25,13 @@ def get_current_user_profile(
 
 
 @user_router.patch("/me", status_code=status.HTTP_200_OK, response_model=s.User)
-def update_user_username(
+def update_user_info(
     user_update: s.UserUpdate,
     current_user: m.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Updates the current user's info"""
-    update_data = user_update.dict(exclude_none=True)
+    update_data = user_update.model_dump(exclude_none=True)
     for key, value in update_data.items():
         setattr(current_user, key, value)
 
